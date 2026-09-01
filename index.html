@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kaydee.my — Indian Cinema Portal</title>
+<meta name="description" content="Kaydee.my — Indian cinema reviews, movie news and event promotions. Every film scored on the Kaydee Rating Board.">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F5F5F7" media="(prefers-color-scheme: light)">
+<meta property="og:title" content="Kaydee.my — Indian Cinema Portal">
+<meta property="og:description" content="Movies. Reviews. Entertainment updates.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23DA0F2A'/><text x='50' y='66' font-family='-apple-system,Helvetica' font-size='44' font-weight='700' fill='white' text-anchor='middle'>KD</text></svg>">
+
+<script>
+/* ============================================================
+   CONFIG — paste your Apps Script Web App URL after deploying.
+   Leave empty to preview with placeholder content. See SETUP.md
+   ============================================================ */
+const CONFIG = {
+  API_URL: "",
+  INSTAGRAM: "https://www.instagram.com/kaydee.my/",
+  TIKTOK: "https://www.tiktok.com/@kaydee.my",
+  FACEBOOK: "https://www.facebook.com/Kaydee.my",
+  EMAIL: "hello@kaydee.my"
+};
+</script>
+
+<style>
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  color-scheme: dark light;
+  --red:#DA0F2A;
+  --red-bright:#FF3B45;
+
+  --bg:#000000;
+  --bg-2:#0B0B0D;
+  --card:rgba(255,255,255,.055);
+  --card-solid:#141416;
+  --text:#F5F5F7;
+  --text-2:#A1A1A8;
+  --line:rgba(255,255,255,.10);
+
+  --glass:rgba(28,28,32,.62);
+  --glass-edge:rgba(255,255,255,.16);
+  --glass-hi:rgba(255,255,255,.18);
+  --glass-shadow:0 10px 40px rgba(0,0,0,.55), 0 2px 8px rgba(0,0,0,.35);
+
+  --r-xl:30px; --r-lg:22px; --r-md:16px; --r-sm:11px;
+  --pad:clamp(18px,4.5vw,34px);
+  --max:1140px;
+  --spring:cubic-bezier(.32,.72,0,1);
+
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Inter",system-ui,sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#F5F5F7; --bg-2:#FFFFFF;
+    --card:rgba(0,0,0,.035); --card-solid:#FFFFFF;
+    --text:#1D1D1F; --text-2:#6E6E73; --line:rgba(0,0,0,.10);
+    --glass:rgba(255,255,255,.66); --glass-edge:rgba(0,0,0,.08);
+    --glass-hi:rgba(255,255,255,.9);
+    --glass-shadow:0 10px 34px rgba(0,0,0,.14), 0 2px 6px rgba(0,0,0,.06);
+    --red-bright:#D70A22;
+  }
+}
+:root[data-theme="light"]{
+    --bg:#F5F5F7; --bg-2:#FFFFFF;
+    --card:rgba(0,0,0,.035); --card-solid:#FFFFFF;
+    --text:#1D1D1F; --text-2:#6E6E73; --line:rgba(0,0,0,.10);
+    --glass:rgba(255,255,255,.66); --glass-edge:rgba(0,0,0,.08);
+    --glass-hi:rgba(255,255,255,.9);
+    --glass-shadow:0 10px 34px rgba(0,0,0,.14), 0 2px 6px rgba(0,0,0,.06);
+    --red-bright:#D70A22;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--font);font-size:17px;line-height:1.47;letter-spacing:-.011em;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button,input,select{font:inherit;color:inherit;background:none;border:none}
+:focus-visible{outline:3px solid var(--red-bright);outline-offset:3px;border-radius:6px}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
+
+h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.03em;line-height:1.06}
+h1{font-size:clamp(38px,7vw,68px)}
+h2{font-size:clamp(26px,3.6vw,38px);letter-spacing:-.028em}
+h3{font-size:19px;letter-spacing:-.02em;line-height:1.25}
+p{margin:0 0 15px}
+.sub{color:var(--text-2);font-size:16px}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.01em;color:var(--red-bright);margin:0 0 10px}
+.meta{color:var(--text-2);font-size:14px;letter-spacing:-.005em}
+
+/* ============================================================
+   GLASS — used only on the navigation and control layer
+   ============================================================ */
+.glass{
+  position:relative;
+  background:var(--glass);
+  -webkit-backdrop-filter:blur(26px) saturate(180%);
+  backdrop-filter:blur(26px) saturate(180%);
+  border:.5px solid var(--glass-edge);
+  box-shadow:var(--glass-shadow);
+}
+.glass::after{ /* specular top highlight */
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(to bottom,var(--glass-hi),transparent 42%);opacity:.5;
+  -webkit-mask:linear-gradient(#000,#000) content-box,linear-gradient(#000,#000);
+  -webkit-mask-composite:xor;mask-composite:exclude;padding:.5px;
+}
+@media (prefers-reduced-transparency: reduce){
+  .glass{background:var(--card-solid);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .glass::after{display:none}
+}
+
+/* ============================================================
+   NAVIGATION LAYER
+   ============================================================ */
+.topbar{
+  position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:80;
+  display:flex;align-items:center;gap:6px;padding:7px 7px 7px 16px;border-radius:999px;
+  width:min(calc(100% - 28px),var(--max));transition:top .4s var(--spring),transform .4s var(--spring);
+}
+.brand{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:-.02em;font-size:16px;padding-right:6px}
+.icon-mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(160deg,var(--red-bright),var(--red) 60%,#8E0819);
+  display:grid;place-items:center;color:#fff;font-size:11px;font-weight:700;letter-spacing:-.02em;
+  box-shadow:0 1px 2px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.35)}
+.tabs{display:flex;gap:2px;margin-left:auto}
+.tabs a{padding:8px 15px;border-radius:999px;font-size:14.5px;font-weight:500;color:var(--text-2);
+  transition:color .2s,background .3s var(--spring)}
+.tabs a:hover{color:var(--text)}
+.tabs a.on{color:var(--text);background:var(--card)}
+.theme-btn{width:36px;height:36px;border-radius:999px;display:grid;place-items:center;cursor:pointer;
+  color:var(--text-2);transition:.2s}
+.theme-btn:hover{color:var(--text);background:var(--card)}
+
+/* mobile tab bar, minimises on scroll like iOS */
+.tabbar{display:none}
+@media (max-width:800px){
+  .topbar{top:10px;padding:6px 6px 6px 14px}
+  .topbar .tabs{display:none}
+  .topbar .theme-btn{margin-left:auto}
+  .tabbar{
+    display:flex;position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;
+    transform:translateX(-50%);z-index:80;border-radius:999px;padding:7px;gap:2px;
+    transition:transform .45s var(--spring),opacity .3s;
+  }
+  .tabbar.min{transform:translateX(-50%) translateY(120%);opacity:0}
+  .tabbar a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 16px;border-radius:999px;
+    font-size:10.5px;font-weight:500;color:var(--text-2);transition:.3s var(--spring)}
+  .tabbar a.on{color:#fff;background:var(--red)}
+}
+main{padding-top:86px;min-height:70vh}
+@media (max-width:800px){ main{padding-top:74px;padding-bottom:100px} }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{position:relative;margin:0 auto;max-width:calc(var(--max) + 2 * var(--pad));padding:0 var(--pad)}
+.hero-frame{position:relative;border-radius:var(--r-xl);overflow:hidden;min-height:min(74vh,600px);
+  display:flex;align-items:flex-end;background:var(--card-solid)}
+.hero-media{position:absolute;inset:0;background-size:cover;background-position:center;
+  transform:scale(1.04);transition:transform 1.2s var(--spring)}
+.hero-frame:hover .hero-media{transform:scale(1.07)}
+.hero-fallback{position:absolute;inset:0;
+  background:radial-gradient(120% 90% at 15% 0%,#FF3B45 0%,#B40A1F 38%,#3A0209 72%,#0A0003 100%)}
+.hero-veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.92) 0%,rgba(0,0,0,.45) 42%,rgba(0,0,0,.1) 100%)}
+.hero-card{position:relative;margin:clamp(14px,2.5vw,22px);padding:clamp(20px,3vw,30px);border-radius:var(--r-lg);
+  width:min(100%,600px);color:#F5F5F7}
+.hero-card h1{margin-bottom:12px}
+.hero-card .meta{color:rgba(245,245,247,.72)}
+.hero-row{display:flex;align-items:center;gap:16px;margin:18px 0}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+
+/* ============================================================
+   CONTROLS
+   ============================================================ */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;
+  font-size:15px;font-weight:600;letter-spacing:-.01em;cursor:pointer;
+  transition:transform .3s var(--spring),background .25s,opacity .25s}
+.btn:active{transform:scale(.96)}
+.btn.prominent{background:var(--red);color:#fff;border:.5px solid rgba(255,255,255,.22);
+  box-shadow:0 6px 20px rgba(218,15,42,.42), inset 0 1px 0 rgba(255,255,255,.28)}
+.btn.prominent:hover{background:#EE1631}
+.btn.quiet{background:var(--card);color:var(--text)}
+.btn.quiet:hover{background:var(--line)}
+
+.score{display:inline-flex;align-items:baseline;gap:2px;padding:9px 15px;border-radius:14px;
+  background:var(--red);color:#fff;font-weight:700;letter-spacing:-.03em;
+  border:.5px solid rgba(255,255,255,.24);box-shadow:0 4px 14px rgba(218,15,42,.4), inset 0 1px 0 rgba(255,255,255,.3)}
+.score b{font-size:22px;line-height:1}
+.score i{font-style:normal;font-size:11px;font-weight:600;opacity:.72}
+.score.lg{padding:14px 22px;border-radius:20px}
+.score.lg b{font-size:40px}
+.score.lg i{font-size:14px}
+.score.sm{padding:5px 10px;border-radius:11px}
+.score.sm b{font-size:15px}
+.score.sm i{font-size:9px}
+
+.segmented{display:inline-flex;padding:3px;border-radius:999px;gap:2px;background:var(--card);flex-wrap:wrap}
+.segmented button{padding:8px 16px;border-radius:999px;font-size:14px;font-weight:500;color:var(--text-2);
+  cursor:pointer;transition:.3s var(--spring)}
+.segmented button[aria-pressed="true"]{color:var(--text);background:var(--bg-2);
+  box-shadow:0 1px 3px rgba(0,0,0,.25);font-weight:600}
+.search{display:flex;align-items:center;gap:9px;padding:11px 16px;border-radius:999px;flex:1;min-width:210px}
+.search input{width:100%;font-size:15px}
+.search input::placeholder{color:var(--text-2)}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:26px}
+
+/* ============================================================
+   CONTENT LAYER
+   ============================================================ */
+section{padding:clamp(42px,6vw,72px) 0}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:24px}
+.sec-head a{font-size:15px;font-weight:500;color:var(--red-bright);white-space:nowrap}
+.sec-head a:hover{opacity:.7}
+
+.grid{display:grid;gap:clamp(16px,2.4vw,26px);grid-template-columns:repeat(auto-fill,minmax(196px,1fr))}
+.card{display:block;transition:transform .45s var(--spring)}
+.card:hover{transform:translateY(-6px) scale(1.014)}
+.poster{position:relative;aspect-ratio:2/3;border-radius:var(--r-md);overflow:hidden;background:var(--card);
+  box-shadow:0 8px 26px rgba(0,0,0,.32);transition:box-shadow .45s var(--spring)}
+.card:hover .poster{box-shadow:0 18px 44px rgba(0,0,0,.45)}
+.poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.poster .ph{position:absolute;inset:0}
+.poster .score{position:absolute;left:10px;bottom:10px}
+.ph{width:100%;height:100%;display:grid;place-items:center;font-size:38px;font-weight:700;letter-spacing:-.04em;
+  color:rgba(255,255,255,.16);background:linear-gradient(150deg,#2A2A30,#141418)}
+.card h3{margin:13px 0 3px}
+.card .meta{font-size:13.5px}
+
+/* grouped list, iOS style */
+.list{background:var(--card);border-radius:var(--r-lg);overflow:hidden}
+.list-row{display:grid;grid-template-columns:150px 1fr;gap:18px;padding:15px 20px;align-items:baseline}
+.list-row + .list-row{box-shadow:inset 0 .5px 0 var(--line)}
+.list-row dt{color:var(--text-2);font-size:14.5px}
+.list-row dd{margin:0;font-size:16px}
+@media(max-width:540px){.list-row{grid-template-columns:1fr;gap:2px}}
+
+/* detail */
+.detail{display:grid;grid-template-columns:280px 1fr;gap:clamp(24px,4vw,52px);align-items:start}
+@media(max-width:760px){.detail{grid-template-columns:1fr}.detail .poster{max-width:210px}}
+.prose{max-width:66ch;color:var(--text);font-size:17.5px;line-height:1.62}
+.prose p{margin:0 0 18px}
+.back{display:inline-flex;align-items:center;gap:5px;color:var(--red-bright);font-size:15px;font-weight:500;margin-bottom:24px}
+.note{color:var(--text-2);font-size:13px;margin-top:30px}
+
+/* events */
+.events{display:grid;gap:12px}
+.ev{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;padding:16px 18px;
+  border-radius:var(--r-lg);background:var(--card);transition:.35s var(--spring)}
+.ev:hover{background:var(--line);transform:translateY(-2px)}
+.datechip{width:62px;padding:9px 0;border-radius:var(--r-sm);text-align:center;background:var(--red);color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.26)}
+.datechip b{display:block;font-size:22px;font-weight:700;letter-spacing:-.03em;line-height:1}
+.datechip span{font-size:11px;font-weight:600;opacity:.85;letter-spacing:.04em}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--card);color:var(--text-2);
+  font-size:12px;font-weight:600;margin-bottom:7px}
+.pill.hot{background:rgba(218,15,42,.16);color:var(--red-bright)}
+@media(max-width:620px){.ev{grid-template-columns:auto 1fr}.ev .btn{grid-column:2;justify-self:start}}
+.ev-feature{border-radius:var(--r-xl);overflow:hidden;position:relative;margin-bottom:26px;background:var(--card-solid)}
+.ev-feature .banner{aspect-ratio:16/7;background-size:cover;background-position:center;
+  background-image:radial-gradient(110% 120% at 80% 0%,#FF3B45,#9E0A1E 45%,#180105)}
+.ev-feature .body{padding:clamp(20px,3vw,30px)}
+
+/* rating board */
+.board{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(148px,1fr))}
+.tier{padding:20px;border-radius:var(--r-md);background:var(--card)}
+.tier b{display:block;font-size:30px;font-weight:700;letter-spacing:-.04em}
+.tier span{color:var(--text-2);font-size:14px}
+.tier.top{background:var(--red);color:#fff}
+.tier.top span{color:rgba(255,255,255,.82)}
+
+.notice{padding:16px 20px;border-radius:var(--r-md);background:var(--card);font-size:15px;color:var(--text-2);margin-bottom:26px}
+.notice b{color:var(--text)}
+.empty{padding:52px 24px;border-radius:var(--r-lg);background:var(--card);text-align:center;color:var(--text-2)}
+footer{padding:44px 0 calc(60px + env(safe-area-inset-bottom));margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
+.f-row{display:flex;flex-wrap:wrap;gap:22px;justify-content:space-between;align-items:center}
+.f-links{display:flex;gap:20px;flex-wrap:wrap}
+.f-links a{font-size:14.5px;color:var(--text-2)}
+.f-links a:hover{color:var(--text)}
+.status{font-size:13px;color:var(--text-2);margin-top:8px;display:flex;align-items:center;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;background:#30D158}
+.dot.off{background:var(--text-2)}
+
+/* motion */
+.rise{opacity:0;transform:translateY(18px);animation:rise .7s var(--spring) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transition:none!important}
+  .rise{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- navigation layer -->
+<div class="topbar glass" id="topbar">
+  <a class="brand" href="#/"><span class="icon-mark">KD</span>Kaydee.my</a>
+  <nav class="tabs" id="tabs"></nav>
+  <button class="theme-btn" id="themeBtn" aria-label="Switch appearance"></button>
+</div>
+<nav class="tabbar glass" id="tabbar" aria-label="Sections"></nav>
+
+<main id="app"></main>
+
+<footer>
+  <div class="wrap f-row">
+    <div>
+      <div class="brand" style="font-size:17px"><span class="icon-mark">KD</span>Kaydee.my</div>
+      <div class="meta" style="margin-top:8px">Indian cinema portal · Movies · Reviews · Events</div>
+      <div class="status" id="status"></div>
+    </div>
+    <div class="f-links" id="social"></div>
+  </div>
+</footer>
+
+<script>
+/* =========================================================
+   DATA — Google Sheets is the database (Apps Script JSON API)
+   ========================================================= */
+const state = { reviews: [], events: [], demo: false, error: "" };
+
+async function loadData(){
+  if(!CONFIG.API_URL){ useDemo(); return; }
+  try{
+    const res = await fetch(CONFIG.API_URL + "?route=all", { cache: "no-store" });
+    if(!res.ok) throw new Error("HTTP " + res.status);
+    const d = await res.json();
+    const live = s => String(s || "published").toLowerCase() !== "draft";
+    state.reviews = (d.reviews || []).filter(r => live(r.status));
+    state.events  = (d.events  || []).filter(e => live(e.status));
+    if(!state.reviews.length && !state.events.length) useDemo();
+  }catch(err){ state.error = err.message; useDemo(); }
+}
+function useDemo(){ state.demo = true; state.reviews = DEMO.reviews; state.events = DEMO.events; }
+
+/* ---------- helpers ---------- */
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const list = s => String(s ?? "").split(/[,|]/).map(x => x.trim()).filter(Boolean);
+const num = s => { const n = parseFloat(s); return isNaN(n) ? null : n; };
+const slugify = s => String(s ?? "").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const slugOf = r => r.slug ? slugify(r.slug) : slugify((r.title||"") + "-" + (r.year||""));
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const parseDate = v => { if(!v) return null; const d = new Date(v); return isNaN(d) ? null : d; };
+const fmtDate = v => { const d = parseDate(v); return d ? d.getDate()+" "+MON[d.getMonth()]+" "+d.getFullYear() : esc(v||""); };
+const runtime = m => { const n = num(m); return n ? Math.floor(n/60)+" hr "+(n%60)+" min" : ""; };
+const dots = a => a.filter(Boolean).map(esc).join(" · ");
+
+const ICON = {
+  home:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.4 12 3l9 7.4V20a1 1 0 0 1-1 1h-5v-6.5h-6V21H4a1 1 0 0 1-1-1z"/></svg>',
+  star:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m12 3.6 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.9l6-.8z"/></svg>',
+  cal:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.2" y="5" width="17.6" height="16" rx="4"/><path d="M8 3v4M16 3v4M3.2 10.5h17.6"/></svg>',
+  info:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.2"/><path d="M12 11v5.4M12 7.7v.2"/></svg>',
+  search:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>',
+  sun:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2.2M12 19.4v2.2M2.4 12h2.2M19.4 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6"/></svg>',
+  moon:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.2A8.4 8.4 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>',
+  back:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 5-7 7 7 7"/></svg>'
+};
+const NAV = [["/","Home","home"],["/reviews","Reviews","star"],["/events","Events","cal"],["/about","About","info"]];
+
+function score(r, size){
+  const n = num(r); if(n === null) return "";
+  return '<span class="score '+(size||"")+'"><b>'+(Number.isInteger(n)?n:n.toFixed(1))+'</b><i>/10</i></span>';
+}
+function poster(r, withScore){
+  const src = r.poster_url || "";
+  const ph = '<div class="ph">'+esc((r.title||"KD").slice(0,2).toUpperCase())+'</div>';
+  const img = src ? '<img src="'+esc(src)+'" alt="'+esc(r.title)+'" loading="lazy" onerror="this.remove()">' : "";
+  return '<div class="poster">'+ph+img+(withScore ? score(r.rating,"sm") : "")+'</div>';
+}
+function card(r){
+  return '<a class="card" href="#/review/'+slugOf(r)+'">'+poster(r,true)+
+    '<h3>'+esc(r.title)+'</h3><div class="meta">'+dots([r.year,r.language,runtime(r.runtime_min)])+'</div></a>';
+}
+const upcoming = e => { const d = parseDate(e.date_end || e.date_start); return !d || d.getTime() >= Date.now() - 864e5; };
+
+function eventRow(e){
+  const d = parseDate(e.date_start);
+  const cta = e.ticket_url ? '<a class="btn prominent" href="'+esc(e.ticket_url)+'" target="_blank" rel="noopener">Get tickets</a>' : "";
+  return '<article class="ev"><div class="datechip"><b>'+(d?d.getDate():"–")+'</b><span>'+(d?MON[d.getMonth()].toUpperCase():"TBA")+'</span></div>'+
+    '<div>'+(e.category ? '<span class="pill'+(upcoming(e)?' hot':'')+'">'+esc(e.category)+'</span>' : "")+
+    '<h3>'+esc(e.title)+'</h3><div class="meta">'+dots([d?fmtDate(e.date_start):"Date to be announced", e.time, e.venue, e.city])+'</div></div>'+cta+'</article>';
+}
+
+/* ---------- pages ---------- */
+function pageHome(){
+  const feat = state.reviews.find(r => String(r.featured).toUpperCase() === "TRUE") || state.reviews[0];
+  const next = state.events.filter(upcoming).slice(0,3);
+  let h = "";
+
+  if(feat){
+    const bg = feat.backdrop_url || feat.poster_url;
+    h += '<div class="hero rise"><div class="hero-frame">'+
+      (bg ? '<div class="hero-media" style="background-image:url('+esc(bg)+')"></div>' : '<div class="hero-fallback"></div>')+
+      '<div class="hero-veil"></div>'+
+      '<div class="hero-card glass"><p class="eyebrow" style="color:#FF6169">Latest review</p>'+
+        '<h1>'+esc(feat.title)+'</h1>'+
+        '<div class="meta">'+dots([feat.year,feat.language,runtime(feat.runtime_min)])+'</div>'+
+        '<div class="hero-row">'+score(feat.rating,"lg")+
+          (feat.verdict ? '<div style="font-size:19px;font-weight:600;letter-spacing:-.02em">'+esc(feat.verdict)+'</div>' : "")+'</div>'+
+        '<div class="actions"><a class="btn prominent" href="#/review/'+slugOf(feat)+'">Read review</a>'+
+        '<a class="btn quiet" href="#/reviews">All reviews</a></div>'+
+      '</div></div></div>';
+  }
+
+  h += '<div class="wrap"><section><div class="sec-head"><div><p class="eyebrow">Fresh from the hall</p><h2>Latest reviews</h2></div>'+
+    '<a href="#/reviews">See all</a></div><div class="grid">'+state.reviews.slice(0,10).map(card).join("")+'</div></section>'+
+
+    '<section><div class="sec-head"><div><p class="eyebrow">Promotions</p><h2>What\'s on</h2></div><a href="#/events">All events</a></div>'+
+    (next.length ? '<div class="events">'+next.map(eventRow).join("")+'</div>'
+                 : '<div class="empty">No events listed yet. Add a row to the Events tab of your sheet.</div>')+'</section>'+
+
+    '<section><div class="sec-head"><div><p class="eyebrow">How we score</p><h2>The rating board</h2></div></div>'+board()+'</section></div>';
+  return h;
+}
+
+function pageReviews(){
+  const langs = [...new Set(state.reviews.map(r => r.language).filter(Boolean))].sort();
+  return '<div class="wrap"><section><p class="eyebrow">Archive</p><h2 style="margin-bottom:24px">Reviews</h2>'+
+    '<div class="toolbar"><label class="search glass">'+ICON.search+
+      '<input id="q" type="search" placeholder="Search a title, director or actor" aria-label="Search reviews"></label>'+
+      '<div class="segmented" id="sort" role="group" aria-label="Sort reviews">'+
+        '<button data-v="new" aria-pressed="true">Newest</button>'+
+        '<button data-v="rating" aria-pressed="false">Top rated</button>'+
+        '<button data-v="az" aria-pressed="false">A–Z</button></div>'+
+      (langs.length > 1 ? '<div class="segmented" id="lang" role="group" aria-label="Filter by language">'+
+        '<button data-v="" aria-pressed="true">All</button>'+
+        langs.map(l => '<button data-v="'+esc(l)+'" aria-pressed="false">'+esc(l)+'</button>').join("")+'</div>' : "")+
+    '</div><div id="results" class="grid"></div></section></div>';
+}
+
+function filterState(id){
+  const g = document.getElementById(id);
+  const on = g && g.querySelector('[aria-pressed="true"]');
+  return on ? on.dataset.v : "";
+}
+function applyFilters(){
+  const q = (document.getElementById("q")?.value || "").toLowerCase().trim();
+  const lang = filterState("lang"), sort = filterState("sort") || "new";
+  let rows = state.reviews.filter(r =>
+    (!q || [r.title,r.director,r.cast,r.genres,r.year].join(" ").toLowerCase().includes(q)) &&
+    (!lang || r.language === lang));
+  if(sort === "rating") rows.sort((a,b)=>(num(b.rating)||0)-(num(a.rating)||0));
+  else if(sort === "az") rows.sort((a,b)=>String(a.title).localeCompare(String(b.title)));
+  else rows.sort((a,b)=>(parseDate(b.review_date)?.getTime()||0)-(parseDate(a.review_date)?.getTime()||0));
+  document.getElementById("results").innerHTML = rows.length ? rows.map(card).join("")
+    : '<div class="empty" style="grid-column:1/-1">Nothing matches that search. Try another title.</div>';
+}
+function wireSegments(){
+  document.querySelectorAll(".segmented").forEach(g => g.addEventListener("click", e => {
+    const b = e.target.closest("button"); if(!b) return;
+    g.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    applyFilters();
+  }));
+  document.getElementById("q").addEventListener("input", applyFilters);
+}
+
+function pageReview(slug){
+  const r = state.reviews.find(x => slugOf(x) === slug);
+  if(!r) return notFound("That review isn’t published yet.");
+  const facts = [["Director",r.director],["Producer",r.producer],["Cast",list(r.cast).join(", ")],
+    ["Runtime",runtime(r.runtime_min)],["Genre",list(r.genres).join(", ")],["Language",r.language],
+    ["Released",r.release_date ? fmtDate(r.release_date) : r.year],["Watch on",r.watch_on]].filter(([,v]) => v);
+  const body = String(r.review_body || r.synopsis || "").split(/\n+/).filter(Boolean).map(p => "<p>"+esc(p)+"</p>").join("");
+  const links = [["IMDb",r.imdb_url],["Wikipedia",r.wiki_url],["Trailer",r.trailer_url]].filter(([,u]) => u)
+    .map(([n,u]) => '<a class="btn quiet" href="'+esc(u)+'" target="_blank" rel="noopener">'+n+'</a>').join("");
+  return '<div class="wrap rise"><section style="padding-top:20px">'+
+    '<a class="back" href="#/reviews">'+ICON.back+'Reviews</a>'+
+    '<div class="detail"><div>'+poster(r,false)+
+      '<div style="margin-top:18px">'+score(r.rating,"lg")+'</div>'+
+      (r.verdict ? '<div style="font-size:19px;font-weight:600;letter-spacing:-.02em;margin-top:14px">'+esc(r.verdict)+'</div>' : "")+
+    '</div><div>'+
+      '<p class="eyebrow">Kaydee review'+(r.reviewer ? " · "+esc(r.reviewer) : "")+'</p>'+
+      '<h1 style="font-size:clamp(32px,5vw,52px);margin-bottom:12px">'+esc(r.title)+'</h1>'+
+      '<div class="meta">'+dots([r.year,r.language,runtime(r.runtime_min),r.review_date?fmtDate(r.review_date):""])+'</div>'+
+      '<dl class="list" style="margin:26px 0">'+facts.map(([k,v]) =>
+        '<div class="list-row"><dt>'+k+'</dt><dd>'+esc(v)+'</dd></div>').join("")+'</dl>'+
+      '<div class="prose">'+body+'</div>'+
+      (links ? '<div class="actions">'+links+'</div>' : "")+
+      '<p class="note">Credits imported from TMDB and Wikipedia into the Kaydee sheet. Score and verdict are Kaydee.my’s own.</p>'+
+    '</div></div></section></div>';
+}
+
+function pageEvents(){
+  const up = state.events.filter(upcoming).sort((a,b)=>(parseDate(a.date_start)?.getTime()||0)-(parseDate(b.date_start)?.getTime()||0));
+  const past = state.events.filter(e => !upcoming(e)).sort((a,b)=>(parseDate(b.date_start)?.getTime()||0)-(parseDate(a.date_start)?.getTime()||0));
+  const feat = up.find(e => String(e.featured).toUpperCase() === "TRUE") || up[0];
+  let h = '<div class="wrap rise"><section><p class="eyebrow">Promotions</p><h2>Events</h2>'+
+    '<p class="sub" style="margin:10px 0 26px">Premieres, fan meets and brand promos listed by Kaydee.my.</p>';
+
+  if(feat){
+    h += '<div class="ev-feature"><div class="banner"'+(feat.poster_url ? ' style="background-image:url('+esc(feat.poster_url)+')"' : "")+'></div>'+
+      '<div class="body"><span class="pill hot">'+esc(feat.category || "Featured")+'</span>'+
+      '<h2 style="font-size:clamp(24px,3.4vw,34px);margin:6px 0 10px">'+esc(feat.title)+'</h2>'+
+      '<div class="meta">'+dots([fmtDate(feat.date_start),feat.time,feat.venue,feat.city])+'</div>'+
+      (feat.description ? '<p class="prose" style="margin-top:14px">'+esc(feat.description)+'</p>' : "")+
+      '<div class="actions">'+(feat.ticket_url ? '<a class="btn prominent" href="'+esc(feat.ticket_url)+'" target="_blank" rel="noopener">Get tickets</a>' : "")+
+      (feat.price ? '<span class="btn quiet" style="cursor:default">From '+esc(feat.price)+'</span>' : "")+'</div></div></div>';
+  }
+
+  h += up.length ? '<div class="events">'+up.map(eventRow).join("")+'</div>'
+                 : '<div class="empty">No upcoming events. Add rows to the Events tab and they appear here.</div>';
+  if(past.length) h += '<div class="sec-head" style="margin-top:46px"><h2>Past events</h2></div>'+
+    '<div class="events" style="opacity:.6">'+past.slice(0,8).map(eventRow).join("")+'</div>';
+  h += '<div class="notice" style="margin-top:34px"><b>Promoting a release or a fan event?</b> Email <a href="mailto:'+esc(CONFIG.EMAIL)+
+    '" style="color:var(--red-bright)">'+esc(CONFIG.EMAIL)+'</a> and we’ll list it.</div>';
+  return h + '</section></div>';
+}
+
+function board(){
+  return '<div class="board">'+[["10","Masterpiece","top"],["8–9","Good",""],["7","Above average",""],["5–6","Average",""],["4","Below average",""]]
+    .map(([n,l,c]) => '<div class="tier '+c+'"><b>'+n+'</b><span>'+l+'</span></div>').join("")+'</div>';
+}
+function pageAbout(){
+  return '<div class="wrap rise"><section><p class="eyebrow">Who we are</p><h2>Kaydee.my</h2>'+
+    '<div class="prose" style="margin-top:20px">'+
+    '<p>Kaydee.my is an Indian cinema portal covering Tamil, Malayalam, Telugu, Hindi and Kannada releases for audiences in Malaysia and beyond — reviews, first-day reactions, song highlights and entertainment news.</p>'+
+    '<p>Every film gets one score on the Kaydee Rating Board, and every review carries the full credits: director, producer, cast and runtime, checked against public film databases before publishing.</p></div>'+
+    '<div class="actions" style="margin-top:26px">'+
+      '<a class="btn prominent" href="'+esc(CONFIG.INSTAGRAM)+'" target="_blank" rel="noopener">Instagram</a>'+
+      '<a class="btn quiet" href="'+esc(CONFIG.TIKTOK)+'" target="_blank" rel="noopener">TikTok</a>'+
+      '<a class="btn quiet" href="mailto:'+esc(CONFIG.EMAIL)+'">Work with us</a></div>'+
+    '<div style="margin-top:52px"><h2 style="margin-bottom:18px">Rating board</h2>'+board()+'</div>'+
+    '</section></div>';
+}
+function notFound(msg){
+  return '<div class="wrap"><section><div class="empty"><h2 style="margin-bottom:10px">Not found</h2><p>'+esc(msg||"")+'</p>'+
+    '<a class="btn quiet" href="#/" style="margin-top:12px">Back to home</a></div></section></div>';
+}
+
+/* ---------- router ---------- */
+function render(){
+  const [, seg, param] = (location.hash.replace(/^#/,"") || "/").split("/");
+  let html, key = "/" + (seg || "");
+  if(!seg) html = pageHome();
+  else if(seg === "reviews") html = pageReviews();
+  else if(seg === "review") html = pageReview(param || "");
+  else if(seg === "events") html = pageEvents();
+  else if(seg === "about") html = pageAbout();
+  else { html = notFound("That page doesn’t exist."); key = ""; }
+
+  const banner = state.demo ? '<div class="wrap" style="padding-top:8px"><div class="notice"><b>Preview content.</b> '+
+    (state.error ? 'Could not reach the sheet ('+esc(state.error)+'). ' : 'Add your Apps Script URL to CONFIG.API_URL in index.html. ')+
+    'Rows from your Google Sheet replace everything below.</div></div>' : "";
+
+  document.getElementById("app").innerHTML = banner + html;
+  document.querySelectorAll(".tabs a, .tabbar a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#"+key));
+  document.title = (seg === "review" && param ? param.replace(/-/g," ").replace(/\b\w/g,c=>c.toUpperCase())+" — " : "") + "Kaydee.my — Indian Cinema Portal";
+  window.scrollTo(0,0);
+  if(seg === "reviews"){ applyFilters(); wireSegments(); }
+}
+
+/* ---------- chrome ---------- */
+document.getElementById("tabs").innerHTML = NAV.map(([h,l]) => '<a href="#'+h+'">'+l+'</a>').join("");
+document.getElementById("tabbar").innerHTML = NAV.map(([h,l,i]) => '<a href="#'+h+'">'+ICON[i]+'<span>'+l+'</span></a>').join("");
+document.getElementById("social").innerHTML =
+  [["Instagram",CONFIG.INSTAGRAM],["TikTok",CONFIG.TIKTOK],["Facebook",CONFIG.FACEBOOK],["Email","mailto:"+CONFIG.EMAIL]]
+  .map(([n,u]) => '<a href="'+u+'" target="_blank" rel="noopener">'+n+'</a>').join("");
+
+function setTheme(mode){
+  document.documentElement.style.colorScheme = mode;
+  document.documentElement.setAttribute("data-theme", mode);
+  const icon = mode === "dark" ? ICON.sun : ICON.moon;
+  document.getElementById("themeBtn").innerHTML = icon;
+}
+let mode = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+setTheme(mode);
+document.getElementById("themeBtn").addEventListener("click", () => {
+  mode = mode === "dark" ? "light" : "dark"; setTheme(mode);
+});
+
+/* tab bar minimises on scroll down, returns on scroll up (iOS behaviour) */
+let lastY = 0;
+addEventListener("scroll", () => {
+  const bar = document.getElementById("tabbar"), y = scrollY;
+  bar.classList.toggle("min", y > lastY && y > 160);
+  lastY = y;
+}, { passive: true });
+addEventListener("hashchange", render);
+
+/* =========================================================
+   PREVIEW CONTENT — replaced by your sheet
+   ========================================================= */
+const DEMO = {
+  reviews: [
+    { title:"Vetri Kodi", year:"2026", language:"Tamil", rating:"9", verdict:"A roaring crowd-pleaser", featured:"TRUE",
+      director:"Sample Director", producer:"Sample Productions", cast:"Lead Actor, Lead Actress, Supporting Actor",
+      runtime_min:"152", genres:"Action, Drama", review_date:"2026-08-22", reviewer:"KD Desk",
+      synopsis:"A mill town shuts down and a union leader's son has to choose between the picket line and the promotion that would end it.",
+      review_body:"This is placeholder review copy living in the Reviews tab of your sheet. Write the full review there and it appears here, paragraph by paragraph.\nPress Alt+Enter inside the cell to start a new paragraph, exactly like this one." },
+    { title:"Neelakasham", year:"2026", language:"Malayalam", rating:"8", verdict:"Quietly excellent",
+      director:"Sample Director", cast:"Lead Actor, Lead Actress", runtime_min:"131", genres:"Drama", review_date:"2026-08-14",
+      synopsis:"A small-town drama that runs on silence more than dialogue." },
+    { title:"Padai Thalapathy", year:"2026", language:"Telugu", rating:"7", verdict:"Above average",
+      director:"Sample Director", cast:"Lead Actor", runtime_min:"164", genres:"Action", review_date:"2026-08-08",
+      synopsis:"Big-canvas action that lands the interval block and loses the second half." },
+    { title:"Sandhya Raagam", year:"2026", language:"Tamil", rating:"10", verdict:"Masterpiece",
+      director:"Sample Director", cast:"Lead Actress, Lead Actor", runtime_min:"141", genres:"Musical, Drama", review_date:"2026-07-30",
+      synopsis:"A musical that earns every note." },
+    { title:"Kadhal Ilaignan", year:"2026", language:"Tamil", rating:"6", verdict:"Average",
+      director:"Sample Director", cast:"Lead Actor, Lead Actress", runtime_min:"128", genres:"Romance", review_date:"2026-07-19",
+      synopsis:"A romance with two good scenes and a long wait between them." },
+    { title:"Manjummel Route", year:"2026", language:"Malayalam", rating:"8.5", verdict:"Good",
+      director:"Sample Director", cast:"Ensemble Cast", runtime_min:"139", genres:"Survival, Thriller", review_date:"2026-07-04",
+      synopsis:"A survival thriller built on friendship." }
+  ],
+  events: [
+    { title:"Vetri Kodi — Premiere night", date_start:"2026-09-12", time:"8:30 PM", venue:"GSC Mid Valley", city:"Kuala Lumpur",
+      category:"Premiere", price:"RM 25", featured:"TRUE",
+      description:"First show in Malaysia with a fan meet before the screening. Placeholder event from the Events tab of your sheet." },
+    { title:"Kaydee Fan Meet — Deepavali special", date_start:"2026-10-04", time:"6:00 PM", venue:"Sunway Pyramid", city:"Selangor", category:"Fan meet" },
+    { title:"Malayalam Film Weekend", date_start:"2026-10-18", time:"12:00 PM", venue:"TGV 1 Utama", city:"Petaling Jaya", category:"Festival" },
+    { title:"Onam Music Night", date_start:"2026-08-16", time:"7:00 PM", venue:"KLCC Plenary Hall", city:"Kuala Lumpur", category:"Concert" }
+  ]
+};
+
+loadData().then(() => {
+  const s = document.getElementById("status");
+  s.innerHTML = state.demo
+    ? '<span class="dot off"></span>Preview mode — sheet not connected'
+    : '<span class="dot"></span>Live from Google Sheets · '+state.reviews.length+' reviews · '+state.events.length+' events';
+  render();
+});
+</script>
+</body>
+</html>
