@@ -8,307 +8,296 @@
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#F5F5F7" media="(prefers-color-scheme: light)">
 <meta property="og:title" content="Kaydee.my — Indian Cinema Portal">
-<meta property="og:description" content="Movies. Reviews. Entertainment updates.">
+<meta property="og:description" content="Movies · Reviews · Entertainment updates">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23DA0F2A'/><text x='50' y='66' font-family='-apple-system,Helvetica' font-size='44' font-weight='700' fill='white' text-anchor='middle'>KD</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23DA0F2A'/><text x='50' y='66' font-family='-apple-system,Helvetica' font-size='42' font-weight='700' fill='white' text-anchor='middle'>KD</text></svg>">
 
 <script>
-/* ============================================================
-   CONFIG — paste your Apps Script Web App URL after deploying.
-   Leave empty to preview with placeholder content. See SETUP.md
-   ============================================================ */
+/* Site settings */
 const CONFIG = {
   API_URL: "https://script.google.com/macros/s/AKfycbxvgUXkAp5PpY5p_ietvi7BNldnxmAg3JWZFH8cv4NiMuTMTgIIar2E7u8qUD2GleOS/exec",
   INSTAGRAM: "https://www.instagram.com/kaydee.my/",
   TIKTOK: "https://www.tiktok.com/@kaydee.my",
   FACEBOOK: "https://www.facebook.com/Kaydee.my",
-  EMAIL: "hellokd@kaydee.my"
+  EMAIL: "hello@kaydee.my",
+  MAX_FEATURED: 5
 };
 </script>
 
 <style>
-/* ============================================================
-   TOKENS
-   ============================================================ */
+/* ===================== TOKENS ===================== */
 :root{
   color-scheme: dark light;
-  --red:#DA0F2A;
-  --red-bright:#FF3B45;
+  --red:#DA0F2A; --red-hi:#FF3B45; --red-bright:#FF3B45;
 
-  --bg:#000000;
-  --bg-2:#0B0B0D;
-  --card:rgba(255,255,255,.055);
-  --card-solid:#141416;
-  --text:#F5F5F7;
-  --text-2:#A1A1A8;
-  --line:rgba(255,255,255,.10);
+  --bg:#000; --bg-2:#0C0C0E;
+  --card:rgba(255,255,255,.06); --card-2:rgba(255,255,255,.10); --card-solid:#151517;
+  --text:#F5F5F7; --text-2:#A1A1A8; --line:rgba(255,255,255,.12);
 
-  --glass:rgba(28,28,32,.62);
-  --glass-edge:rgba(255,255,255,.16);
-  --glass-hi:rgba(255,255,255,.18);
-  --glass-shadow:0 10px 40px rgba(0,0,0,.55), 0 2px 8px rgba(0,0,0,.35);
+  --glass:rgba(30,30,34,.55);
+  --glass-edge:rgba(255,255,255,.20);
+  --glass-hi:rgba(255,255,255,.30);
+  --glass-lo:rgba(255,255,255,.06);
+  --glass-shadow:0 14px 44px rgba(0,0,0,.55), 0 2px 10px rgba(0,0,0,.4);
 
-  --r-xl:30px; --r-lg:22px; --r-md:16px; --r-sm:11px;
+  --r-xl:32px; --r-lg:24px; --r-md:18px; --r-sm:12px;
   --pad:clamp(18px,4.5vw,34px);
   --max:1140px;
   --spring:cubic-bezier(.32,.72,0,1);
-
+  --bounce:cubic-bezier(.34,1.56,.64,1);
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Inter",system-ui,sans-serif;
-  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
 }
-@media (prefers-color-scheme: light){
-  :root:not([data-theme="dark"]){
-    --bg:#F5F5F7; --bg-2:#FFFFFF;
-    --card:rgba(0,0,0,.035); --card-solid:#FFFFFF;
-    --text:#1D1D1F; --text-2:#6E6E73; --line:rgba(0,0,0,.10);
-    --glass:rgba(255,255,255,.66); --glass-edge:rgba(0,0,0,.08);
-    --glass-hi:rgba(255,255,255,.9);
-    --glass-shadow:0 10px 34px rgba(0,0,0,.14), 0 2px 6px rgba(0,0,0,.06);
-    --red-bright:#D70A22;
-  }
-}
+@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){
+  --bg:#F2F2F5; --bg-2:#fff;
+  --card:rgba(0,0,0,.045); --card-2:rgba(0,0,0,.08); --card-solid:#fff;
+  --text:#1D1D1F; --text-2:#6E6E73; --line:rgba(0,0,0,.10);
+  --glass:rgba(255,255,255,.62); --glass-edge:rgba(255,255,255,.85);
+  --glass-hi:rgba(255,255,255,.95); --glass-lo:rgba(0,0,0,.04);
+  --glass-shadow:0 14px 40px rgba(0,0,0,.16), 0 2px 8px rgba(0,0,0,.07);
+  --red-bright:#C90A20;
+}}
 :root[data-theme="light"]{
-    --bg:#F5F5F7; --bg-2:#FFFFFF;
-    --card:rgba(0,0,0,.035); --card-solid:#FFFFFF;
-    --text:#1D1D1F; --text-2:#6E6E73; --line:rgba(0,0,0,.10);
-    --glass:rgba(255,255,255,.66); --glass-edge:rgba(0,0,0,.08);
-    --glass-hi:rgba(255,255,255,.9);
-    --glass-shadow:0 10px 34px rgba(0,0,0,.14), 0 2px 6px rgba(0,0,0,.06);
-    --red-bright:#D70A22;
+  --bg:#F2F2F5; --bg-2:#fff;
+  --card:rgba(0,0,0,.045); --card-2:rgba(0,0,0,.08); --card-solid:#fff;
+  --text:#1D1D1F; --text-2:#6E6E73; --line:rgba(0,0,0,.10);
+  --glass:rgba(255,255,255,.62); --glass-edge:rgba(255,255,255,.85);
+  --glass-hi:rgba(255,255,255,.95); --glass-lo:rgba(0,0,0,.04);
+  --glass-shadow:0 14px 40px rgba(0,0,0,.16), 0 2px 8px rgba(0,0,0,.07);
+  --red-bright:#C90A20;
 }
 
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{
-  margin:0;background:var(--bg);color:var(--text);
-  font-family:var(--font);font-size:17px;line-height:1.47;letter-spacing:-.011em;
-  -webkit-font-smoothing:antialiased;overflow-x:hidden;
-}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:17px;
+  line-height:1.47;letter-spacing:-.011em;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body.locked{overflow:hidden}
 img{display:block;max-width:100%}
 a{color:inherit;text-decoration:none}
-button,input,select{font:inherit;color:inherit;background:none;border:none}
-:focus-visible{outline:3px solid var(--red-bright);outline-offset:3px;border-radius:6px}
+button,input{font:inherit;color:inherit;background:none;border:none}
+:focus-visible{outline:3px solid var(--red-hi);outline-offset:3px;border-radius:8px}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
-
 h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.03em;line-height:1.06}
-h1{font-size:clamp(38px,7vw,68px)}
-h2{font-size:clamp(26px,3.6vw,38px);letter-spacing:-.028em}
+h1{font-size:clamp(36px,6.4vw,64px)}
+h2{font-size:clamp(26px,3.6vw,38px)}
 h3{font-size:19px;letter-spacing:-.02em;line-height:1.25}
 p{margin:0 0 15px}
 .sub{color:var(--text-2);font-size:16px}
-.eyebrow{font-size:13px;font-weight:600;letter-spacing:.01em;color:var(--red-bright);margin:0 0 10px}
-.meta{color:var(--text-2);font-size:14px;letter-spacing:-.005em}
+.eyebrow{font-size:13px;font-weight:600;color:var(--red-bright);margin:0 0 10px}
+.meta{color:var(--text-2);font-size:14px}
 
-/* ============================================================
-   GLASS — used only on the navigation and control layer
-   ============================================================ */
-.glass{
-  position:relative;
-  background:var(--glass);
-  -webkit-backdrop-filter:blur(26px) saturate(180%);
-  backdrop-filter:blur(26px) saturate(180%);
+/* ===================== GLASS ===================== */
+.glass{position:relative;background:var(--glass);
+  -webkit-backdrop-filter:blur(30px) saturate(200%) brightness(1.06);
+  backdrop-filter:blur(30px) saturate(200%) brightness(1.06);
   border:.5px solid var(--glass-edge);
-  box-shadow:var(--glass-shadow);
-}
-.glass::after{ /* specular top highlight */
-  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  background:linear-gradient(to bottom,var(--glass-hi),transparent 42%);opacity:.5;
-  -webkit-mask:linear-gradient(#000,#000) content-box,linear-gradient(#000,#000);
-  -webkit-mask-composite:xor;mask-composite:exclude;padding:.5px;
-}
+  box-shadow:var(--glass-shadow), inset 0 1px 1px var(--glass-hi), inset 0 -1px 1px var(--glass-lo);}
+.glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(160deg,var(--glass-hi),transparent 38%,transparent 72%,var(--glass-lo));
+  opacity:.55;-webkit-mask:linear-gradient(#000,#000) content-box,linear-gradient(#000,#000);
+  -webkit-mask-composite:xor;mask-composite:exclude;padding:.6px}
 @media (prefers-reduced-transparency: reduce){
   .glass{background:var(--card-solid);backdrop-filter:none;-webkit-backdrop-filter:none}
   .glass::after{display:none}
 }
 
-/* ============================================================
-   NAVIGATION LAYER
-   ============================================================ */
-.topbar{
-  position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:80;
-  display:flex;align-items:center;gap:6px;padding:7px 7px 7px 16px;border-radius:999px;
-  width:min(calc(100% - 28px),var(--max));transition:top .4s var(--spring),transform .4s var(--spring);
-}
-.brand{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:-.02em;font-size:16px;padding-right:6px}
-.icon-mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(160deg,var(--red-bright),var(--red) 60%,#8E0819);
-  display:grid;place-items:center;color:#fff;font-size:11px;font-weight:700;letter-spacing:-.02em;
-  box-shadow:0 1px 2px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.35)}
+/* ===================== NAV ===================== */
+.topbar{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;
+  gap:6px;padding:7px 7px 7px 15px;border-radius:999px;width:min(calc(100% - 26px),var(--max))}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;letter-spacing:-.02em}
+.mark{width:29px;height:29px;border-radius:9px;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:700;
+  background:linear-gradient(155deg,#FF5560,var(--red) 55%,#8A0718);
+  box-shadow:0 2px 6px rgba(218,15,42,.45), inset 0 1px 0 rgba(255,255,255,.45)}
 .tabs{display:flex;gap:2px;margin-left:auto}
-.tabs a{padding:8px 15px;border-radius:999px;font-size:14.5px;font-weight:500;color:var(--text-2);
-  transition:color .2s,background .3s var(--spring)}
-.tabs a:hover{color:var(--text)}
-.tabs a.on{color:var(--text);background:var(--card)}
-.theme-btn{width:36px;height:36px;border-radius:999px;display:grid;place-items:center;cursor:pointer;
-  color:var(--text-2);transition:.2s}
-.theme-btn:hover{color:var(--text);background:var(--card)}
-
-/* mobile tab bar, minimises on scroll like iOS */
+.tabs a{padding:8px 16px;border-radius:999px;font-size:14.5px;font-weight:500;color:var(--text-2);
+  transition:transform .4s var(--bounce),background .3s,color .2s}
+.tabs a:hover{color:#fff;background:var(--red);transform:scale(1.09)}
+.tabs a.on{color:#fff;background:var(--red);box-shadow:0 4px 14px rgba(218,15,42,.4)}
+.circle-btn{width:36px;height:36px;border-radius:999px;display:grid;place-items:center;cursor:pointer;color:var(--text-2);
+  transition:transform .4s var(--bounce),background .3s,color .2s}
+.circle-btn:hover{color:#fff;background:var(--red);transform:scale(1.12)}
 .tabbar{display:none}
-@media (max-width:800px){
-  .topbar{top:10px;padding:6px 6px 6px 14px}
+@media (max-width:820px){
+  .topbar{top:10px}
   .topbar .tabs{display:none}
-  .topbar .theme-btn{margin-left:auto}
-  .tabbar{
-    display:flex;position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;
-    transform:translateX(-50%);z-index:80;border-radius:999px;padding:7px;gap:2px;
-    transition:transform .45s var(--spring),opacity .3s;
-  }
-  .tabbar.min{transform:translateX(-50%) translateY(120%);opacity:0}
-  .tabbar a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 16px;border-radius:999px;
-    font-size:10.5px;font-weight:500;color:var(--text-2);transition:.3s var(--spring)}
-  .tabbar a.on{color:#fff;background:var(--red)}
+  .topbar .circle-btn{margin-left:auto}
+  .tabbar{display:flex;position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;z-index:80;
+    transform:translateX(-50%);border-radius:999px;padding:7px;gap:2px;transition:transform .5s var(--spring),opacity .3s}
+  .tabbar.min{transform:translateX(-50%) translateY(150%);opacity:0}
+  .tabbar a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 15px;border-radius:999px;
+    font-size:10.5px;font-weight:500;color:var(--text-2);transition:transform .4s var(--bounce),background .3s,color .2s}
+  .tabbar a:hover,.tabbar a.on{color:#fff;background:var(--red)}
+  .tabbar a.on{transform:scale(1.04)}
 }
-main{padding-top:86px;min-height:70vh}
-@media (max-width:800px){ main{padding-top:74px;padding-bottom:100px} }
+main{padding-top:84px;min-height:70vh}
+@media (max-width:820px){main{padding-top:72px;padding-bottom:104px}}
 
-/* ============================================================
-   HERO
-   ============================================================ */
-.hero{position:relative;margin:0 auto;max-width:calc(var(--max) + 2 * var(--pad));padding:0 var(--pad)}
-.hero-frame{position:relative;border-radius:var(--r-xl);overflow:hidden;min-height:min(74vh,600px);
-  display:flex;align-items:flex-end;background:var(--card-solid)}
-.hero-media{position:absolute;inset:0;background-size:cover;background-position:center;
-  transform:scale(1.04);transition:transform 1.2s var(--spring)}
-.hero-frame:hover .hero-media{transform:scale(1.07)}
-.hero-fallback{position:absolute;inset:0;
-  background:radial-gradient(120% 90% at 15% 0%,#FF3B45 0%,#B40A1F 38%,#3A0209 72%,#0A0003 100%)}
-.hero-veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.92) 0%,rgba(0,0,0,.45) 42%,rgba(0,0,0,.1) 100%)}
-.hero-card{position:relative;margin:clamp(14px,2.5vw,22px);padding:clamp(20px,3vw,30px);border-radius:var(--r-lg);
-  width:min(100%,600px);color:#F5F5F7}
-.hero-card h1{margin-bottom:12px}
-.hero-card .meta{color:rgba(245,245,247,.72)}
-.hero-row{display:flex;align-items:center;gap:16px;margin:18px 0}
+/* ===================== CONTROLS ===================== */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;font-size:15px;font-weight:600;
+  cursor:pointer;transition:transform .45s var(--bounce),background .3s,box-shadow .3s,color .2s;will-change:transform}
+.btn.prominent{background:var(--red);color:#fff;border:.5px solid rgba(255,255,255,.24);
+  box-shadow:0 6px 20px rgba(218,15,42,.42), inset 0 1px 0 rgba(255,255,255,.3)}
+.btn.quiet{background:var(--card);color:var(--text)}
+.btn:hover{background:var(--red);color:#fff;transform:scale(1.08);box-shadow:0 10px 28px rgba(218,15,42,.5), inset 0 1px 0 rgba(255,255,255,.3)}
+.btn:active{transform:scale(.95)}
 .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
 
-/* ============================================================
-   CONTROLS
-   ============================================================ */
-.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;
-  font-size:15px;font-weight:600;letter-spacing:-.01em;cursor:pointer;
-  transition:transform .3s var(--spring),background .25s,opacity .25s}
-.btn:active{transform:scale(.96)}
-.btn.prominent{background:var(--red);color:#fff;border:.5px solid rgba(255,255,255,.22);
-  box-shadow:0 6px 20px rgba(218,15,42,.42), inset 0 1px 0 rgba(255,255,255,.28)}
-.btn.prominent:hover{background:#EE1631}
-.btn.quiet{background:var(--card);color:var(--text)}
-.btn.quiet:hover{background:var(--line)}
-
-.score{display:inline-flex;align-items:baseline;gap:2px;padding:9px 15px;border-radius:14px;
-  background:var(--red);color:#fff;font-weight:700;letter-spacing:-.03em;
-  border:.5px solid rgba(255,255,255,.24);box-shadow:0 4px 14px rgba(218,15,42,.4), inset 0 1px 0 rgba(255,255,255,.3)}
+.score{display:inline-flex;align-items:baseline;gap:2px;padding:9px 15px;border-radius:15px;background:var(--red);color:#fff;
+  font-weight:700;letter-spacing:-.03em;border:.5px solid rgba(255,255,255,.26);
+  box-shadow:0 4px 14px rgba(218,15,42,.42), inset 0 1px 0 rgba(255,255,255,.32);
+  transition:transform .45s var(--bounce),box-shadow .3s}
 .score b{font-size:22px;line-height:1}
-.score i{font-style:normal;font-size:11px;font-weight:600;opacity:.72}
-.score.lg{padding:14px 22px;border-radius:20px}
-.score.lg b{font-size:40px}
-.score.lg i{font-size:14px}
-.score.sm{padding:5px 10px;border-radius:11px}
-.score.sm b{font-size:15px}
-.score.sm i{font-size:9px}
+.score i{font-style:normal;font-size:11px;font-weight:600;opacity:.75}
+.score.lg{padding:14px 22px;border-radius:21px}.score.lg b{font-size:40px}.score.lg i{font-size:14px}
+.score.sm{padding:5px 11px;border-radius:12px}.score.sm b{font-size:15px}.score.sm i{font-size:9px}
+.score:hover,.card:hover .score,a:hover > .score{transform:scale(1.14);box-shadow:0 10px 26px rgba(218,15,42,.55)}
 
-.segmented{display:inline-flex;padding:3px;border-radius:999px;gap:2px;background:var(--card);flex-wrap:wrap}
-.segmented button{padding:8px 16px;border-radius:999px;font-size:14px;font-weight:500;color:var(--text-2);
-  cursor:pointer;transition:.3s var(--spring)}
-.segmented button[aria-pressed="true"]{color:var(--text);background:var(--bg-2);
-  box-shadow:0 1px 3px rgba(0,0,0,.25);font-weight:600}
-.search{display:flex;align-items:center;gap:9px;padding:11px 16px;border-radius:999px;flex:1;min-width:210px}
+/* swipeable segmented control with sliding bubble */
+.seg{position:relative;display:flex;gap:2px;padding:4px;border-radius:999px;overflow-x:auto;scrollbar-width:none;
+  -ms-overflow-style:none;max-width:100%;touch-action:pan-x;cursor:grab;scroll-behavior:smooth}
+.seg::-webkit-scrollbar{display:none}
+.seg.dragging{cursor:grabbing;scroll-behavior:auto}
+.seg-thumb{position:absolute;top:4px;bottom:4px;left:0;width:0;border-radius:999px;background:var(--red);z-index:0;
+  border:.5px solid rgba(255,255,255,.26);box-shadow:0 5px 16px rgba(218,15,42,.45), inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .55s var(--spring),width .55s var(--spring);will-change:transform,width}
+.seg button{position:relative;z-index:1;padding:9px 18px;border-radius:999px;font-size:14.5px;font-weight:500;
+  color:var(--text-2);white-space:nowrap;cursor:pointer;transition:color .3s,transform .4s var(--bounce)}
+.seg button:hover{color:var(--text);transform:scale(1.06)}
+.seg button[aria-pressed="true"]{color:#fff;font-weight:600}
+.search{display:flex;align-items:center;gap:9px;padding:12px 18px;border-radius:999px;flex:1;min-width:220px}
 .search input{width:100%;font-size:15px}
 .search input::placeholder{color:var(--text-2)}
-.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:26px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:28px}
 
-/* ============================================================
-   CONTENT LAYER
-   ============================================================ */
-section{padding:clamp(42px,6vw,72px) 0}
+/* ===================== CAROUSEL ===================== */
+.carousel{position:relative;margin-bottom:12px}
+.track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;
+  -ms-overflow-style:none;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+.track::-webkit-scrollbar{display:none}
+.slide{position:relative;flex:0 0 100%;scroll-snap-align:center;border-radius:var(--r-xl);overflow:hidden;
+  min-height:clamp(340px,52vh,520px);display:flex;align-items:flex-end;background:var(--card-solid);
+  cursor:pointer;text-align:left;width:100%;transition:transform .5s var(--spring)}
+.slide-media{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 1.4s var(--spring)}
+.slide:hover .slide-media{transform:scale(1.05)}
+.slide-fallback{position:absolute;inset:0;background:radial-gradient(120% 95% at 12% 0%,#FF3B45,#B00A1F 40%,#39030A 74%,#080002)}
+.slide-veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.92),rgba(0,0,0,.42) 46%,rgba(0,0,0,.08))}
+.slide-card{position:relative;margin:clamp(14px,2.4vw,22px);padding:clamp(18px,2.8vw,28px);border-radius:var(--r-lg);
+  width:min(100%,580px);color:#F5F5F7}
+.slide-card h2,.slide-card h1{margin-bottom:10px}
+.slide-card .meta{color:rgba(245,245,247,.78)}
+.slide-row{display:flex;align-items:center;gap:15px;margin:16px 0 0;flex-wrap:wrap}
+.cnav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;display:none;
+  place-items:center;cursor:pointer;z-index:3;color:#fff;transition:transform .45s var(--bounce),background .3s}
+.cnav:hover{background:var(--red);transform:translateY(-50%) scale(1.14)}
+.cnav.prev{left:14px}.cnav.next{right:14px}
+@media(hover:hover) and (min-width:821px){.cnav{display:grid}}
+.dots{display:flex;justify-content:center;gap:7px;margin-top:14px}
+.dots button{width:7px;height:7px;border-radius:999px;background:var(--card-2);cursor:pointer;
+  transition:width .45s var(--spring),background .3s,transform .4s var(--bounce)}
+.dots button:hover{background:var(--red);transform:scale(1.4)}
+.dots button.on{width:24px;background:var(--red)}
+
+/* ===================== CONTENT ===================== */
+section{padding:clamp(40px,5.6vw,68px) 0}
 .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:24px}
-.sec-head a{font-size:15px;font-weight:500;color:var(--red-bright);white-space:nowrap}
-.sec-head a:hover{opacity:.7}
-
-.grid{display:grid;gap:clamp(16px,2.4vw,26px);grid-template-columns:repeat(auto-fill,minmax(196px,1fr))}
-.card{display:block;transition:transform .45s var(--spring)}
-.card:hover{transform:translateY(-6px) scale(1.014)}
+.sec-head a{font-size:15px;font-weight:500;color:var(--red-bright);padding:6px 14px;border-radius:999px;
+  transition:transform .4s var(--bounce),background .3s,color .2s;white-space:nowrap}
+.sec-head a:hover{background:var(--red);color:#fff;transform:scale(1.07)}
+.grid{display:grid;gap:clamp(16px,2.4vw,26px);grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+.card{display:block;transition:transform .5s var(--spring)}
+.card:hover{transform:translateY(-8px) scale(1.02)}
 .poster{position:relative;aspect-ratio:2/3;border-radius:var(--r-md);overflow:hidden;background:var(--card);
-  box-shadow:0 8px 26px rgba(0,0,0,.32);transition:box-shadow .45s var(--spring)}
-.card:hover .poster{box-shadow:0 18px 44px rgba(0,0,0,.45)}
+  box-shadow:0 8px 26px rgba(0,0,0,.32);transition:box-shadow .5s var(--spring)}
+.card:hover .poster{box-shadow:0 20px 48px rgba(0,0,0,.5)}
 .poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.poster .ph{position:absolute;inset:0}
+.poster .ph{position:absolute;inset:0;display:grid;place-items:center;font-size:38px;font-weight:700;letter-spacing:-.04em;
+  color:rgba(255,255,255,.16);background:linear-gradient(150deg,#2B2B31,#131317)}
 .poster .score{position:absolute;left:10px;bottom:10px}
-.ph{width:100%;height:100%;display:grid;place-items:center;font-size:38px;font-weight:700;letter-spacing:-.04em;
-  color:rgba(255,255,255,.16);background:linear-gradient(150deg,#2A2A30,#141418)}
 .card h3{margin:13px 0 3px}
 .card .meta{font-size:13.5px}
 
-/* grouped list, iOS style */
 .list{background:var(--card);border-radius:var(--r-lg);overflow:hidden}
-.list-row{display:grid;grid-template-columns:150px 1fr;gap:18px;padding:15px 20px;align-items:baseline}
+.list-row{display:grid;grid-template-columns:148px 1fr;gap:18px;padding:15px 20px;align-items:baseline;transition:background .3s}
 .list-row + .list-row{box-shadow:inset 0 .5px 0 var(--line)}
+.list-row:hover{background:var(--card-2)}
 .list-row dt{color:var(--text-2);font-size:14.5px}
 .list-row dd{margin:0;font-size:16px}
 @media(max-width:540px){.list-row{grid-template-columns:1fr;gap:2px}}
 
-/* detail */
-.detail{display:grid;grid-template-columns:280px 1fr;gap:clamp(24px,4vw,52px);align-items:start}
+.detail{display:grid;grid-template-columns:272px 1fr;gap:clamp(24px,4vw,52px);align-items:start}
 @media(max-width:760px){.detail{grid-template-columns:1fr}.detail .poster{max-width:210px}}
-.prose{max-width:66ch;color:var(--text);font-size:17.5px;line-height:1.62}
+.prose{max-width:66ch;font-size:17.5px;line-height:1.62}
 .prose p{margin:0 0 18px}
-.back{display:inline-flex;align-items:center;gap:5px;color:var(--red-bright);font-size:15px;font-weight:500;margin-bottom:24px}
-.note{color:var(--text-2);font-size:13px;margin-top:30px}
+.back{display:inline-flex;align-items:center;gap:5px;color:var(--red-bright);font-size:15px;font-weight:500;
+  margin-bottom:24px;padding:7px 15px 7px 11px;border-radius:999px;transition:transform .4s var(--bounce),background .3s,color .2s}
+.back:hover{background:var(--red);color:#fff;transform:scale(1.06)}
 
-/* events */
 .events{display:grid;gap:12px}
-.ev{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;padding:16px 18px;
-  border-radius:var(--r-lg);background:var(--card);transition:.35s var(--spring)}
-.ev:hover{background:var(--line);transform:translateY(-2px)}
+.ev{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;padding:15px 18px;border-radius:var(--r-lg);
+  background:var(--card);width:100%;text-align:left;cursor:pointer;transition:transform .45s var(--spring),background .3s}
+.ev:hover{background:var(--card-2);transform:translateY(-3px) scale(1.005)}
 .datechip{width:62px;padding:9px 0;border-radius:var(--r-sm);text-align:center;background:var(--red);color:#fff;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.26)}
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3);transition:transform .45s var(--bounce)}
+.ev:hover .datechip{transform:scale(1.1)}
 .datechip b{display:block;font-size:22px;font-weight:700;letter-spacing:-.03em;line-height:1}
-.datechip span{font-size:11px;font-weight:600;opacity:.85;letter-spacing:.04em}
-.pill{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--card);color:var(--text-2);
-  font-size:12px;font-weight:600;margin-bottom:7px}
+.datechip span{font-size:11px;font-weight:600;opacity:.86}
+.pill{display:inline-block;padding:3px 11px;border-radius:999px;background:var(--card-2);color:var(--text-2);
+  font-size:12px;font-weight:600;margin-bottom:7px;transition:transform .4s var(--bounce),background .3s,color .2s}
 .pill.hot{background:rgba(218,15,42,.16);color:var(--red-bright)}
-@media(max-width:620px){.ev{grid-template-columns:auto 1fr}.ev .btn{grid-column:2;justify-self:start}}
-.ev-feature{border-radius:var(--r-xl);overflow:hidden;position:relative;margin-bottom:26px;background:var(--card-solid)}
-.ev-feature .banner{aspect-ratio:16/7;background-size:cover;background-position:center;
-  background-image:radial-gradient(110% 120% at 80% 0%,#FF3B45,#9E0A1E 45%,#180105)}
-.ev-feature .body{padding:clamp(20px,3vw,30px)}
+.ev:hover .pill{background:var(--red);color:#fff;transform:scale(1.06)}
+.chev{color:var(--text-2);transition:transform .45s var(--bounce),color .3s}
+.ev:hover .chev{color:var(--red-bright);transform:translateX(4px) scale(1.2)}
+@media(max-width:620px){.ev{grid-template-columns:auto 1fr}.ev .chev{display:none}}
 
-/* rating board */
-.board{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(148px,1fr))}
-.tier{padding:20px;border-radius:var(--r-md);background:var(--card)}
+.board{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(146px,1fr))}
+.tier{padding:20px;border-radius:var(--r-md);background:var(--card);cursor:default;
+  transition:transform .45s var(--bounce),background .3s,box-shadow .3s,color .2s}
 .tier b{display:block;font-size:30px;font-weight:700;letter-spacing:-.04em}
-.tier span{color:var(--text-2);font-size:14px}
-.tier.top{background:var(--red);color:#fff}
-.tier.top span{color:rgba(255,255,255,.82)}
+.tier span{color:var(--text-2);font-size:14px;transition:color .2s}
+.tier.top{background:var(--red);color:#fff}.tier.top span{color:rgba(255,255,255,.85)}
+.tier:hover{background:var(--red);color:#fff;transform:scale(1.06);box-shadow:0 12px 30px rgba(218,15,42,.42)}
+.tier:hover span{color:rgba(255,255,255,.85)}
 
-.notice{padding:16px 20px;border-radius:var(--r-md);background:var(--card);font-size:15px;color:var(--text-2);margin-bottom:26px}
-.notice b{color:var(--text)}
-.empty{padding:52px 24px;border-radius:var(--r-lg);background:var(--card);text-align:center;color:var(--text-2)}
-footer{padding:44px 0 calc(60px + env(safe-area-inset-bottom));margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
+.empty{padding:50px 24px;border-radius:var(--r-lg);background:var(--card);text-align:center;color:var(--text-2)}
+footer{padding:44px 0 calc(56px + env(safe-area-inset-bottom));margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
 .f-row{display:flex;flex-wrap:wrap;gap:22px;justify-content:space-between;align-items:center}
-.f-links{display:flex;gap:20px;flex-wrap:wrap}
-.f-links a{font-size:14.5px;color:var(--text-2)}
-.f-links a:hover{color:var(--text)}
-.status{font-size:13px;color:var(--text-2);margin-top:8px;display:flex;align-items:center;gap:7px}
-.dot{width:7px;height:7px;border-radius:50%;background:#30D158}
-.dot.off{background:var(--text-2)}
+.f-links{display:flex;gap:8px;flex-wrap:wrap}
+.f-links a{font-size:14.5px;color:var(--text-2);padding:8px 15px;border-radius:999px;
+  transition:transform .4s var(--bounce),background .3s,color .2s}
+.f-links a:hover{background:var(--red);color:#fff;transform:scale(1.08)}
 
-/* motion */
-.rise{opacity:0;transform:translateY(18px);animation:rise .7s var(--spring) forwards}
+/* ===================== EVENT SHEET ===================== */
+.backdrop{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(18px);
+  backdrop-filter:blur(18px);display:grid;place-items:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .35s}
+.backdrop.open{opacity:1;pointer-events:auto}
+.sheet{width:min(560px,100%);max-height:88vh;overflow-y:auto;border-radius:var(--r-xl);
+  transform:translateY(28px) scale(.96);transition:transform .55s var(--spring)}
+.backdrop.open .sheet{transform:none}
+.sheet-banner{aspect-ratio:16/9;background-size:cover;background-position:center;
+  background-image:radial-gradient(115% 120% at 78% 0%,#FF3B45,#9E0A1E 46%,#170105)}
+.sheet-body{padding:clamp(20px,3.4vw,28px)}
+.sheet-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:999px;display:grid;place-items:center;
+  cursor:pointer;color:#fff;background:rgba(0,0,0,.42);z-index:2;transition:transform .45s var(--bounce),background .3s}
+.sheet-close:hover{background:var(--red);transform:scale(1.14)}
+.sheet .list{margin:18px 0}
+
+.rise{opacity:0;transform:translateY(16px);animation:rise .7s var(--spring) forwards}
 @keyframes rise{to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){
-  *{animation:none!important;transition:none!important}
+  *{animation:none!important;transition-duration:.01ms!important}
   .rise{opacity:1;transform:none}
+  .track{scroll-behavior:auto}
 }
 </style>
 </head>
 <body>
 
-<!-- navigation layer -->
 <div class="topbar glass" id="topbar">
-  <a class="brand" href="#/"><span class="icon-mark">KD</span>Kaydee.my</a>
-  <nav class="tabs" id="tabs"></nav>
-  <button class="theme-btn" id="themeBtn" aria-label="Switch appearance"></button>
+  <a class="brand" href="#/"><span class="mark">KD</span>Kaydee.my</a>
+  <nav class="tabs" id="tabs" aria-label="Main"></nav>
+  <button class="circle-btn" id="themeBtn" aria-label="Switch appearance"></button>
 </div>
 <nav class="tabbar glass" id="tabbar" aria-label="Sections"></nav>
 
@@ -317,45 +306,49 @@ footer{padding:44px 0 calc(60px + env(safe-area-inset-bottom));margin-top:20px;b
 <footer>
   <div class="wrap f-row">
     <div>
-      <div class="brand" style="font-size:17px"><span class="icon-mark">KD</span>Kaydee.my</div>
-      <div class="meta" style="margin-top:8px">Indian cinema portal · Movies · Reviews · Events</div>
-      <div class="status" id="status"></div>
+      <div class="brand" style="font-size:17px"><span class="mark">KD</span>Kaydee.my</div>
+      <div class="meta" style="margin-top:10px">Indian cinema portal · Movies · Reviews · Events</div>
+      <div class="meta" style="margin-top:4px">© <span id="yr"></span> Kaydee.my</div>
     </div>
     <div class="f-links" id="social"></div>
   </div>
 </footer>
 
+<div class="backdrop" id="sheet" hidden>
+  <div class="sheet glass" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" id="sheetInner"></div>
+</div>
+
 <script>
-/* =========================================================
-   DATA — Google Sheets is the database (Apps Script JSON API)
-   ========================================================= */
-const state = { reviews: [], events: [], demo: false, error: "" };
+/* ===================== DATA ===================== */
+const state = { reviews: [], events: [] };
 
 async function loadData(){
-  if(!CONFIG.API_URL){ useDemo(); return; }
+  if(!CONFIG.API_URL){ state.reviews = SAMPLE.reviews; state.events = SAMPLE.events; return; }
   try{
     const res = await fetch(CONFIG.API_URL + "?route=all", { cache: "no-store" });
-    if(!res.ok) throw new Error("HTTP " + res.status);
     const d = await res.json();
-    const live = s => String(s || "published").toLowerCase() !== "draft";
-    state.reviews = (d.reviews || []).filter(r => live(r.status));
-    state.events  = (d.events  || []).filter(e => live(e.status));
-    if(!state.reviews.length && !state.events.length) useDemo();
-  }catch(err){ state.error = err.message; useDemo(); }
+    const live = s => String(s || "published").toLowerCase() === "published";
+    state.reviews = (d.reviews || []).filter(r => r.title && live(r.status));
+    state.events  = (d.events  || []).filter(e => e.title && live(e.status));
+  }catch(err){
+    state.reviews = []; state.events = [];
+  }
 }
-function useDemo(){ state.demo = true; state.reviews = DEMO.reviews; state.events = DEMO.events; }
 
-/* ---------- helpers ---------- */
+/* ===================== HELPERS ===================== */
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const list = s => String(s ?? "").split(/[,|]/).map(x => x.trim()).filter(Boolean);
 const num = s => { const n = parseFloat(s); return isNaN(n) ? null : n; };
 const slugify = s => String(s ?? "").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-const slugOf = r => r.slug ? slugify(r.slug) : slugify((r.title||"") + "-" + (r.year||""));
+const slugOf = r => slugify((r.title||"") + "-" + (r.year||""));
 const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const parseDate = v => { if(!v) return null; const d = new Date(v); return isNaN(d) ? null : d; };
 const fmtDate = v => { const d = parseDate(v); return d ? d.getDate()+" "+MON[d.getMonth()]+" "+d.getFullYear() : esc(v||""); };
 const runtime = m => { const n = num(m); return n ? Math.floor(n/60)+" hr "+(n%60)+" min" : ""; };
 const dots = a => a.filter(Boolean).map(esc).join(" · ");
+const isFeatured = x => ["true","yes","1","y"].includes(String(x.featured||"").trim().toLowerCase());
+const upcoming = e => { const d = parseDate(e.date_end || e.date_start); return !d || d.getTime() >= Date.now() - 864e5; };
+const byDate = k => (a,b) => (parseDate(a[k])?.getTime()||0) - (parseDate(b[k])?.getTime()||0);
 
 const ICON = {
   home:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.4 12 3l9 7.4V20a1 1 0 0 1-1 1h-5v-6.5h-6V21H4a1 1 0 0 1-1-1z"/></svg>',
@@ -365,156 +358,247 @@ const ICON = {
   search:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>',
   sun:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2.2M12 19.4v2.2M2.4 12h2.2M19.4 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6"/></svg>',
   moon:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.2A8.4 8.4 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>',
-  back:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 5-7 7 7 7"/></svg>'
+  left:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 5-7 7 7 7"/></svg>',
+  right:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 5 7 7-7 7"/></svg>',
+  close:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>'
 };
 const NAV = [["/","Home","home"],["/reviews","Reviews","star"],["/events","Events","cal"],["/about","About","info"]];
 
-function score(r, size){
-  const n = num(r); if(n === null) return "";
+function score(v, size){
+  const n = num(v); if(n === null) return "";
   return '<span class="score '+(size||"")+'"><b>'+(Number.isInteger(n)?n:n.toFixed(1))+'</b><i>/10</i></span>';
 }
 function poster(r, withScore){
-  const src = r.poster_url || "";
   const ph = '<div class="ph">'+esc((r.title||"KD").slice(0,2).toUpperCase())+'</div>';
-  const img = src ? '<img src="'+esc(src)+'" alt="'+esc(r.title)+'" loading="lazy" onerror="this.remove()">' : "";
+  const img = r.poster_url ? '<img src="'+esc(r.poster_url)+'" alt="'+esc(r.title)+'" loading="lazy" onerror="this.remove()">' : "";
   return '<div class="poster">'+ph+img+(withScore ? score(r.rating,"sm") : "")+'</div>';
 }
 function card(r){
   return '<a class="card" href="#/review/'+slugOf(r)+'">'+poster(r,true)+
     '<h3>'+esc(r.title)+'</h3><div class="meta">'+dots([r.year,r.language,runtime(r.runtime_min)])+'</div></a>';
 }
-const upcoming = e => { const d = parseDate(e.date_end || e.date_start); return !d || d.getTime() >= Date.now() - 864e5; };
-
-function eventRow(e){
-  const d = parseDate(e.date_start);
-  const cta = e.ticket_url ? '<a class="btn prominent" href="'+esc(e.ticket_url)+'" target="_blank" rel="noopener">Get tickets</a>' : "";
-  return '<article class="ev"><div class="datechip"><b>'+(d?d.getDate():"–")+'</b><span>'+(d?MON[d.getMonth()].toUpperCase():"TBA")+'</span></div>'+
-    '<div>'+(e.category ? '<span class="pill'+(upcoming(e)?' hot':'')+'">'+esc(e.category)+'</span>' : "")+
-    '<h3>'+esc(e.title)+'</h3><div class="meta">'+dots([d?fmtDate(e.date_start):"Date to be announced", e.time, e.venue, e.city])+'</div></div>'+cta+'</article>';
+function media(url){
+  return url ? '<div class="slide-media" style="background-image:url('+esc(url)+')"></div>' : '<div class="slide-fallback"></div>';
 }
 
-/* ---------- pages ---------- */
+/* ===================== CAROUSEL ===================== */
+function carousel(slides, id){
+  if(!slides.length) return "";
+  return '<div class="carousel rise" data-carousel id="'+id+'">'+
+    '<div class="track">'+slides.join("")+'</div>'+
+    (slides.length > 1 ? '<button class="cnav prev glass" aria-label="Previous">'+ICON.left+'</button>'+
+      '<button class="cnav next glass" aria-label="Next">'+ICON.right+'</button>'+
+      '<div class="dots">'+slides.map((_,i) => '<button aria-label="Go to slide '+(i+1)+'"'+(i?"":' class="on"')+'></button>').join("")+'</div>' : "")+
+    '</div>';
+}
+let TIMERS = [];
+function initCarousels(){
+  TIMERS.forEach(clearInterval); TIMERS = [];
+  document.querySelectorAll("[data-carousel]").forEach(c => {
+    const track = c.querySelector(".track"), dots = [...c.querySelectorAll(".dots button")];
+    if(!track.children.length) return;
+    const idx = () => Math.round(track.scrollLeft / track.clientWidth);
+    const go = i => {
+      const n = track.children.length;
+      track.scrollTo({ left: ((i % n) + n) % n * track.clientWidth, behavior: "smooth" });
+    };
+    let timer, paused = false;
+    const sync = () => dots.forEach((d,i) => d.classList.toggle("on", i === idx()));
+    track.addEventListener("scroll", () => { clearTimeout(track._t); track._t = setTimeout(sync, 90); }, { passive:true });
+    dots.forEach((d,i) => d.addEventListener("click", () => go(i)));
+    c.querySelector(".prev")?.addEventListener("click", () => go(idx()-1));
+    c.querySelector(".next")?.addEventListener("click", () => go(idx()+1));
+    ["pointerenter","pointerdown","focusin"].forEach(ev => c.addEventListener(ev, () => paused = true));
+    ["pointerleave","focusout"].forEach(ev => c.addEventListener(ev, () => paused = false));
+    if(track.children.length > 1 && !matchMedia("(prefers-reduced-motion: reduce)").matches){
+      timer = setInterval(() => { if(!paused) go(idx()+1); }, 6500);
+      TIMERS.push(timer);
+    }
+  });
+}
+
+/* ===================== SWIPEABLE SEGMENTS ===================== */
+function segmented(id, items, label){
+  return '<div class="seg glass" id="'+id+'" role="group" aria-label="'+label+'"><span class="seg-thumb"></span>'+
+    items.map(([v,l],i) => '<button data-v="'+esc(v)+'" aria-pressed="'+(i?"false":"true")+'">'+esc(l)+'</button>').join("")+'</div>';
+}
+function moveThumb(seg){
+  const on = seg.querySelector('[aria-pressed="true"]'), thumb = seg.querySelector(".seg-thumb");
+  if(!on || !thumb) return;
+  thumb.style.width = on.offsetWidth + "px";
+  thumb.style.transform = "translateX(" + on.offsetLeft + "px)";
+  const l = on.offsetLeft - seg.scrollLeft, r = l + on.offsetWidth;
+  if(l < 0 || r > seg.clientWidth) seg.scrollTo({ left: on.offsetLeft - (seg.clientWidth - on.offsetWidth)/2, behavior:"smooth" });
+}
+function dragScroll(el){
+  let down = false, x0 = 0, s0 = 0, moved = 0;
+  el.addEventListener("pointerdown", e => { down = true; moved = 0; x0 = e.clientX; s0 = el.scrollLeft; el.classList.add("dragging"); });
+  el.addEventListener("pointermove", e => {
+    if(!down) return;
+    const dx = e.clientX - x0; moved = Math.max(moved, Math.abs(dx));
+    if(moved > 4) el.scrollLeft = s0 - dx;
+  });
+  ["pointerup","pointercancel","pointerleave"].forEach(ev => el.addEventListener(ev, () => { down = false; el.classList.remove("dragging"); }));
+  el.addEventListener("click", e => { if(moved > 6){ e.preventDefault(); e.stopPropagation(); } }, true);
+}
+function wireSegments(onChange){
+  document.querySelectorAll(".seg").forEach(seg => {
+    dragScroll(seg);
+    requestAnimationFrame(() => moveThumb(seg));
+    setTimeout(() => moveThumb(seg), 400);
+    if(document.fonts) document.fonts.ready.then(() => moveThumb(seg));
+    seg.addEventListener("click", e => {
+      const b = e.target.closest("button"); if(!b) return;
+      seg.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+      moveThumb(seg); onChange && onChange();
+    });
+    seg.addEventListener("scroll", () => { clearTimeout(seg._t); seg._t = setTimeout(() => {
+      const on = seg.querySelector('[aria-pressed="true"]'), thumb = seg.querySelector(".seg-thumb");
+      if(on && thumb) thumb.style.transform = "translateX(" + on.offsetLeft + "px)";
+    }, 40); }, { passive:true });
+  });
+}
+addEventListener("resize", () => document.querySelectorAll(".seg").forEach(moveThumb));
+
+/* ===================== EVENT SHEET ===================== */
+let lastFocus = null;
+function openEvent(i){
+  const e = state.events[i]; if(!e) return;
+  lastFocus = document.activeElement;
+  const facts = [["When", [fmtDate(e.date_start) + (e.date_end && e.date_end !== e.date_start ? " – " + fmtDate(e.date_end) : ""), e.time].filter(Boolean).join(", ")],
+    ["Where", [e.venue, e.city].filter(Boolean).join(", ")], ["Type", e.category], ["Price", e.price]].filter(([,v]) => v);
+  document.getElementById("sheetInner").innerHTML =
+    '<button class="sheet-close" id="sheetClose" aria-label="Close">'+ICON.close+'</button>'+
+    '<div class="sheet-banner"'+(e.banner_url || e.poster_url ? ' style="background-image:url('+esc(e.banner_url || e.poster_url)+')"' : "")+'></div>'+
+    '<div class="sheet-body">'+(e.category ? '<span class="pill hot">'+esc(e.category)+'</span>' : "")+
+      '<h2 id="sheetTitle" style="font-size:clamp(23px,3.4vw,32px);margin:4px 0 0">'+esc(e.title)+'</h2>'+
+      '<dl class="list">'+facts.map(([k,v]) => '<div class="list-row"><dt>'+k+'</dt><dd>'+esc(v)+'</dd></div>').join("")+'</dl>'+
+      (e.description ? '<p class="prose" style="font-size:16.5px">'+esc(e.description)+'</p>' : "")+
+      (e.ticket_url ? '<div class="actions"><a class="btn prominent" href="'+esc(e.ticket_url)+'" target="_blank" rel="noopener">Get tickets</a></div>' : "")+
+    '</div>';
+  const b = document.getElementById("sheet");
+  b.hidden = false; document.body.classList.add("locked");
+  requestAnimationFrame(() => b.classList.add("open"));
+  document.getElementById("sheetClose").focus();
+  document.getElementById("sheetClose").addEventListener("click", closeEvent);
+}
+function closeEvent(){
+  const b = document.getElementById("sheet");
+  b.classList.remove("open"); document.body.classList.remove("locked");
+  setTimeout(() => { b.hidden = true; }, 340);
+  lastFocus?.focus();
+}
+document.getElementById("sheet").addEventListener("click", e => { if(e.target.id === "sheet") closeEvent(); });
+addEventListener("keydown", e => { if(e.key === "Escape" && !document.getElementById("sheet").hidden) closeEvent(); });
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-event]"); if(t) openEvent(Number(t.dataset.event));
+});
+
+/* ===================== ROWS & SLIDES ===================== */
+function eventRow(e){
+  const i = state.events.indexOf(e), d = parseDate(e.date_start);
+  return '<button class="ev" data-event="'+i+'"><div class="datechip"><b>'+(d?d.getDate():"–")+'</b><span>'+
+    (d?MON[d.getMonth()].toUpperCase():"TBA")+'</span></div><div>'+
+    (e.category ? '<span class="pill'+(upcoming(e)?' hot':'')+'">'+esc(e.category)+'</span>' : "")+
+    '<h3>'+esc(e.title)+'</h3><div class="meta">'+dots([d?fmtDate(e.date_start):"Date to be announced", e.time, e.venue, e.city])+
+    '</div></div><span class="chev">'+ICON.right+'</span></button>';
+}
+function reviewSlide(r){
+  return '<a class="slide" href="#/review/'+slugOf(r)+'">'+media(r.banner_url || r.poster_url)+'<div class="slide-veil"></div>'+
+    '<div class="slide-card glass"><p class="eyebrow" style="color:#FF6B72">Featured review</p>'+
+    '<h2 style="font-size:clamp(28px,4.6vw,46px)">'+esc(r.title)+'</h2>'+
+    '<div class="meta">'+dots([r.year,r.language,runtime(r.runtime_min)])+'</div>'+
+    '<div class="slide-row">'+score(r.rating,"lg")+
+    (r.verdict ? '<span style="font-size:18px;font-weight:600;letter-spacing:-.02em">'+esc(r.verdict)+'</span>' : "")+
+    '</div></div></a>';
+}
+function eventSlide(e){
+  const i = state.events.indexOf(e);
+  return '<button class="slide" data-event="'+i+'">'+media(e.banner_url || e.poster_url)+'<div class="slide-veil"></div>'+
+    '<div class="slide-card glass"><p class="eyebrow" style="color:#FF6B72">'+esc(e.category || "Featured event")+'</p>'+
+    '<h2 style="font-size:clamp(26px,4.2vw,42px)">'+esc(e.title)+'</h2>'+
+    '<div class="meta">'+dots([fmtDate(e.date_start), e.time, e.venue, e.city])+'</div>'+
+    '<div class="slide-row"><span class="btn prominent">View details</span>'+
+    (e.price ? '<span style="font-size:15px;font-weight:600">From '+esc(e.price)+'</span>' : "")+
+    '</div></div></button>';
+}
+const featured = (arr, fallbackAll) => {
+  const f = arr.filter(isFeatured).slice(0, CONFIG.MAX_FEATURED);
+  return f.length ? f : arr.slice(0, fallbackAll ? 1 : 0);
+};
+
+/* ===================== PAGES ===================== */
 function pageHome(){
-  const feat = state.reviews.find(r => String(r.featured).toUpperCase() === "TRUE") || state.reviews[0];
-  const next = state.events.filter(upcoming).slice(0,3);
-  let h = "";
-
-  if(feat){
-    const bg = feat.backdrop_url || feat.poster_url;
-    h += '<div class="hero rise"><div class="hero-frame">'+
-      (bg ? '<div class="hero-media" style="background-image:url('+esc(bg)+')"></div>' : '<div class="hero-fallback"></div>')+
-      '<div class="hero-veil"></div>'+
-      '<div class="hero-card glass"><p class="eyebrow" style="color:#FF6169">Latest review</p>'+
-        '<h1>'+esc(feat.title)+'</h1>'+
-        '<div class="meta">'+dots([feat.year,feat.language,runtime(feat.runtime_min)])+'</div>'+
-        '<div class="hero-row">'+score(feat.rating,"lg")+
-          (feat.verdict ? '<div style="font-size:19px;font-weight:600;letter-spacing:-.02em">'+esc(feat.verdict)+'</div>' : "")+'</div>'+
-        '<div class="actions"><a class="btn prominent" href="#/review/'+slugOf(feat)+'">Read review</a>'+
-        '<a class="btn quiet" href="#/reviews">All reviews</a></div>'+
-      '</div></div></div>';
-  }
-
+  const banners = featured(state.reviews, true).map(reviewSlide);
+  const next = state.events.filter(upcoming).sort(byDate("date_start")).slice(0,3);
+  let h = banners.length ? '<div class="wrap">'+carousel(banners,"c-home")+'</div>' : "";
   h += '<div class="wrap"><section><div class="sec-head"><div><p class="eyebrow">Fresh from the hall</p><h2>Latest reviews</h2></div>'+
-    '<a href="#/reviews">See all</a></div><div class="grid">'+state.reviews.slice(0,10).map(card).join("")+'</div></section>'+
-
-    '<section><div class="sec-head"><div><p class="eyebrow">Promotions</p><h2>What\'s on</h2></div><a href="#/events">All events</a></div>'+
+    '<a href="#/reviews">See all</a></div>'+
+    (state.reviews.length ? '<div class="grid">'+state.reviews.slice(0,10).map(card).join("")+'</div>'
+      : '<div class="empty">Reviews are on the way. Check back shortly.</div>')+'</section>'+
+    '<section><div class="sec-head"><div><p class="eyebrow">Promotions</p><h2>What’s on</h2></div><a href="#/events">All events</a></div>'+
     (next.length ? '<div class="events">'+next.map(eventRow).join("")+'</div>'
-                 : '<div class="empty">No events listed yet. Add a row to the Events tab of your sheet.</div>')+'</section>'+
-
+      : '<div class="empty">No events listed right now.</div>')+'</section>'+
     '<section><div class="sec-head"><div><p class="eyebrow">How we score</p><h2>The rating board</h2></div></div>'+board()+'</section></div>';
   return h;
 }
 
 function pageReviews(){
+  const banners = featured(state.reviews, false).map(reviewSlide);
   const langs = [...new Set(state.reviews.map(r => r.language).filter(Boolean))].sort();
-  return '<div class="wrap"><section><p class="eyebrow">Archive</p><h2 style="margin-bottom:24px">Reviews</h2>'+
+  return '<div class="wrap">'+ (banners.length ? carousel(banners,"c-rev") : "") +
+    '<section style="padding-top:'+(banners.length ? "44px" : "24px")+'"><p class="eyebrow">Archive</p><h2 style="margin-bottom:24px">Reviews</h2>'+
     '<div class="toolbar"><label class="search glass">'+ICON.search+
       '<input id="q" type="search" placeholder="Search a title, director or actor" aria-label="Search reviews"></label>'+
-      '<div class="segmented" id="sort" role="group" aria-label="Sort reviews">'+
-        '<button data-v="new" aria-pressed="true">Newest</button>'+
-        '<button data-v="rating" aria-pressed="false">Top rated</button>'+
-        '<button data-v="az" aria-pressed="false">A–Z</button></div>'+
-      (langs.length > 1 ? '<div class="segmented" id="lang" role="group" aria-label="Filter by language">'+
-        '<button data-v="" aria-pressed="true">All</button>'+
-        langs.map(l => '<button data-v="'+esc(l)+'" aria-pressed="false">'+esc(l)+'</button>').join("")+'</div>' : "")+
+      segmented("sort",[["new","Newest"],["rating","Top rated"],["az","A–Z"]],"Sort reviews")+
+      (langs.length > 1 ? segmented("lang",[["","All"],...langs.map(l => [l,l])],"Filter by language") : "")+
     '</div><div id="results" class="grid"></div></section></div>';
 }
-
-function filterState(id){
-  const g = document.getElementById(id);
-  const on = g && g.querySelector('[aria-pressed="true"]');
-  return on ? on.dataset.v : "";
-}
+const segValue = id => document.querySelector("#"+id+' [aria-pressed="true"]')?.dataset.v ?? "";
 function applyFilters(){
   const q = (document.getElementById("q")?.value || "").toLowerCase().trim();
-  const lang = filterState("lang"), sort = filterState("sort") || "new";
+  const lang = segValue("lang"), sort = segValue("sort") || "new";
   let rows = state.reviews.filter(r =>
     (!q || [r.title,r.director,r.cast,r.genres,r.year].join(" ").toLowerCase().includes(q)) &&
     (!lang || r.language === lang));
   if(sort === "rating") rows.sort((a,b)=>(num(b.rating)||0)-(num(a.rating)||0));
   else if(sort === "az") rows.sort((a,b)=>String(a.title).localeCompare(String(b.title)));
   else rows.sort((a,b)=>(parseDate(b.review_date)?.getTime()||0)-(parseDate(a.review_date)?.getTime()||0));
-  document.getElementById("results").innerHTML = rows.length ? rows.map(card).join("")
+  const el = document.getElementById("results");
+  if(el) el.innerHTML = rows.length ? rows.map(card).join("")
     : '<div class="empty" style="grid-column:1/-1">Nothing matches that search. Try another title.</div>';
-}
-function wireSegments(){
-  document.querySelectorAll(".segmented").forEach(g => g.addEventListener("click", e => {
-    const b = e.target.closest("button"); if(!b) return;
-    g.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
-    applyFilters();
-  }));
-  document.getElementById("q").addEventListener("input", applyFilters);
 }
 
 function pageReview(slug){
   const r = state.reviews.find(x => slugOf(x) === slug);
-  if(!r) return notFound("That review isn’t published yet.");
+  if(!r) return notFound("That review isn’t available.");
   const facts = [["Director",r.director],["Producer",r.producer],["Cast",list(r.cast).join(", ")],
     ["Runtime",runtime(r.runtime_min)],["Genre",list(r.genres).join(", ")],["Language",r.language],
-    ["Released",r.release_date ? fmtDate(r.release_date) : r.year],["Watch on",r.watch_on]].filter(([,v]) => v);
+    ["Year",r.year],["Watch on",r.watch_on]].filter(([,v]) => v);
   const body = String(r.review_body || r.synopsis || "").split(/\n+/).filter(Boolean).map(p => "<p>"+esc(p)+"</p>").join("");
-  const links = [["IMDb",r.imdb_url],["Wikipedia",r.wiki_url],["Trailer",r.trailer_url]].filter(([,u]) => u)
-    .map(([n,u]) => '<a class="btn quiet" href="'+esc(u)+'" target="_blank" rel="noopener">'+n+'</a>').join("");
-  return '<div class="wrap rise"><section style="padding-top:20px">'+
-    '<a class="back" href="#/reviews">'+ICON.back+'Reviews</a>'+
+  return '<div class="wrap rise"><section style="padding-top:20px"><a class="back" href="#/reviews">'+ICON.left+'Reviews</a>'+
     '<div class="detail"><div>'+poster(r,false)+
       '<div style="margin-top:18px">'+score(r.rating,"lg")+'</div>'+
       (r.verdict ? '<div style="font-size:19px;font-weight:600;letter-spacing:-.02em;margin-top:14px">'+esc(r.verdict)+'</div>' : "")+
-    '</div><div>'+
-      '<p class="eyebrow">Kaydee review'+(r.reviewer ? " · "+esc(r.reviewer) : "")+'</p>'+
+    '</div><div><p class="eyebrow">Kaydee review</p>'+
       '<h1 style="font-size:clamp(32px,5vw,52px);margin-bottom:12px">'+esc(r.title)+'</h1>'+
       '<div class="meta">'+dots([r.year,r.language,runtime(r.runtime_min),r.review_date?fmtDate(r.review_date):""])+'</div>'+
-      '<dl class="list" style="margin:26px 0">'+facts.map(([k,v]) =>
-        '<div class="list-row"><dt>'+k+'</dt><dd>'+esc(v)+'</dd></div>').join("")+'</dl>'+
-      '<div class="prose">'+body+'</div>'+
-      (links ? '<div class="actions">'+links+'</div>' : "")+
-      '<p class="note">Credits imported from TMDB and Wikipedia into the Kaydee sheet. Score and verdict are Kaydee.my’s own.</p>'+
-    '</div></div></section></div>';
+      '<dl class="list" style="margin:26px 0">'+facts.map(([k,v]) => '<div class="list-row"><dt>'+k+'</dt><dd>'+esc(v)+'</dd></div>').join("")+'</dl>'+
+      '<div class="prose">'+body+'</div></div></div></section></div>';
 }
 
 function pageEvents(){
-  const up = state.events.filter(upcoming).sort((a,b)=>(parseDate(a.date_start)?.getTime()||0)-(parseDate(b.date_start)?.getTime()||0));
-  const past = state.events.filter(e => !upcoming(e)).sort((a,b)=>(parseDate(b.date_start)?.getTime()||0)-(parseDate(a.date_start)?.getTime()||0));
-  const feat = up.find(e => String(e.featured).toUpperCase() === "TRUE") || up[0];
-  let h = '<div class="wrap rise"><section><p class="eyebrow">Promotions</p><h2>Events</h2>'+
-    '<p class="sub" style="margin:10px 0 26px">Premieres, fan meets and brand promos listed by Kaydee.my.</p>';
-
-  if(feat){
-    h += '<div class="ev-feature"><div class="banner"'+(feat.poster_url ? ' style="background-image:url('+esc(feat.poster_url)+')"' : "")+'></div>'+
-      '<div class="body"><span class="pill hot">'+esc(feat.category || "Featured")+'</span>'+
-      '<h2 style="font-size:clamp(24px,3.4vw,34px);margin:6px 0 10px">'+esc(feat.title)+'</h2>'+
-      '<div class="meta">'+dots([fmtDate(feat.date_start),feat.time,feat.venue,feat.city])+'</div>'+
-      (feat.description ? '<p class="prose" style="margin-top:14px">'+esc(feat.description)+'</p>' : "")+
-      '<div class="actions">'+(feat.ticket_url ? '<a class="btn prominent" href="'+esc(feat.ticket_url)+'" target="_blank" rel="noopener">Get tickets</a>' : "")+
-      (feat.price ? '<span class="btn quiet" style="cursor:default">From '+esc(feat.price)+'</span>' : "")+'</div></div></div>';
-  }
-
+  const up = state.events.filter(upcoming).sort(byDate("date_start"));
+  const past = state.events.filter(e => !upcoming(e)).sort((a,b) => byDate("date_start")(b,a));
+  const banners = featured(up, false).map(eventSlide);
+  let h = '<div class="wrap">'+ (banners.length ? carousel(banners,"c-ev") : "") +
+    '<section style="padding-top:'+(banners.length ? "44px" : "24px")+'"><p class="eyebrow">Promotions</p><h2>Events</h2>'+
+    '<p class="sub" style="margin:10px 0 26px">Premieres, fan meets and brand promotions listed by Kaydee.my. Tap any event for details.</p>';
   h += up.length ? '<div class="events">'+up.map(eventRow).join("")+'</div>'
-                 : '<div class="empty">No upcoming events. Add rows to the Events tab and they appear here.</div>';
+    : '<div class="empty">No upcoming events right now. Follow us on Instagram for announcements.</div>';
   if(past.length) h += '<div class="sec-head" style="margin-top:46px"><h2>Past events</h2></div>'+
-    '<div class="events" style="opacity:.6">'+past.slice(0,8).map(eventRow).join("")+'</div>';
-  h += '<div class="notice" style="margin-top:34px"><b>Promoting a release or a fan event?</b> Email <a href="mailto:'+esc(CONFIG.EMAIL)+
-    '" style="color:var(--red-bright)">'+esc(CONFIG.EMAIL)+'</a> and we’ll list it.</div>';
+    '<div class="events" style="opacity:.62">'+past.slice(0,8).map(eventRow).join("")+'</div>';
+  h += '<div class="actions" style="margin-top:34px"><a class="btn quiet" href="mailto:'+esc(CONFIG.EMAIL)+'">Promote your event with us</a></div>';
   return h + '</section></div>';
 }
 
@@ -526,20 +610,19 @@ function pageAbout(){
   return '<div class="wrap rise"><section><p class="eyebrow">Who we are</p><h2>Kaydee.my</h2>'+
     '<div class="prose" style="margin-top:20px">'+
     '<p>Kaydee.my is an Indian cinema portal covering Tamil, Malayalam, Telugu, Hindi and Kannada releases for audiences in Malaysia and beyond — reviews, first-day reactions, song highlights and entertainment news.</p>'+
-    '<p>Every film gets one score on the Kaydee Rating Board, and every review carries the full credits: director, producer, cast and runtime, checked against public film databases before publishing.</p></div>'+
+    '<p>Every film gets one score on the Kaydee Rating Board, and every review carries the credits that matter: director, producer, cast and runtime.</p></div>'+
     '<div class="actions" style="margin-top:26px">'+
       '<a class="btn prominent" href="'+esc(CONFIG.INSTAGRAM)+'" target="_blank" rel="noopener">Instagram</a>'+
       '<a class="btn quiet" href="'+esc(CONFIG.TIKTOK)+'" target="_blank" rel="noopener">TikTok</a>'+
       '<a class="btn quiet" href="mailto:'+esc(CONFIG.EMAIL)+'">Work with us</a></div>'+
-    '<div style="margin-top:52px"><h2 style="margin-bottom:18px">Rating board</h2>'+board()+'</div>'+
-    '</section></div>';
+    '<div style="margin-top:52px"><h2 style="margin-bottom:18px">Rating board</h2>'+board()+'</div></section></div>';
 }
-function notFound(msg){
-  return '<div class="wrap"><section><div class="empty"><h2 style="margin-bottom:10px">Not found</h2><p>'+esc(msg||"")+'</p>'+
+function notFound(m){
+  return '<div class="wrap"><section><div class="empty"><h2 style="margin-bottom:10px">Not found</h2><p>'+esc(m||"")+'</p>'+
     '<a class="btn quiet" href="#/" style="margin-top:12px">Back to home</a></div></section></div>';
 }
 
-/* ---------- router ---------- */
+/* ===================== ROUTER ===================== */
 function render(){
   const [, seg, param] = (location.hash.replace(/^#/,"") || "/").split("/");
   let html, key = "/" + (seg || "");
@@ -550,64 +633,56 @@ function render(){
   else if(seg === "about") html = pageAbout();
   else { html = notFound("That page doesn’t exist."); key = ""; }
 
-  const banner = state.demo ? '<div class="wrap" style="padding-top:8px"><div class="notice"><b>Preview content.</b> '+
-    (state.error ? 'Could not reach the sheet ('+esc(state.error)+'). ' : 'Add your Apps Script URL to CONFIG.API_URL in index.html. ')+
-    'Rows from your Google Sheet replace everything below.</div></div>' : "";
-
-  document.getElementById("app").innerHTML = banner + html;
+  document.getElementById("app").innerHTML = html;
   document.querySelectorAll(".tabs a, .tabbar a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#"+key));
-  document.title = (seg === "review" && param ? param.replace(/-/g," ").replace(/\b\w/g,c=>c.toUpperCase())+" — " : "") + "Kaydee.my — Indian Cinema Portal";
-  window.scrollTo(0,0);
-  if(seg === "reviews"){ applyFilters(); wireSegments(); }
+  document.title = "Kaydee.my — Indian Cinema Portal";
+  scrollTo(0,0);
+  if(seg === "reviews"){ applyFilters(); wireSegments(applyFilters); document.getElementById("q").addEventListener("input", applyFilters); }
+  initCarousels();
 }
 
-/* ---------- chrome ---------- */
+/* ===================== CHROME ===================== */
 document.getElementById("tabs").innerHTML = NAV.map(([h,l]) => '<a href="#'+h+'">'+l+'</a>').join("");
 document.getElementById("tabbar").innerHTML = NAV.map(([h,l,i]) => '<a href="#'+h+'">'+ICON[i]+'<span>'+l+'</span></a>').join("");
 document.getElementById("social").innerHTML =
   [["Instagram",CONFIG.INSTAGRAM],["TikTok",CONFIG.TIKTOK],["Facebook",CONFIG.FACEBOOK],["Email","mailto:"+CONFIG.EMAIL]]
   .map(([n,u]) => '<a href="'+u+'" target="_blank" rel="noopener">'+n+'</a>').join("");
+document.getElementById("yr").textContent = new Date().getFullYear();
 
-function setTheme(mode){
-  document.documentElement.style.colorScheme = mode;
-  document.documentElement.setAttribute("data-theme", mode);
-  const icon = mode === "dark" ? ICON.sun : ICON.moon;
-  document.getElementById("themeBtn").innerHTML = icon;
-}
 let mode = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+function setTheme(m){
+  document.documentElement.setAttribute("data-theme", m);
+  document.documentElement.style.colorScheme = m;
+  document.getElementById("themeBtn").innerHTML = m === "dark" ? ICON.sun : ICON.moon;
+}
 setTheme(mode);
-document.getElementById("themeBtn").addEventListener("click", () => {
-  mode = mode === "dark" ? "light" : "dark"; setTheme(mode);
-});
+document.getElementById("themeBtn").addEventListener("click", () => { mode = mode === "dark" ? "light" : "dark"; setTheme(mode); });
 
-/* tab bar minimises on scroll down, returns on scroll up (iOS behaviour) */
 let lastY = 0;
 addEventListener("scroll", () => {
   const bar = document.getElementById("tabbar"), y = scrollY;
-  bar.classList.toggle("min", y > lastY && y > 160);
+  bar.classList.toggle("min", y > lastY && y > 180);
   lastY = y;
-}, { passive: true });
+}, { passive:true });
 addEventListener("hashchange", render);
 
-/* =========================================================
-   PREVIEW CONTENT — replaced by your sheet
-   ========================================================= */
-const DEMO = {
+/* ===================== SAMPLE CONTENT (preview only) ===================== */
+const SAMPLE = {
   reviews: [
     { title:"Vetri Kodi", year:"2026", language:"Tamil", rating:"9", verdict:"A roaring crowd-pleaser", featured:"TRUE",
       director:"Sample Director", producer:"Sample Productions", cast:"Lead Actor, Lead Actress, Supporting Actor",
-      runtime_min:"152", genres:"Action, Drama", review_date:"2026-08-22", reviewer:"KD Desk",
+      runtime_min:"152", genres:"Action, Drama", review_date:"2026-08-22", watch_on:"In cinemas",
       synopsis:"A mill town shuts down and a union leader's son has to choose between the picket line and the promotion that would end it.",
-      review_body:"This is placeholder review copy living in the Reviews tab of your sheet. Write the full review there and it appears here, paragraph by paragraph.\nPress Alt+Enter inside the cell to start a new paragraph, exactly like this one." },
-    { title:"Neelakasham", year:"2026", language:"Malayalam", rating:"8", verdict:"Quietly excellent",
+      review_body:"Placeholder review text. The full write-up runs here, paragraph by paragraph, with the score and verdict beside the poster.\nA second paragraph continues the same way." },
+    { title:"Sandhya Raagam", year:"2026", language:"Tamil", rating:"10", verdict:"Masterpiece", featured:"TRUE",
+      director:"Sample Director", cast:"Lead Actress, Lead Actor", runtime_min:"141", genres:"Musical, Drama", review_date:"2026-07-30",
+      synopsis:"A musical that earns every note." },
+    { title:"Neelakasham", year:"2026", language:"Malayalam", rating:"8", verdict:"Quietly excellent", featured:"TRUE",
       director:"Sample Director", cast:"Lead Actor, Lead Actress", runtime_min:"131", genres:"Drama", review_date:"2026-08-14",
       synopsis:"A small-town drama that runs on silence more than dialogue." },
     { title:"Padai Thalapathy", year:"2026", language:"Telugu", rating:"7", verdict:"Above average",
       director:"Sample Director", cast:"Lead Actor", runtime_min:"164", genres:"Action", review_date:"2026-08-08",
       synopsis:"Big-canvas action that lands the interval block and loses the second half." },
-    { title:"Sandhya Raagam", year:"2026", language:"Tamil", rating:"10", verdict:"Masterpiece",
-      director:"Sample Director", cast:"Lead Actress, Lead Actor", runtime_min:"141", genres:"Musical, Drama", review_date:"2026-07-30",
-      synopsis:"A musical that earns every note." },
     { title:"Kadhal Ilaignan", year:"2026", language:"Tamil", rating:"6", verdict:"Average",
       director:"Sample Director", cast:"Lead Actor, Lead Actress", runtime_min:"128", genres:"Romance", review_date:"2026-07-19",
       synopsis:"A romance with two good scenes and a long wait between them." },
@@ -618,20 +693,18 @@ const DEMO = {
   events: [
     { title:"Vetri Kodi — Premiere night", date_start:"2026-09-12", time:"8:30 PM", venue:"GSC Mid Valley", city:"Kuala Lumpur",
       category:"Premiere", price:"RM 25", featured:"TRUE",
-      description:"First show in Malaysia with a fan meet before the screening. Placeholder event from the Events tab of your sheet." },
-    { title:"Kaydee Fan Meet — Deepavali special", date_start:"2026-10-04", time:"6:00 PM", venue:"Sunway Pyramid", city:"Selangor", category:"Fan meet" },
-    { title:"Malayalam Film Weekend", date_start:"2026-10-18", time:"12:00 PM", venue:"TGV 1 Utama", city:"Petaling Jaya", category:"Festival" },
+      description:"First show in Malaysia, with a fan meet an hour before the screening. Doors open at 7:30 PM." },
+    { title:"Kaydee Fan Meet — Deepavali special", date_start:"2026-10-04", time:"6:00 PM", venue:"Sunway Pyramid",
+      city:"Selangor", category:"Fan meet", featured:"TRUE", price:"Free entry",
+      description:"Meet the Kaydee team, win merchandise and catch an early look at the festive releases." },
+    { title:"Malayalam Film Weekend", date_start:"2026-10-18", time:"12:00 PM", venue:"TGV 1 Utama", city:"Petaling Jaya",
+      category:"Festival", featured:"TRUE", price:"RM 60 pass",
+      description:"Three films across one weekend, with a Q&A between screenings." },
     { title:"Onam Music Night", date_start:"2026-08-16", time:"7:00 PM", venue:"KLCC Plenary Hall", city:"Kuala Lumpur", category:"Concert" }
   ]
 };
 
-loadData().then(() => {
-  const s = document.getElementById("status");
-  s.innerHTML = state.demo
-    ? '<span class="dot off"></span>Preview mode — sheet not connected'
-    : '<span class="dot"></span>Live from Google Sheets · '+state.reviews.length+' reviews · '+state.events.length+' events';
-  render();
-});
+loadData().then(render);
 </script>
 </body>
 </html>
