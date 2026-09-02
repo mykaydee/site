@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>kaydee.my - Indian Cinema Portal</title>
+<title>Kaydee.my — Indian Cinema Portal</title>
 <meta name="description" content="Kaydee.my — Indian cinema reviews, movie news and event promotions. Every film scored on the Kaydee Rating Board.">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#F5F5F7" media="(prefers-color-scheme: light)">
@@ -23,7 +23,9 @@ const CONFIG = {
   TIKTOK: "https://www.tiktok.com/@kaydee.my",
   FACEBOOK: "https://www.facebook.com/Kaydee.my",
   EMAIL: "hello@kaydee.my",
-  MAX_FEATURED: 5
+  MAX_FEATURED: 5,
+  DATA_VERSION: "1",   // bump this after publishing new content — every visitor picks it up once
+  CACHE_HOURS: 0       // 0 = a device never re-checks on its own, only when triggered
 };
 </script>
 
@@ -31,7 +33,8 @@ const CONFIG = {
 /* ===================== TOKENS ===================== */
 :root{
   color-scheme: dark light;
-  --red:#DA0F2A; --red-hi:#FF3B45; --red-bright:#FF3B45;
+  --red:#DA0F2A; --red-hi:#FF3B45; --red-bright:#FF5A63;
+  --tint:rgba(218,15,42,.18); --tint-2:rgba(218,15,42,.28);
 
   --bg:#000; --bg-2:#0C0C0E;
   --card:rgba(255,255,255,.06); --card-2:rgba(255,255,255,.10); --card-solid:#151517;
@@ -57,7 +60,7 @@ const CONFIG = {
   --glass:rgba(255,255,255,.62); --glass-edge:rgba(255,255,255,.85);
   --glass-hi:rgba(255,255,255,.95); --glass-lo:rgba(0,0,0,.04);
   --glass-shadow:0 14px 40px rgba(0,0,0,.16), 0 2px 8px rgba(0,0,0,.07);
-  --red-bright:#C90A20;
+  --red-bright:#C90A20; --tint:rgba(218,15,42,.11); --tint-2:rgba(218,15,42,.18);
 }}
 :root[data-theme="light"]{
   --bg:#F2F2F5; --bg-2:#fff;
@@ -66,7 +69,7 @@ const CONFIG = {
   --glass:rgba(255,255,255,.62); --glass-edge:rgba(255,255,255,.85);
   --glass-hi:rgba(255,255,255,.95); --glass-lo:rgba(0,0,0,.04);
   --glass-shadow:0 14px 40px rgba(0,0,0,.16), 0 2px 8px rgba(0,0,0,.07);
-  --red-bright:#C90A20;
+  --red-bright:#C90A20; --tint:rgba(218,15,42,.11); --tint-2:rgba(218,15,42,.18);
 }
 
 *{box-sizing:border-box}
@@ -110,26 +113,27 @@ p{margin:0 0 15px}
 .mark{width:29px;height:29px;border-radius:9px;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:700;
   background:linear-gradient(155deg,#FF5560,var(--red) 55%,#8A0718);
   box-shadow:0 2px 6px rgba(218,15,42,.45), inset 0 1px 0 rgba(255,255,255,.45)}
-.tabs{display:flex;gap:2px;margin-left:auto}
-.tabs a{padding:8px 16px;border-radius:999px;font-size:14.5px;font-weight:500;color:var(--text-2);
-  transition:transform .4s var(--bounce),background .3s,color .2s}
-.tabs a:hover{color:#fff;background:var(--red);transform:scale(1.09)}
-.tabs a.on{color:#fff;background:var(--red);box-shadow:0 4px 14px rgba(218,15,42,.4)}
-.circle-btn{width:36px;height:36px;border-radius:999px;display:grid;place-items:center;cursor:pointer;color:var(--text-2);
-  transition:transform .4s var(--bounce),background .3s,color .2s}
-.circle-btn:hover{color:#fff;background:var(--red);transform:scale(1.12)}
+.tabs{display:flex;gap:7px;margin-left:auto;margin-right:4px}
+.tabs a{padding:7px 15px;border-radius:999px;font-size:14.5px;font-weight:500;color:var(--text-2);
+  transition:background .32s var(--spring),color .22s}
+.tabs a:hover{color:var(--text);background:var(--card)}
+.tabs a.on{color:var(--red-bright);background:var(--tint);font-weight:600}
+.tabs a.on:hover{background:var(--tint-2)}
+.circle-btn{width:34px;height:34px;border-radius:999px;display:grid;place-items:center;cursor:pointer;color:var(--text-2);
+  transition:background .32s var(--spring),color .22s}
+.circle-btn:hover{color:var(--text);background:var(--card)}
 .tabbar{display:none}
 @media (max-width:820px){
   .topbar{top:10px}
   .topbar .tabs{display:none}
   .topbar .circle-btn{margin-left:auto}
   .tabbar{display:flex;position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;z-index:80;
-    transform:translateX(-50%);border-radius:999px;padding:7px;gap:2px;transition:transform .5s var(--spring),opacity .3s}
+    transform:translateX(-50%);border-radius:999px;padding:7px;gap:6px;transition:transform .5s var(--spring),opacity .3s}
   .tabbar.min{transform:translateX(-50%) translateY(150%);opacity:0}
-  .tabbar a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 15px;border-radius:999px;
-    font-size:10.5px;font-weight:500;color:var(--text-2);transition:transform .4s var(--bounce),background .3s,color .2s}
-  .tabbar a:hover,.tabbar a.on{color:#fff;background:var(--red)}
-  .tabbar a.on{transform:scale(1.04)}
+  .tabbar a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 14px;border-radius:999px;
+    font-size:10.5px;font-weight:500;color:var(--text-2);transition:background .32s var(--spring),color .22s}
+  .tabbar a:hover{color:var(--text);background:var(--card)}
+  .tabbar a.on{color:var(--red-bright);background:var(--tint);font-weight:600}
 }
 main{padding-top:84px;min-height:70vh}
 @media (max-width:820px){main{padding-top:72px;padding-bottom:104px}}
@@ -204,7 +208,7 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:24px}
 .sec-head a{font-size:15px;font-weight:500;color:var(--red-bright);padding:6px 14px;border-radius:999px;
   transition:transform .4s var(--bounce),background .3s,color .2s;white-space:nowrap}
-.sec-head a:hover{background:var(--red);color:#fff;transform:scale(1.07)}
+.sec-head a:hover{background:var(--card);transform:scale(1.05)}
 .grid{display:grid;gap:clamp(16px,2.4vw,26px);grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
 .card{display:block;transition:transform .5s var(--spring)}
 .card:hover{transform:translateY(-8px) scale(1.02)}
@@ -266,7 +270,7 @@ footer{padding:44px 0 calc(56px + env(safe-area-inset-bottom));margin-top:20px;b
 .f-links{display:flex;gap:8px;flex-wrap:wrap}
 .f-links a{font-size:14.5px;color:var(--text-2);padding:8px 15px;border-radius:999px;
   transition:transform .4s var(--bounce),background .3s,color .2s}
-.f-links a:hover{background:var(--red);color:#fff;transform:scale(1.08)}
+.f-links a:hover{color:var(--red-bright);background:var(--card);transform:scale(1.05)}
 
 /* ===================== EVENT SHEET ===================== */
 .backdrop{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(18px);
@@ -295,7 +299,7 @@ footer{padding:44px 0 calc(56px + env(safe-area-inset-bottom));margin-top:20px;b
 <body>
 
 <div class="topbar glass" id="topbar">
-  <a class="brand" href="#/"><span class="mark">KD</span>KAYDEE.MY</a>
+  <a class="brand" href="#/"><span class="mark">KD</span>Kaydee.my</a>
   <nav class="tabs" id="tabs" aria-label="Main"></nav>
   <button class="circle-btn" id="themeBtn" aria-label="Switch appearance"></button>
 </div>
@@ -322,17 +326,56 @@ footer{padding:44px 0 calc(56px + env(safe-area-inset-bottom));margin-top:20px;b
 /* ===================== DATA ===================== */
 const state = { reviews: [], events: [] };
 
-async function loadData(){
-  if(!CONFIG.API_URL){ state.reviews = SAMPLE.reviews; state.events = SAMPLE.events; return; }
+const STORE = "kd.content";
+
+function apply(d){
+  const live = s => String(s || "published").toLowerCase() === "published";
+  state.reviews = (d.reviews || []).filter(r => r.title && live(r.status));
+  state.events  = (d.events  || []).filter(e => e.title && live(e.status));
+}
+function stored(){
   try{
-    const res = await fetch(CONFIG.API_URL + "?route=all", { cache: "no-store" });
-    const d = await res.json();
-    const live = s => String(s || "published").toLowerCase() === "published";
-    state.reviews = (d.reviews || []).filter(r => r.title && live(r.status));
-    state.events  = (d.events  || []).filter(e => e.title && live(e.status));
-  }catch(err){
-    state.reviews = []; state.events = [];
+    const c = JSON.parse(localStorage.getItem(STORE));
+    return (c && c.v === CONFIG.DATA_VERSION && c.d) ? c : null;
+  }catch(e){ return null; }
+}
+function store(d){
+  try{ localStorage.setItem(STORE, JSON.stringify({ v: CONFIG.DATA_VERSION, t: Date.now(), d })); }catch(e){}
+}
+const pull = () => fetch(CONFIG.API_URL + "?route=all&v=" + encodeURIComponent(CONFIG.DATA_VERSION),
+  { cache: "no-store" }).then(r => r.json());
+
+/* Content lives on the visitor's device once fetched. Repeat visits render from that
+   stored copy and make no request at all. A fresh fetch happens only when there is
+   nothing stored, when DATA_VERSION changes, or when ?refresh is used. */
+async function loadData(){
+  if(!CONFIG.API_URL){ apply(SAMPLE); return; }
+
+  const forced = /(^|[?&])refresh\b/.test(location.search);
+  if(forced) history.replaceState(null, "", location.pathname + location.hash);
+
+  const cached = forced ? null : stored();
+  if(cached){
+    apply(cached.d);
+    const hours = Number(CONFIG.CACHE_HOURS) || 0;
+    if(hours > 0 && Date.now() - cached.t > hours * 36e5) revalidate(cached.d);
+    return;
   }
+  try{
+    const d = await pull();
+    apply(d); store(d);
+  }catch(err){
+    const fallback = stored();               // keep the old copy rather than an empty page
+    apply(fallback ? fallback.d : { reviews: [], events: [] });
+  }
+}
+
+async function revalidate(prev){
+  try{
+    const d = await pull();
+    store(d);
+    if(JSON.stringify(d) !== JSON.stringify(prev)){ apply(d); render(); }
+  }catch(err){}
 }
 
 /* ===================== HELPERS ===================== */
