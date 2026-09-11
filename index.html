@@ -9,23 +9,23 @@
 <meta name="theme-color" content="#F5F5F7" media="(prefers-color-scheme: light)">
 <meta property="og:title" content="Kaydee.my — Indian Cinema Portal">
 <meta property="og:description" content="Movies · Reviews · Entertainment updates">
+<meta property="og:image" content="logo.png">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23DA0F2A'/><text x='50' y='66' font-family='-apple-system,Helvetica' font-size='42' font-weight='700' fill='white' text-anchor='middle'>KD</text></svg>">
+<link rel="icon" href="logo.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 
 <script>
 /* Site settings */
 const CONFIG = {
-  API_URL: "",
+  DATA_FILE: "data.json",
   INSTAGRAM: "https://www.instagram.com/kaydee.my/",
   TIKTOK: "https://www.tiktok.com/@kaydee.my",
   FACEBOOK: "https://www.facebook.com/Kaydee.my",
   EMAIL: "hello@kaydee.my",
-  MAX_FEATURED: 5,
-  DATA_VERSION: "1",   // bump this after publishing new content — every visitor picks it up once
-  CACHE_HOURS: 0       // 0 = a device never re-checks on its own, only when triggered
+  MAX_FEATURED: 5
 };
 </script>
 
@@ -33,8 +33,8 @@ const CONFIG = {
 /* ===================== TOKENS ===================== */
 :root{
   color-scheme: dark light;
-  --red:#DA0F2A; --red-hi:#FF3B45; --red-bright:#FF5A63;
-  --tint:rgba(218,15,42,.18); --tint-2:rgba(218,15,42,.28);
+  --red:#F30219; --red-deep:#C9020D; --red-hi:#FF4A52; --red-bright:#FF4A52;
+  --tint:rgba(243,2,25,.18); --tint-2:rgba(243,2,25,.28);
 
   --bg:#000; --bg-2:#0C0C0E;
   --card:rgba(255,255,255,.06); --card-2:rgba(255,255,255,.10); --card-solid:#151517;
@@ -60,7 +60,7 @@ const CONFIG = {
   --glass:rgba(255,255,255,.62); --glass-edge:rgba(255,255,255,.85);
   --glass-hi:rgba(255,255,255,.95); --glass-lo:rgba(0,0,0,.04);
   --glass-shadow:0 14px 40px rgba(0,0,0,.16), 0 2px 8px rgba(0,0,0,.07);
-  --red-bright:#C90A20; --tint:rgba(218,15,42,.11); --tint-2:rgba(218,15,42,.18);
+  --red-bright:#C9020D; --tint:rgba(243,2,25,.10); --tint-2:rgba(243,2,25,.17);
 }}
 :root[data-theme="light"]{
   --bg:#F2F2F5; --bg-2:#fff;
@@ -69,14 +69,14 @@ const CONFIG = {
   --glass:rgba(255,255,255,.62); --glass-edge:rgba(255,255,255,.85);
   --glass-hi:rgba(255,255,255,.95); --glass-lo:rgba(0,0,0,.04);
   --glass-shadow:0 14px 40px rgba(0,0,0,.16), 0 2px 8px rgba(0,0,0,.07);
-  --red-bright:#C90A20; --tint:rgba(218,15,42,.11); --tint-2:rgba(218,15,42,.18);
+  --red-bright:#C9020D; --tint:rgba(243,2,25,.10); --tint-2:rgba(243,2,25,.17);
 }
 
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:17px;
   line-height:1.47;letter-spacing:-.011em;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-body.locked{overflow:hidden}
+body.locked{position:fixed;width:100%;overflow:hidden}
 img{display:block;max-width:100%}
 a{color:inherit;text-decoration:none}
 button,input{font:inherit;color:inherit;background:none;border:none}
@@ -110,15 +110,20 @@ p{margin:0 0 15px}
 .topbar{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;
   gap:6px;padding:7px 7px 7px 15px;border-radius:999px;width:min(calc(100% - 26px),var(--max))}
 .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;letter-spacing:-.02em}
-.mark{width:29px;height:29px;border-radius:9px;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:700;
-  background:linear-gradient(155deg,#FF5560,var(--red) 55%,#8A0718);
-  box-shadow:0 2px 6px rgba(218,15,42,.45), inset 0 1px 0 rgba(255,255,255,.45)}
+.mark{width:30px;height:30px;border-radius:50%;flex:none;
+  background:url("logo.png") center/cover no-repeat,
+             radial-gradient(circle at 32% 28%,#FF3742,var(--red) 55%,var(--red-deep));
+  box-shadow:0 2px 8px rgba(243,2,25,.42)}
+.brand:hover .mark{transform:scale(1.06)}
+.mark,.brand .mark{transition:transform .4s var(--bounce)}
+footer .mark{width:34px;height:34px}
 .tabs{display:flex;gap:7px;margin-left:auto;margin-right:4px}
 .tabs a{padding:7px 15px;border-radius:999px;font-size:14.5px;font-weight:500;color:var(--text-2);
   transition:background .32s var(--spring),color .22s}
 .tabs a:hover{color:var(--text);background:var(--card)}
-.tabs a.on{color:var(--red-bright);background:var(--tint);font-weight:600}
-.tabs a.on:hover{background:var(--tint-2)}
+.tabs a.on{color:#fff;background:var(--red);font-weight:600;
+  box-shadow:0 5px 16px rgba(243,2,25,.45), inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 0 .5px rgba(255,255,255,.24)}
+.tabs a.on:hover{background:var(--red-deep)}
 .circle-btn{width:34px;height:34px;border-radius:999px;display:grid;place-items:center;cursor:pointer;color:var(--text-2);
   transition:background .32s var(--spring),color .22s}
 .circle-btn:hover{color:var(--text);background:var(--card)}
@@ -133,45 +138,54 @@ p{margin:0 0 15px}
   .tabbar a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 14px;border-radius:999px;
     font-size:10.5px;font-weight:500;color:var(--text-2);transition:background .32s var(--spring),color .22s}
   .tabbar a:hover{color:var(--text);background:var(--card)}
-  .tabbar a.on{color:var(--red-bright);background:var(--tint);font-weight:600}
+  .tabbar a.on{color:#fff;background:var(--red);font-weight:600;
+    box-shadow:0 5px 16px rgba(243,2,25,.45), inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 0 .5px rgba(255,255,255,.24)}
 }
-main{padding-top:84px;min-height:70vh}
-@media (max-width:820px){main{padding-top:72px;padding-bottom:104px}}
+@media (max-width:430px){
+  .tabbar{padding:6px;gap:2px}
+  .tabbar a{padding:7px 10px;font-size:10px;gap:2px}
+}
+main{padding-top:84px;min-height:60vh}
+@media (max-width:820px){
+  main{padding-top:78px}
+  body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}  /* clears the floating tab bar */
+}
 
 /* ===================== CONTROLS ===================== */
 .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;font-size:15px;font-weight:600;
   cursor:pointer;transition:transform .45s var(--bounce),background .3s,box-shadow .3s,color .2s;will-change:transform}
 .btn.prominent{background:var(--red);color:#fff;border:.5px solid rgba(255,255,255,.24);
-  box-shadow:0 6px 20px rgba(218,15,42,.42), inset 0 1px 0 rgba(255,255,255,.3)}
+  box-shadow:0 6px 20px rgba(243,2,25,.42), inset 0 1px 0 rgba(255,255,255,.3)}
 .btn.quiet{background:var(--card);color:var(--text)}
-.btn:hover{background:var(--red);color:#fff;transform:scale(1.08);box-shadow:0 10px 28px rgba(218,15,42,.5), inset 0 1px 0 rgba(255,255,255,.3)}
+.btn:hover{background:var(--red-deep);color:#fff;transform:scale(1.08);box-shadow:0 10px 28px rgba(243,2,25,.5), inset 0 1px 0 rgba(255,255,255,.3)}
 .btn:active{transform:scale(.95)}
 .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
 
 .score{display:inline-flex;align-items:baseline;gap:2px;padding:9px 15px;border-radius:15px;background:var(--red);color:#fff;
   font-weight:700;letter-spacing:-.03em;border:.5px solid rgba(255,255,255,.26);
-  box-shadow:0 4px 14px rgba(218,15,42,.42), inset 0 1px 0 rgba(255,255,255,.32);
+  box-shadow:0 4px 14px rgba(243,2,25,.42), inset 0 1px 0 rgba(255,255,255,.32);
   transition:transform .45s var(--bounce),box-shadow .3s}
 .score b{font-size:22px;line-height:1}
 .score i{font-style:normal;font-size:11px;font-weight:600;opacity:.75}
 .score.lg{padding:14px 22px;border-radius:21px}.score.lg b{font-size:40px}.score.lg i{font-size:14px}
 .score.sm{padding:5px 11px;border-radius:12px}.score.sm b{font-size:15px}.score.sm i{font-size:9px}
-.score:hover,.card:hover .score,a:hover > .score{transform:scale(1.14);box-shadow:0 10px 26px rgba(218,15,42,.55)}
+.score:hover,.card:hover .score,a:hover > .score{transform:scale(1.14);box-shadow:0 10px 26px rgba(243,2,25,.55)}
 
 /* swipeable segmented control with sliding bubble */
 .seg{position:relative;display:flex;gap:2px;padding:4px;border-radius:999px;overflow-x:auto;scrollbar-width:none;
-  -ms-overflow-style:none;max-width:100%;touch-action:pan-x;cursor:grab;scroll-behavior:smooth}
+  -ms-overflow-style:none;max-width:100%;cursor:grab;scroll-behavior:smooth}
 .seg::-webkit-scrollbar{display:none}
 .seg.dragging{cursor:grabbing;scroll-behavior:auto}
 .seg-thumb{position:absolute;top:4px;bottom:4px;left:0;width:0;border-radius:999px;background:var(--red);z-index:0;
-  border:.5px solid rgba(255,255,255,.26);box-shadow:0 5px 16px rgba(218,15,42,.45), inset 0 1px 0 rgba(255,255,255,.35);
+  border:.5px solid rgba(255,255,255,.26);box-shadow:0 5px 16px rgba(243,2,25,.45), inset 0 1px 0 rgba(255,255,255,.35);
   transition:transform .55s var(--spring),width .55s var(--spring);will-change:transform,width}
 .seg button{position:relative;z-index:1;padding:9px 18px;border-radius:999px;font-size:14.5px;font-weight:500;
   color:var(--text-2);white-space:nowrap;cursor:pointer;transition:color .3s,transform .4s var(--bounce)}
 .seg button:hover{color:var(--text);transform:scale(1.06)}
 .seg button[aria-pressed="true"]{color:#fff;font-weight:600}
 .search{display:flex;align-items:center;gap:9px;padding:12px 18px;border-radius:999px;flex:1;min-width:220px}
-.search input{width:100%;font-size:15px}
+.search input{width:100%;font-size:16px;-webkit-appearance:none;appearance:none;border-radius:0}
+.search input::-webkit-search-cancel-button{-webkit-appearance:none}
 .search input::placeholder{color:var(--text-2)}
 .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:28px}
 
@@ -185,7 +199,7 @@ main{padding-top:84px;min-height:70vh}
   cursor:pointer;text-align:left;width:100%;transition:transform .5s var(--spring)}
 .slide-media{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 1.4s var(--spring)}
 .slide:hover .slide-media{transform:scale(1.05)}
-.slide-fallback{position:absolute;inset:0;background:radial-gradient(120% 95% at 12% 0%,#FF3B45,#B00A1F 40%,#39030A 74%,#080002)}
+.slide-fallback{position:absolute;inset:0;background:radial-gradient(120% 95% at 12% 0%,#F30219,#C9020D 40%,#3A0206 74%,#080002)}
 .slide-veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.92),rgba(0,0,0,.42) 46%,rgba(0,0,0,.08))}
 .slide-card{position:relative;margin:clamp(14px,2.4vw,22px);padding:clamp(18px,2.8vw,28px);border-radius:var(--r-lg);
   width:min(100%,580px);color:#F5F5F7}
@@ -198,8 +212,9 @@ main{padding-top:84px;min-height:70vh}
 .cnav.prev{left:14px}.cnav.next{right:14px}
 @media(hover:hover) and (min-width:821px){.cnav{display:grid}}
 .dots{display:flex;justify-content:center;gap:7px;margin-top:14px}
-.dots button{width:7px;height:7px;border-radius:999px;background:var(--card-2);cursor:pointer;
+.dots button{position:relative;width:7px;height:7px;border-radius:999px;background:var(--card-2);cursor:pointer;
   transition:width .45s var(--spring),background .3s,transform .4s var(--bounce)}
+.dots button::after{content:"";position:absolute;inset:-18px -9px}
 .dots button:hover{background:var(--red);transform:scale(1.4)}
 .dots button.on{width:24px;background:var(--red)}
 
@@ -217,7 +232,7 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 .card:hover .poster{box-shadow:0 20px 48px rgba(0,0,0,.5)}
 .poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .poster .ph{position:absolute;inset:0;display:grid;place-items:center;font-size:38px;font-weight:700;letter-spacing:-.04em;
-  color:rgba(255,255,255,.16);background:linear-gradient(150deg,#2B2B31,#131317)}
+  color:rgba(255,255,255,.16);background:linear-gradient(150deg,#2A1418,#120609)}
 .poster .score{position:absolute;left:10px;bottom:10px}
 .card h3{margin:13px 0 3px}
 .card .meta{font-size:13.5px}
@@ -242,14 +257,19 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 .ev{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;padding:15px 18px;border-radius:var(--r-lg);
   background:var(--card);width:100%;text-align:left;cursor:pointer;transition:transform .45s var(--spring),background .3s}
 .ev:hover{background:var(--card-2);transform:translateY(-3px) scale(1.005)}
-.datechip{width:62px;padding:9px 0;border-radius:var(--r-sm);text-align:center;background:var(--red);color:#fff;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.3);transition:transform .45s var(--bounce)}
-.ev:hover .datechip{transform:scale(1.1)}
-.datechip b{display:block;font-size:22px;font-weight:700;letter-spacing:-.03em;line-height:1}
-.datechip span{font-size:11px;font-weight:600;opacity:.86}
+.datechip{width:60px;height:60px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;border-radius:15px;background:var(--red);color:#fff;font-variant-numeric:tabular-nums lining-nums;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 4px 12px rgba(243,2,25,.28);transition:transform .45s var(--bounce)}
+.ev:hover .datechip{transform:scale(1.08)}
+.datechip b{font-size:23px;font-weight:700;letter-spacing:-.02em;line-height:1}
+.datechip span{font-size:10.5px;font-weight:600;letter-spacing:.06em;line-height:1;opacity:.92}
+.ev .thumb{width:46px;height:60px;flex:none;border-radius:11px;overflow:hidden;background:var(--card-2);
+  display:grid;place-items:center;color:var(--red-bright);transition:transform .45s var(--bounce)}
+.ev .thumb img{width:100%;height:100%;object-fit:cover}
+.ev:hover .thumb{transform:scale(1.06)}
 .pill{display:inline-block;padding:3px 11px;border-radius:999px;background:var(--card-2);color:var(--text-2);
   font-size:12px;font-weight:600;margin-bottom:7px;transition:transform .4s var(--bounce),background .3s,color .2s}
-.pill.hot{background:rgba(218,15,42,.16);color:var(--red-bright)}
+.pill.hot{background:rgba(243,2,25,.16);color:var(--red-bright)}
 .ev:hover .pill{background:var(--red);color:#fff;transform:scale(1.06)}
 .chev{color:var(--text-2);transition:transform .45s var(--bounce),color .3s}
 .ev:hover .chev{color:var(--red-bright);transform:translateX(4px) scale(1.2)}
@@ -261,16 +281,63 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 .tier b{display:block;font-size:30px;font-weight:700;letter-spacing:-.04em}
 .tier span{color:var(--text-2);font-size:14px;transition:color .2s}
 .tier.top{background:var(--red);color:#fff}.tier.top span{color:rgba(255,255,255,.85)}
-.tier:hover{background:var(--red);color:#fff;transform:scale(1.06);box-shadow:0 12px 30px rgba(218,15,42,.42)}
+.tier:hover{background:var(--red);color:#fff;transform:scale(1.06);box-shadow:0 12px 30px rgba(243,2,25,.42)}
 .tier:hover span{color:rgba(255,255,255,.85)}
 
+.badge{display:inline-flex;align-items:center;padding:9px 15px;border-radius:14px;background:var(--tint);
+  color:var(--red-bright);border:.5px solid var(--tint-2);font-weight:600;font-size:13.5px;letter-spacing:-.01em;
+  transition:transform .45s var(--bounce)}
+.badge.lg{padding:13px 20px;border-radius:19px;font-size:16px}
+.badge.sm{padding:5px 11px;border-radius:12px;font-size:11px;background:rgba(0,0,0,.5);color:#fff;border-color:rgba(255,255,255,.2);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.card:hover .badge,.badge:hover{transform:scale(1.08)}
+.poster .badge{position:absolute;left:10px;bottom:10px}
+
+/* ===================== CALENDAR ===================== */
+.cal{background:var(--card);border-radius:var(--r-lg);padding:clamp(13px,2.4vw,20px)}
+.cal-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.cal-top h3{font-size:19px}
+.cal-nav{display:flex;gap:6px;align-items:center}
+.cal-nav button{width:36px;height:36px;border-radius:999px;display:grid;place-items:center;cursor:pointer;
+  color:var(--text-2);background:var(--card-2);transition:transform .4s var(--bounce),background .3s,color .2s}
+.cal-nav button.today{width:auto;padding:0 15px;font-size:13.5px;font-weight:600}
+.cal-nav button:hover{background:var(--red);color:#fff;transform:scale(1.1)}
+.cal-dow,.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:clamp(3px,.7vw,6px)}
+.cal-dow{margin-bottom:7px}
+.cal-dow span{text-align:center;font-size:11px;font-weight:600;color:var(--text-2)}
+.cal-cell{aspect-ratio:1;border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;font-size:14.5px;font-weight:500;color:var(--text);font-variant-numeric:tabular-nums lining-nums;
+  transition:background .3s,transform .4s var(--bounce),color .2s}
+.cal-cell.empty{visibility:hidden}
+.cal-cell.none{color:var(--text-2);opacity:.45}
+.cal-cell.has{cursor:pointer;background:var(--card-2)}
+.cal-cell.has:hover{background:var(--tint);color:var(--red-bright);transform:scale(1.08)}
+.cal-cell.today{box-shadow:inset 0 0 0 1.5px var(--red);color:var(--red-bright);font-weight:700}
+.cal-cell.on{background:var(--red);color:#fff;transform:scale(1.06);box-shadow:0 6px 18px rgba(243,2,25,.4)}
+.marks{display:flex;gap:3px;height:5px;align-items:center}
+.marks i{width:5px;height:5px;border-radius:50%;background:var(--red)}
+.marks i.evt{background:var(--text-2)}
+.cal-cell.on .marks i{background:#fff}
+.legend{display:flex;flex-wrap:wrap;gap:18px;margin-top:16px;font-size:13px;color:var(--text-2)}
+.legend i{width:7px;height:7px;border-radius:50%;background:var(--red);display:inline-block;margin-right:7px;vertical-align:middle}
+.legend i.evt{background:var(--text-2)}
+
 .empty{padding:50px 24px;border-radius:var(--r-lg);background:var(--card);text-align:center;color:var(--text-2)}
-footer{padding:44px 0 calc(56px + env(safe-area-inset-bottom));margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
+footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
+@media (max-width:820px){footer{padding:34px 0 10px}}
 .f-row{display:flex;flex-wrap:wrap;gap:22px;justify-content:space-between;align-items:center}
-.f-links{display:flex;gap:8px;flex-wrap:wrap}
-.f-links a{font-size:14.5px;color:var(--text-2);padding:8px 15px;border-radius:999px;
+@media (max-width:600px){
+  .f-row{flex-direction:column;align-items:center;text-align:center;gap:20px}
+  /* only the text column stacks — the icon row must stay a row */
+  .f-row > div:not(.f-links){display:flex;flex-direction:column;align-items:center}
+  .f-links{flex-direction:row;justify-content:center}
+}
+.f-links{display:flex;flex-direction:row;gap:10px;flex-wrap:nowrap}
+.f-links a{width:44px;height:44px;border-radius:999px;display:grid;place-items:center;flex:none;
+  background:var(--card);color:var(--text-2);
   transition:transform .4s var(--bounce),background .3s,color .2s}
-.f-links a:hover{color:var(--red-bright);background:var(--card);transform:scale(1.05)}
+.f-links a:hover{background:var(--red);color:#fff;transform:scale(1.12)}
+.f-links a:active{transform:scale(.94)}
 
 /* ===================== EVENT SHEET ===================== */
 .backdrop{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(18px);
@@ -280,7 +347,7 @@ footer{padding:44px 0 calc(56px + env(safe-area-inset-bottom));margin-top:20px;b
   transform:translateY(28px) scale(.96);transition:transform .55s var(--spring)}
 .backdrop.open .sheet{transform:none}
 .sheet-banner{aspect-ratio:16/9;background-size:cover;background-position:center;
-  background-image:radial-gradient(115% 120% at 78% 0%,#FF3B45,#9E0A1E 46%,#170105)}
+  background-image:radial-gradient(115% 120% at 78% 0%,#F30219,#C9020D 46%,#180104)}
 .sheet-body{padding:clamp(20px,3.4vw,28px)}
 .sheet-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:999px;display:grid;place-items:center;
   cursor:pointer;color:#fff;background:rgba(0,0,0,.42);z-index:2;transition:transform .45s var(--bounce),background .3s}
@@ -299,7 +366,7 @@ footer{padding:44px 0 calc(56px + env(safe-area-inset-bottom));margin-top:20px;b
 <body>
 
 <div class="topbar glass" id="topbar">
-  <a class="brand" href="#/"><span class="mark">KD</span>Kaydee.my</a>
+  <a class="brand" href="#/"><span class="mark" aria-hidden="true"></span>Kaydee.my</a>
   <nav class="tabs" id="tabs" aria-label="Main"></nav>
   <button class="circle-btn" id="themeBtn" aria-label="Switch appearance"></button>
 </div>
@@ -310,7 +377,7 @@ footer{padding:44px 0 calc(56px + env(safe-area-inset-bottom));margin-top:20px;b
 <footer>
   <div class="wrap f-row">
     <div>
-      <div class="brand" style="font-size:17px"><span class="mark">KD</span>Kaydee.my</div>
+      <div class="brand" style="font-size:17px"><span class="mark" aria-hidden="true"></span>Kaydee.my</div>
       <div class="meta" style="margin-top:10px">Indian cinema portal · Movies · Reviews · Events</div>
       <div class="meta" style="margin-top:4px">© <span id="yr"></span> Kaydee.my</div>
     </div>
@@ -323,59 +390,24 @@ footer{padding:44px 0 calc(56px + env(safe-area-inset-bottom));margin-top:20px;b
 </div>
 
 <script>
-/* ===================== DATA ===================== */
+/* ===================== DATA =====================
+   Content is baked into data.json when the site is published, so a visit is a
+   single static file read. No live lookups, nothing to expire, nothing to clear.
+   ================================================ */
 const state = { reviews: [], events: [] };
 
-const STORE = "kd.content";
-
-function apply(d){
-  const live = s => String(s || "published").toLowerCase() === "published";
-  state.reviews = (d.reviews || []).filter(r => r.title && live(r.status));
-  state.events  = (d.events  || []).filter(e => e.title && live(e.status));
-}
-function stored(){
-  try{
-    const c = JSON.parse(localStorage.getItem(STORE));
-    return (c && c.v === CONFIG.DATA_VERSION && c.d) ? c : null;
-  }catch(e){ return null; }
-}
-function store(d){
-  try{ localStorage.setItem(STORE, JSON.stringify({ v: CONFIG.DATA_VERSION, t: Date.now(), d })); }catch(e){}
-}
-const pull = () => fetch(CONFIG.API_URL + "?route=all&v=" + encodeURIComponent(CONFIG.DATA_VERSION),
-  { cache: "no-store" }).then(r => r.json());
-
-/* Content lives on the visitor's device once fetched. Repeat visits render from that
-   stored copy and make no request at all. A fresh fetch happens only when there is
-   nothing stored, when DATA_VERSION changes, or when ?refresh is used. */
 async function loadData(){
-  if(!CONFIG.API_URL){ apply(SAMPLE); return; }
-
-  const forced = /(^|[?&])refresh\b/.test(location.search);
-  if(forced) history.replaceState(null, "", location.pathname + location.hash);
-
-  const cached = forced ? null : stored();
-  if(cached){
-    apply(cached.d);
-    const hours = Number(CONFIG.CACHE_HOURS) || 0;
-    if(hours > 0 && Date.now() - cached.t > hours * 36e5) revalidate(cached.d);
-    return;
-  }
   try{
-    const d = await pull();
-    apply(d); store(d);
+    const res = await fetch(CONFIG.DATA_FILE, { cache: "no-cache" });
+    if(!res.ok) throw 0;
+    const d = await res.json();
+    state.reviews = Array.isArray(d.reviews) ? d.reviews : [];
+    state.events  = Array.isArray(d.events)  ? d.events  : [];
+    if(!state.reviews.length && !state.events.length) throw 0;
   }catch(err){
-    const fallback = stored();               // keep the old copy rather than an empty page
-    apply(fallback ? fallback.d : { reviews: [], events: [] });
+    state.reviews = SAMPLE.reviews;   // local preview before the first publish
+    state.events  = SAMPLE.events;
   }
-}
-
-async function revalidate(prev){
-  try{
-    const d = await pull();
-    store(d);
-    if(JSON.stringify(d) !== JSON.stringify(prev)){ apply(d); render(); }
-  }catch(err){}
 }
 
 /* ===================== HELPERS ===================== */
@@ -385,13 +417,25 @@ const num = s => { const n = parseFloat(s); return isNaN(n) ? null : n; };
 const slugify = s => String(s ?? "").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 const slugOf = r => slugify((r.title||"") + "-" + (r.year||""));
 const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const parseDate = v => { if(!v) return null; const d = new Date(v); return isNaN(d) ? null : d; };
+const parseDate = v => {
+  if(!v) return null;
+  const iso = String(v).trim().match(/^(\d{4})-(\d{2})-(\d{2})/);
+  const d = iso ? new Date(+iso[1], +iso[2] - 1, +iso[3]) : new Date(v);
+  return isNaN(d) ? null : d;
+};
 const fmtDate = v => { const d = parseDate(v); return d ? d.getDate()+" "+MON[d.getMonth()]+" "+d.getFullYear() : esc(v||""); };
 const runtime = m => { const n = num(m); return n ? Math.floor(n/60)+" hr "+(n%60)+" min" : ""; };
 const dots = a => a.filter(Boolean).map(esc).join(" · ");
+const bg = u => 'url("' + esc(String(u).replace(/"/g, "%22")) + '")';   // safe inside a style attribute
 const isFeatured = x => ["true","yes","1","y"].includes(String(x.featured||"").trim().toLowerCase());
 const upcoming = e => { const d = parseDate(e.date_end || e.date_start); return !d || d.getTime() >= Date.now() - 864e5; };
 const byDate = k => (a,b) => (parseDate(a[k])?.getTime()||0) - (parseDate(b[k])?.getTime()||0);
+const today0 = () => { const d = new Date(); d.setHours(0,0,0,0); return d.getTime(); };
+/* A film with a release date still ahead of us is upcoming; it becomes a normal
+   review the moment a rating is filled in. */
+const unreleased = r => { const d = parseDate(r.release_date); return !!d && d.getTime() > today0(); };
+const rated = r => num(r.rating) !== null;
+const dayKey = d => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
 
 const ICON = {
   home:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.4 12 3l9 7.4V20a1 1 0 0 1-1 1h-5v-6.5h-6V21H4a1 1 0 0 1-1-1z"/></svg>',
@@ -403,25 +447,43 @@ const ICON = {
   moon:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.2A8.4 8.4 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>',
   left:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 5-7 7 7 7"/></svg>',
   right:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 5 7 7-7 7"/></svg>',
-  close:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>'
+  close:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  ticket:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3.5 9.2V7a1.5 1.5 0 0 1 1.5-1.5h14A1.5 1.5 0 0 1 20.5 7v2.2a2.8 2.8 0 0 0 0 5.6V17a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 17v-2.2a2.8 2.8 0 0 0 0-5.6z"/><path d="M14 6v12" stroke-dasharray="2 2.6"/></svg>',
+  calgrid:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.2" y="5" width="17.6" height="16" rx="4"/><path d="M8 3v4M16 3v4M3.2 10.5h17.6"/><circle cx="8.4" cy="14.6" r="1.15" fill="currentColor" stroke="none"/><circle cx="12" cy="14.6" r="1.15" fill="currentColor" stroke="none"/><circle cx="15.6" cy="14.6" r="1.15" fill="currentColor" stroke="none"/></svg>',
+  play:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.6v12.8a1 1 0 0 0 1.5.87l10.4-6.4a1 1 0 0 0 0-1.74L9.5 4.73A1 1 0 0 0 8 5.6z"/></svg>',
+  instagram:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.1" cy="6.9" r="1.15" fill="currentColor" stroke="none"/></svg>',
+  tiktok:'<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 3h-2.7v11.4a2.3 2.3 0 1 1-2.3-2.3c.24 0 .47.04.69.11V9.4a5.2 5.2 0 0 0-.69-.05 5.05 5.05 0 1 0 5.05 5.05V8.9a6.4 6.4 0 0 0 3.75 1.2V7.4A3.75 3.75 0 0 1 16.4 3z"/></svg>',
+  facebook:'<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13.6 21v-8.2h2.75l.41-3.19H13.6V7.57c0-.92.26-1.55 1.58-1.55h1.69V3.17c-.29-.04-1.3-.13-2.47-.13-2.44 0-4.11 1.49-4.11 4.23v2.34H7.53v3.19h2.76V21z"/></svg>',
+  mail:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="2.8" y="5" width="18.4" height="14" rx="3.4"/><path d="m3.6 7.6 7.35 5.05a1.85 1.85 0 0 0 2.1 0L20.4 7.6"/></svg>'
 };
-const NAV = [["/","Home","home"],["/reviews","Reviews","star"],["/events","Events","cal"],["/about","About","info"]];
+const NAV = [["/","Home","home"],["/movies","Movies","star"],["/events","Events","ticket"],
+             ["/calendar","Calendar","calgrid"],["/about","About","info"]];
+const MONTH = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
 function score(v, size){
   const n = num(v); if(n === null) return "";
   return '<span class="score '+(size||"")+'"><b>'+(Number.isInteger(n)?n:n.toFixed(1))+'</b><i>/10</i></span>';
 }
+/* Either a score or an Upcoming badge, never both. */
+function mark(r, size){
+  if(rated(r)) return score(r.rating, size);
+  if(unreleased(r)) return '<span class="badge '+(size||"")+'">Upcoming</span>';
+  return "";
+}
 function poster(r, withScore){
   const ph = '<div class="ph">'+esc((r.title||"KD").slice(0,2).toUpperCase())+'</div>';
   const img = r.poster_url ? '<img src="'+esc(r.poster_url)+'" alt="'+esc(r.title)+'" loading="lazy" onerror="this.remove()">' : "";
-  return '<div class="poster">'+ph+img+(withScore ? score(r.rating,"sm") : "")+'</div>';
+  return '<div class="poster">'+ph+img+(withScore ? mark(r,"sm") : "")+'</div>';
 }
 function card(r){
+  const line = unreleased(r)
+    ? '<span style="color:var(--red-bright)">In cinemas ' + fmtDate(r.release_date) + '</span>'
+    : dots([r.year, r.language, runtime(r.runtime_min)]);
   return '<a class="card" href="#/review/'+slugOf(r)+'">'+poster(r,true)+
-    '<h3>'+esc(r.title)+'</h3><div class="meta">'+dots([r.year,r.language,runtime(r.runtime_min)])+'</div></a>';
+    '<h3>'+esc(r.title)+'</h3><div class="meta">'+line+'</div></a>';
 }
 function media(url){
-  return url ? '<div class="slide-media" style="background-image:url('+esc(url)+')"></div>' : '<div class="slide-fallback"></div>';
+  return url ? '<div class="slide-media" style="background-image:'+bg(url)+'"></div>' : '<div class="slide-fallback"></div>';
 }
 
 /* ===================== CAROUSEL ===================== */
@@ -440,10 +502,18 @@ function initCarousels(){
   document.querySelectorAll("[data-carousel]").forEach(c => {
     const track = c.querySelector(".track"), dots = [...c.querySelectorAll(".dots button")];
     if(!track.children.length) return;
-    const idx = () => Math.round(track.scrollLeft / track.clientWidth);
+    const at = i => track.children[i].offsetLeft - track.children[0].offsetLeft;
+    const idx = () => {
+      let best = 0, min = Infinity;
+      for(let i = 0; i < track.children.length; i++){
+        const d = Math.abs(at(i) - track.scrollLeft);
+        if(d < min){ min = d; best = i; }
+      }
+      return best;
+    };
     const go = i => {
       const n = track.children.length;
-      track.scrollTo({ left: ((i % n) + n) % n * track.clientWidth, behavior: "smooth" });
+      track.scrollTo({ left: at(((i % n) + n) % n), behavior: "smooth" });
     };
     let timer, paused = false;
     const sync = () => dots.forEach((d,i) => d.classList.toggle("on", i === idx()));
@@ -451,8 +521,10 @@ function initCarousels(){
     dots.forEach((d,i) => d.addEventListener("click", () => go(i)));
     c.querySelector(".prev")?.addEventListener("click", () => go(idx()-1));
     c.querySelector(".next")?.addEventListener("click", () => go(idx()+1));
-    ["pointerenter","pointerdown","focusin"].forEach(ev => c.addEventListener(ev, () => paused = true));
-    ["pointerleave","focusout"].forEach(ev => c.addEventListener(ev, () => paused = false));
+    let resume;
+    const hold = () => { paused = true; clearTimeout(resume); resume = setTimeout(() => paused = false, 9000); };
+    ["pointerenter","pointerdown","focusin","touchstart"].forEach(ev => c.addEventListener(ev, hold, { passive:true }));
+    ["pointerleave","focusout"].forEach(ev => c.addEventListener(ev, () => { clearTimeout(resume); paused = false; }));
     if(track.children.length > 1 && !matchMedia("(prefers-reduced-motion: reduce)").matches){
       timer = setInterval(() => { if(!paused) go(idx()+1); }, 6500);
       TIMERS.push(timer);
@@ -512,7 +584,7 @@ function openEvent(i){
     ["Where", [e.venue, e.city].filter(Boolean).join(", ")], ["Type", e.category], ["Price", e.price]].filter(([,v]) => v);
   document.getElementById("sheetInner").innerHTML =
     '<button class="sheet-close" id="sheetClose" aria-label="Close">'+ICON.close+'</button>'+
-    '<div class="sheet-banner"'+(e.banner_url || e.poster_url ? ' style="background-image:url('+esc(e.banner_url || e.poster_url)+')"' : "")+'></div>'+
+    '<div class="sheet-banner"'+(e.banner_url || e.poster_url ? ' style="background-image:'+bg(e.banner_url || e.poster_url)+'"' : "")+'></div>'+
     '<div class="sheet-body">'+(e.category ? '<span class="pill hot">'+esc(e.category)+'</span>' : "")+
       '<h2 id="sheetTitle" style="font-size:clamp(23px,3.4vw,32px);margin:4px 0 0">'+esc(e.title)+'</h2>'+
       '<dl class="list">'+facts.map(([k,v]) => '<div class="list-row"><dt>'+k+'</dt><dd>'+esc(v)+'</dd></div>').join("")+'</dl>'+
@@ -520,17 +592,45 @@ function openEvent(i){
       (e.ticket_url ? '<div class="actions"><a class="btn prominent" href="'+esc(e.ticket_url)+'" target="_blank" rel="noopener">Get tickets</a></div>' : "")+
     '</div>';
   const b = document.getElementById("sheet");
-  b.hidden = false; document.body.classList.add("locked");
+  b.hidden = false;
+  lockScroll(true);
   requestAnimationFrame(() => b.classList.add("open"));
   document.getElementById("sheetClose").focus();
   document.getElementById("sheetClose").addEventListener("click", closeEvent);
 }
 function closeEvent(){
   const b = document.getElementById("sheet");
-  b.classList.remove("open"); document.body.classList.remove("locked");
+  if(b.hidden) return;
+  b.classList.remove("open");
+  lockScroll(false);
   setTimeout(() => { b.hidden = true; }, 340);
   lastFocus?.focus();
 }
+
+let heldY = 0;
+function lockScroll(on){
+  const body = document.body;
+  if(on){
+    heldY = window.scrollY;
+    body.style.top = -heldY + "px";
+    body.classList.add("locked");
+  }else if(body.classList.contains("locked")){
+    body.classList.remove("locked");
+    body.style.top = "";
+    window.scrollTo(0, heldY);
+  }
+}
+
+/* keyboard focus stays inside the sheet while it is open */
+addEventListener("keydown", e => {
+  const b = document.getElementById("sheet");
+  if(e.key !== "Tab" || b.hidden) return;
+  const items = b.querySelectorAll("button, a[href]");
+  if(!items.length) return;
+  const first = items[0], last = items[items.length - 1];
+  if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+  else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+});
 document.getElementById("sheet").addEventListener("click", e => { if(e.target.id === "sheet") closeEvent(); });
 addEventListener("keydown", e => { if(e.key === "Escape" && !document.getElementById("sheet").hidden) closeEvent(); });
 document.addEventListener("click", e => {
@@ -548,17 +648,18 @@ function eventRow(e){
 }
 function reviewSlide(r){
   return '<a class="slide" href="#/review/'+slugOf(r)+'">'+media(r.banner_url || r.poster_url)+'<div class="slide-veil"></div>'+
-    '<div class="slide-card glass"><p class="eyebrow" style="color:#FF6B72">Featured review</p>'+
+    '<div class="slide-card glass"><p class="eyebrow" style="color:#FF6068">'+(unreleased(r) ? "Coming soon" : "Featured review")+'</p>'+
     '<h2 style="font-size:clamp(28px,4.6vw,46px)">'+esc(r.title)+'</h2>'+
-    '<div class="meta">'+dots([r.year,r.language,runtime(r.runtime_min)])+'</div>'+
-    '<div class="slide-row">'+score(r.rating,"lg")+
+    '<div class="meta">'+(unreleased(r) ? "In cinemas " + fmtDate(r.release_date)
+      : dots([r.year,r.language,runtime(r.runtime_min)]))+'</div>'+
+    '<div class="slide-row">'+mark(r,"lg")+
     (r.verdict ? '<span style="font-size:18px;font-weight:600;letter-spacing:-.02em">'+esc(r.verdict)+'</span>' : "")+
     '</div></div></a>';
 }
 function eventSlide(e){
   const i = state.events.indexOf(e);
   return '<button class="slide" data-event="'+i+'">'+media(e.banner_url || e.poster_url)+'<div class="slide-veil"></div>'+
-    '<div class="slide-card glass"><p class="eyebrow" style="color:#FF6B72">'+esc(e.category || "Featured event")+'</p>'+
+    '<div class="slide-card glass"><p class="eyebrow" style="color:#FF6068">'+esc(e.category || "Featured event")+'</p>'+
     '<h2 style="font-size:clamp(26px,4.2vw,42px)">'+esc(e.title)+'</h2>'+
     '<div class="meta">'+dots([fmtDate(e.date_start), e.time, e.venue, e.city])+'</div>'+
     '<div class="slide-row"><span class="btn prominent">View details</span>'+
@@ -574,11 +675,15 @@ const featured = (arr, fallbackAll) => {
 function pageHome(){
   const banners = featured(state.reviews, true).map(reviewSlide);
   const next = state.events.filter(upcoming).sort(byDate("date_start")).slice(0,3);
+  const reviewed = state.reviews.filter(r => !unreleased(r));
+  const soon = state.reviews.filter(unreleased).sort(byDate("release_date"));
   let h = banners.length ? '<div class="wrap">'+carousel(banners,"c-home")+'</div>' : "";
   h += '<div class="wrap"><section><div class="sec-head"><div><p class="eyebrow">Fresh from the hall</p><h2>Latest reviews</h2></div>'+
-    '<a href="#/reviews">See all</a></div>'+
-    (state.reviews.length ? '<div class="grid">'+state.reviews.slice(0,10).map(card).join("")+'</div>'
+    '<a href="#/movies">See all</a></div>'+
+    (reviewed.length ? '<div class="grid">'+reviewed.slice(0,10).map(card).join("")+'</div>'
       : '<div class="empty">Reviews are on the way. Check back shortly.</div>')+'</section>'+
+    (soon.length ? '<section><div class="sec-head"><div><p class="eyebrow">Release calendar</p><h2>Coming soon</h2></div>'+
+      '<a href="#/calendar">See dates</a></div><div class="grid">'+soon.slice(0,10).map(card).join("")+'</div></section>' : "")+
     '<section><div class="sec-head"><div><p class="eyebrow">Promotions</p><h2>What’s on</h2></div><a href="#/events">All events</a></div>'+
     (next.length ? '<div class="events">'+next.map(eventRow).join("")+'</div>'
       : '<div class="empty">No events listed right now.</div>')+'</section>'+
@@ -586,27 +691,43 @@ function pageHome(){
   return h;
 }
 
-function pageReviews(){
+function pageMovies(){
+  const reviewed = state.reviews.filter(r => !unreleased(r));
+  const soon = state.reviews.filter(unreleased).sort(byDate("release_date"));
   const banners = featured(state.reviews, false).map(reviewSlide);
-  const langs = [...new Set(state.reviews.map(r => r.language).filter(Boolean))].sort();
-  return '<div class="wrap">'+ (banners.length ? carousel(banners,"c-rev") : "") +
-    '<section style="padding-top:'+(banners.length ? "44px" : "24px")+'"><p class="eyebrow">Archive</p><h2 style="margin-bottom:24px">Reviews</h2>'+
-    '<div class="toolbar"><label class="search glass">'+ICON.search+
-      '<input id="q" type="search" placeholder="Search a title, director or actor" aria-label="Search reviews"></label>'+
-      segmented("sort",[["new","Newest"],["rating","Top rated"],["az","A–Z"]],"Sort reviews")+
-      (langs.length > 1 ? segmented("lang",[["","All"],...langs.map(l => [l,l])],"Filter by language") : "")+
-    '</div><div id="results" class="grid"></div></section></div>';
+  const langs = [...new Set(reviewed.map(r => r.language).filter(Boolean))].sort();
+
+  return '<div class="wrap">'+ (banners.length ? carousel(banners,"c-mov") : "") +
+    '<section style="padding-top:'+(banners.length ? "44px" : "24px")+'">'+
+      '<p class="eyebrow">Archive</p><h2>Movies</h2>'+
+      '<p class="sub" style="margin:10px 0 0">Reviews and upcoming movies.</p>'+
+    '</section>'+
+
+    '<section style="padding-top:10px"><div class="sec-head"><h2 style="font-size:26px">Reviews</h2>'+
+      '<span class="meta">'+reviewed.length+' film'+(reviewed.length === 1 ? "" : "s")+'</span></div>'+
+      '<div class="toolbar"><label class="search glass">'+ICON.search+
+        '<input id="q" type="search" placeholder="Search a title, director or actor" aria-label="Search reviews"></label>'+
+        segmented("sort",[["new","Newest"],["rating","Top rated"],["az","A–Z"]],"Sort reviews")+
+        (langs.length > 1 ? segmented("lang",[["","All"],...langs.map(l => [l,l])],"Filter by language") : "")+
+      '</div><div id="results" class="grid"></div></section>'+
+
+    '<section style="padding-top:10px"><div class="sec-head"><div><p class="eyebrow">Release calendar</p>'+
+      '<h2 style="font-size:26px">Upcoming</h2></div><a href="#/calendar">See dates</a></div>'+
+      (soon.length ? '<div class="grid">'+soon.map(card).join("")+'</div>'
+        : '<div class="empty">No films listed yet. They appear here as soon as a release date is set.</div>')+
+    '</section></div>';
 }
 const segValue = id => document.querySelector("#"+id+' [aria-pressed="true"]')?.dataset.v ?? "";
 function applyFilters(){
   const q = (document.getElementById("q")?.value || "").toLowerCase().trim();
   const lang = segValue("lang"), sort = segValue("sort") || "new";
-  let rows = state.reviews.filter(r =>
+  let rows = state.reviews.filter(r => !unreleased(r)).filter(r =>
     (!q || [r.title,r.director,r.cast,r.genres,r.year].join(" ").toLowerCase().includes(q)) &&
     (!lang || r.language === lang));
+  const when = r => parseDate(r.review_date)?.getTime() || parseDate(r.release_date)?.getTime() || 0;
   if(sort === "rating") rows.sort((a,b)=>(num(b.rating)||0)-(num(a.rating)||0));
   else if(sort === "az") rows.sort((a,b)=>String(a.title).localeCompare(String(b.title)));
-  else rows.sort((a,b)=>(parseDate(b.review_date)?.getTime()||0)-(parseDate(a.review_date)?.getTime()||0));
+  else rows.sort((a,b)=> when(b) - when(a));
   const el = document.getElementById("results");
   if(el) el.innerHTML = rows.length ? rows.map(card).join("")
     : '<div class="empty" style="grid-column:1/-1">Nothing matches that search. Try another title.</div>';
@@ -615,19 +736,29 @@ function applyFilters(){
 function pageReview(slug){
   const r = state.reviews.find(x => slugOf(x) === slug);
   if(!r) return notFound("That review isn’t available.");
+  const soon = unreleased(r);
   const facts = [["Director",r.director],["Producer",r.producer],["Cast",list(r.cast).join(", ")],
     ["Runtime",runtime(r.runtime_min)],["Genre",list(r.genres).join(", ")],["Language",r.language],
-    ["Year",r.year],["Watch on",r.watch_on]].filter(([,v]) => v);
+    ["In cinemas", r.release_date ? fmtDate(r.release_date) : ""],
+    ["Year", r.release_date ? "" : r.year],["Watch on",r.watch_on]].filter(([,v]) => v);
+  const clips = [["Watch trailer", r.trailer_url, "prominent"], ["Watch teaser", r.teaser_url, "quiet"]]
+    .filter(([,u]) => u)
+    .map(([label,u,style]) => '<a class="btn '+style+'" href="'+esc(u)+'" target="_blank" rel="noopener">'+
+      ICON.play+label+'</a>').join("");
   const body = String(r.review_body || r.synopsis || "").split(/\n+/).filter(Boolean).map(p => "<p>"+esc(p)+"</p>").join("");
-  return '<div class="wrap rise"><section style="padding-top:20px"><a class="back" href="#/reviews">'+ICON.left+'Reviews</a>'+
+  return '<div class="wrap rise"><section style="padding-top:20px"><a class="back" href="#/movies">'+ICON.left+'Movies</a>'+
     '<div class="detail"><div>'+poster(r,false)+
-      '<div style="margin-top:18px">'+score(r.rating,"lg")+'</div>'+
+      '<div style="margin-top:18px">'+mark(r,"lg")+'</div>'+
       (r.verdict ? '<div style="font-size:19px;font-weight:600;letter-spacing:-.02em;margin-top:14px">'+esc(r.verdict)+'</div>' : "")+
-    '</div><div><p class="eyebrow">Kaydee review</p>'+
+    '</div><div><p class="eyebrow">'+(soon ? "Coming soon" : "Kaydee review")+'</p>'+
       '<h1 style="font-size:clamp(32px,5vw,52px);margin-bottom:12px">'+esc(r.title)+'</h1>'+
-      '<div class="meta">'+dots([r.year,r.language,runtime(r.runtime_min),r.review_date?fmtDate(r.review_date):""])+'</div>'+
+      '<div class="meta">'+(soon ? '<span style="color:var(--red-bright)">In cinemas ' + fmtDate(r.release_date) + '</span>'
+        : dots([r.year,r.language,runtime(r.runtime_min),r.review_date?fmtDate(r.review_date):""]))+'</div>'+
+      (clips ? '<div class="actions" style="margin-top:20px">'+clips+'</div>' : "")+
       '<dl class="list" style="margin:26px 0">'+facts.map(([k,v]) => '<div class="list-row"><dt>'+k+'</dt><dd>'+esc(v)+'</dd></div>').join("")+'</dl>'+
-      '<div class="prose">'+body+'</div></div></div></section></div>';
+      '<div class="prose">'+body+'</div>'+
+      (soon && !r.review_body ? '<p class="meta" style="margin-top:18px">The Kaydee review lands once the film opens.</p>' : "")+
+      '</div></div></section></div>';
 }
 
 function pageEvents(){
@@ -643,6 +774,78 @@ function pageEvents(){
     '<div class="events" style="opacity:.62">'+past.slice(0,8).map(eventRow).join("")+'</div>';
   h += '<div class="actions" style="margin-top:34px"><a class="btn quiet" href="mailto:'+esc(CONFIG.EMAIL)+'">Promote your event with us</a></div>';
   return h + '</section></div>';
+}
+
+/* ===================== CALENDAR ===================== */
+let calCursor = null, calPick = null;
+
+function calendarMap(){
+  const map = {};
+  const put = (k, v) => { (map[k] = map[k] || []).push(v); };
+  state.reviews.forEach(r => { const d = parseDate(r.release_date); if(d) put(dayKey(d), { kind:"film", r }); });
+  state.events.forEach(e => {
+    const a = parseDate(e.date_start); if(!a) return;
+    const b = parseDate(e.date_end) || a;
+    for(let d = new Date(a); d <= b; d.setDate(d.getDate() + 1)) put(dayKey(d), { kind:"event", e });
+  });
+  return map;
+}
+function filmRow(r){
+  const thumb = r.poster_url
+    ? '<img src="'+esc(r.poster_url)+'" alt="" loading="lazy" onerror="this.remove()">'
+    : ICON.star;
+  return '<a class="ev" href="#/review/'+slugOf(r)+'"><span class="thumb">'+thumb+'</span><div>'+
+    '<span class="pill hot">'+(unreleased(r) ? "Release" : "Released")+'</span>'+
+    '<h3>'+esc(r.title)+'</h3><div class="meta">'+dots([r.language, runtime(r.runtime_min), list(r.genres).join(", ")])+
+    '</div></div><span class="chev">'+ICON.right+'</span></a>';
+}
+const dayRow = it => it.kind === "film" ? filmRow(it.r) : eventRow(it.e);
+
+function pageCalendar(){
+  const map = calendarMap(), now = new Date();
+  if(!calCursor) calCursor = new Date(now.getFullYear(), now.getMonth(), 1);
+  const y = calCursor.getFullYear(), m = calCursor.getMonth();
+  const lead = new Date(y, m, 1).getDay(), len = new Date(y, m + 1, 0).getDate();
+  const nowKey = dayKey(now);
+
+  let cells = "";
+  for(let i = 0; i < lead; i++) cells += '<div class="cal-cell empty"></div>';
+  const monthKeys = [];
+  for(let d = 1; d <= len; d++){
+    const key = y + "-" + String(m+1).padStart(2,"0") + "-" + String(d).padStart(2,"0");
+    const items = map[key] || [];
+    if(items.length) monthKeys.push(key);
+    const marks = items.slice(0,3).map(i => '<i class="'+(i.kind === "event" ? "evt" : "")+'"></i>').join("");
+    cells += '<button class="cal-cell'+(items.length ? " has" : " none")+(key === nowKey ? " today" : "")+
+      (key === calPick ? " on" : "")+'"'+(items.length ? ' data-day="'+key+'"' : " disabled")+
+      ' aria-label="'+d+" "+MONTH[m]+(items.length ? ", "+items.length+" listed" : "")+'">'+d+
+      '<span class="marks">'+marks+'</span></button>';
+  }
+
+  const picked = calPick && map[calPick] ? map[calPick] : null;
+  const monthAll = monthKeys.flatMap(k => map[k]);
+  const films = monthAll.filter(i => i.kind === "film").length;
+  const evs = monthAll.filter(i => i.kind === "event").length;
+
+  const listHead = picked
+    ? '<div class="sec-head"><h2 style="font-size:22px">'+fmtDate(calPick)+'</h2>'+
+      '<a href="#/calendar" data-cal="clear">Show the month</a></div>'
+    : '<div class="sec-head"><h2 style="font-size:22px">'+MONTH[m]+' at a glance</h2></div>';
+  const rows = (picked || monthAll);
+
+  return '<div class="wrap rise"><section><p class="eyebrow">What is on when</p><h2>Calendar</h2>'+
+    '<p class="sub" style="margin:10px 0 26px">Film releases and events, day by day. Tap a date to see what is listed.</p>'+
+    '<div class="cal"><div class="cal-top"><h3>'+MONTH[m]+' '+y+'</h3><div class="cal-nav">'+
+      '<button data-cal="-1" aria-label="Previous month">'+ICON.left+'</button>'+
+      '<button class="today" data-cal="today">Today</button>'+
+      '<button data-cal="1" aria-label="Next month">'+ICON.right+'</button></div></div>'+
+    '<div class="cal-dow">'+["S","M","T","W","T","F","S"].map(d => '<span>'+d+'</span>').join("")+'</div>'+
+    '<div class="cal-grid">'+cells+'</div>'+
+    '<div class="legend"><span><i></i>'+films+' film release'+(films === 1 ? "" : "s")+'</span>'+
+    '<span><i class="evt"></i>'+evs+' event'+(evs === 1 ? "" : "s")+'</span></div></div>'+
+    '<div style="margin-top:34px">'+listHead+
+    (rows.length ? '<div class="events">'+rows.map(dayRow).join("")+'</div>'
+      : '<div class="empty">Nothing listed for '+MONTH[m]+' yet.</div>')+'</div></section></div>';
 }
 
 function board(){
@@ -666,30 +869,57 @@ function notFound(m){
 }
 
 /* ===================== ROUTER ===================== */
-function render(){
+function render(keepScroll){
   const [, seg, param] = (location.hash.replace(/^#/,"") || "/").split("/");
   let html, key = "/" + (seg || "");
+  if(seg === "reviews"){ location.replace("#/movies"); return; }   // old links keep working
   if(!seg) html = pageHome();
-  else if(seg === "reviews") html = pageReviews();
+  else if(seg === "movies") html = pageMovies();
   else if(seg === "review") html = pageReview(param || "");
   else if(seg === "events") html = pageEvents();
+  else if(seg === "calendar") html = pageCalendar();
   else if(seg === "about") html = pageAbout();
   else { html = notFound("That page doesn’t exist."); key = ""; }
 
   document.getElementById("app").innerHTML = html;
   document.querySelectorAll(".tabs a, .tabbar a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#"+key));
   document.title = "Kaydee.my — Indian Cinema Portal";
-  scrollTo(0,0);
-  if(seg === "reviews"){ applyFilters(); wireSegments(applyFilters); document.getElementById("q").addEventListener("input", applyFilters); }
+  if(!keepScroll) scrollTo(0,0);
+  if(seg === "calendar") wireCalendar();
+  if(seg === "movies"){ applyFilters(); wireSegments(applyFilters); document.getElementById("q").addEventListener("input", applyFilters); }
   initCarousels();
+}
+
+function wireCalendar(){
+  document.querySelectorAll("[data-cal]").forEach(b => b.addEventListener("click", e => {
+    e.preventDefault();
+    const v = b.dataset.cal;
+    if(v === "today"){
+      const n = new Date();
+      calCursor = new Date(n.getFullYear(), n.getMonth(), 1);
+      calPick = dayKey(n);
+    }else if(v === "clear"){
+      calPick = null;
+    }else{
+      calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() + Number(v), 1);
+      calPick = null;
+    }
+    render(true);
+  }));
+  document.querySelectorAll("[data-day]").forEach(b => b.addEventListener("click", () => {
+    calPick = calPick === b.dataset.day ? null : b.dataset.day;
+    render(true);
+  }));
 }
 
 /* ===================== CHROME ===================== */
 document.getElementById("tabs").innerHTML = NAV.map(([h,l]) => '<a href="#'+h+'">'+l+'</a>').join("");
 document.getElementById("tabbar").innerHTML = NAV.map(([h,l,i]) => '<a href="#'+h+'">'+ICON[i]+'<span>'+l+'</span></a>').join("");
 document.getElementById("social").innerHTML =
-  [["Instagram",CONFIG.INSTAGRAM],["TikTok",CONFIG.TIKTOK],["Facebook",CONFIG.FACEBOOK],["Email","mailto:"+CONFIG.EMAIL]]
-  .map(([n,u]) => '<a href="'+u+'" target="_blank" rel="noopener">'+n+'</a>').join("");
+  [["Instagram", CONFIG.INSTAGRAM, "instagram"], ["TikTok", CONFIG.TIKTOK, "tiktok"],
+   ["Facebook", CONFIG.FACEBOOK, "facebook"], ["Email", "mailto:" + CONFIG.EMAIL, "mail"]]
+  .map(([name, url, icon]) => '<a href="'+url+'" target="_blank" rel="noopener" title="'+name+
+    '" aria-label="Kaydee.my on '+name+'">'+ICON[icon]+'</a>').join("");
 document.getElementById("yr").textContent = new Date().getFullYear();
 
 let mode = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
@@ -707,7 +937,7 @@ addEventListener("scroll", () => {
   bar.classList.toggle("min", y > lastY && y > 180);
   lastY = y;
 }, { passive:true });
-addEventListener("hashchange", render);
+addEventListener("hashchange", () => { closeEvent(); render(); });
 
 /* ===================== SAMPLE CONTENT (preview only) ===================== */
 const SAMPLE = {
@@ -731,8 +961,17 @@ const SAMPLE = {
       synopsis:"A romance with two good scenes and a long wait between them." },
     { title:"Manjummel Route", year:"2026", language:"Malayalam", rating:"8.5", verdict:"Good",
       director:"Sample Director", cast:"Ensemble Cast", runtime_min:"139", genres:"Survival, Thriller", review_date:"2026-07-04",
-      synopsis:"A survival thriller built on friendship." }
+      synopsis:"A survival thriller built on friendship." },
+    { title:"Idhaya Kanmani", year:"2026", language:"Tamil", release_date:"2026-10-16", featured:"TRUE",
+      director:"Sample Director", producer:"Sample Productions", cast:"Lead Actor, Lead Actress",
+      runtime_min:"146", genres:"Drama, Romance", trailer_url:"https://www.youtube.com", teaser_url:"https://www.youtube.com",
+      synopsis:"An unreleased film. It carries an Upcoming badge instead of a score until the rating column is filled in." },
+    { title:"Nilavu Nagaram", year:"2026", language:"Malayalam", release_date:"2026-11-06",
+      director:"Sample Director", cast:"Ensemble Cast", runtime_min:"133", genres:"Thriller",
+      trailer_url:"https://www.youtube.com",
+      synopsis:"Another film awaiting release, listed on the calendar by its release date." }
   ],
+  upcomingSample: true,
   events: [
     { title:"Vetri Kodi — Premiere night", date_start:"2026-09-12", time:"8:30 PM", venue:"GSC Mid Valley", city:"Kuala Lumpur",
       category:"Premiere", price:"RM 25", featured:"TRUE",
