@@ -20,7 +20,12 @@
 <script>
 /* Site settings */
 const CONFIG = {
-  DATA_FILE: "data.json",
+  /* Content source. Paste the /exec address of the published web app here.
+     It must end in /exec, not /dev. */
+  SOURCE: "https://script.google.com/macros/s/AKfycbyN7bHUe9qkKvYOGsDRD7AM4PyQnrewktxmllqMEHvORKVxO6jX-VO8B3lZdBL0wrS7/exec",
+
+  LOGO: "logo.png",
+
   INSTAGRAM: "https://www.instagram.com/kaydee.my/",
   TIKTOK: "https://www.tiktok.com/@kaydee.my",
   FACEBOOK: "https://www.facebook.com/Kaydee.my",
@@ -110,13 +115,17 @@ p{margin:0 0 15px}
 .topbar{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;
   gap:6px;padding:7px 7px 7px 15px;border-radius:999px;width:min(calc(100% - 26px),var(--max))}
 .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;letter-spacing:-.02em}
-.mark{width:30px;height:30px;border-radius:50%;flex:none;
-  background:url("logo.png") center/cover no-repeat,
-             radial-gradient(circle at 32% 28%,#FF3742,var(--red) 55%,var(--red-deep));
+/* The whole logo is shown, never cropped. Falls back to a clean red disc
+   if the file is ever missing, so nothing can look broken. */
+.mark{width:34px;height:30px;border-radius:50%;flex:none;
+  background:radial-gradient(circle at 32% 28%,#FF3742,var(--red) 55%,var(--red-deep)) center/cover no-repeat;
   box-shadow:0 2px 8px rgba(243,2,25,.42)}
+html.has-logo .mark{width:auto;height:26px;aspect-ratio:var(--logo-ar,1);max-width:132px;
+  background:var(--logo) center/contain no-repeat;border-radius:0;box-shadow:none}
 .brand:hover .mark{transform:scale(1.06)}
 .mark,.brand .mark{transition:transform .4s var(--bounce)}
-footer .mark{width:34px;height:34px}
+footer .mark{width:38px;height:34px}
+html.has-logo footer .mark{width:auto;height:30px;max-width:150px}
 .tabs{display:flex;gap:7px;margin-left:auto;margin-right:4px}
 .tabs a{padding:7px 15px;border-radius:999px;font-size:14.5px;font-weight:500;color:var(--text-2);
   transition:background .32s var(--spring),color .22s}
@@ -412,23 +421,66 @@ footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
 
 <script>
 /* ===================== DATA =====================
-   Content is baked into data.json when the site is published, so a visit is a
-   single static file read. No live lookups, nothing to expire, nothing to clear.
+   A visitor reads the copy already held on their own device. The site asks the
+   source only for a short version stamp, and pulls the full content again only
+   when that stamp has moved, which happens when changes are published.
    ================================================ */
 const state = { reviews: [], events: [] };
 
-async function loadData(){
+const STORE_KEY = "kd_content_v1";
+
+function readStore(){
+  try{ return JSON.parse(localStorage.getItem(STORE_KEY) || "null"); }catch(e){ return null; }
+}
+function writeStore(obj){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(obj)); }catch(e){}
+}
+function apply(d){
+  const rev = Array.isArray(d && d.reviews) ? d.reviews : [];
+  const evt = Array.isArray(d && d.events)  ? d.events  : [];
+  if(!rev.length && !evt.length) return false;
+  state.reviews = rev; state.events = evt;
+  return true;
+}
+async function grab(url, ms){
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), ms || 9000);
   try{
-    const res = await fetch(CONFIG.DATA_FILE, { cache: "no-cache" });
+    const res = await fetch(url, { signal: ctl.signal, redirect: "follow" });
     if(!res.ok) throw 0;
-    const d = await res.json();
-    state.reviews = Array.isArray(d.reviews) ? d.reviews : [];
-    state.events  = Array.isArray(d.events)  ? d.events  : [];
-    if(!state.reviews.length && !state.events.length) throw 0;
-  }catch(err){
-    state.reviews = SAMPLE.reviews;   // local preview before the first publish
-    state.events  = SAMPLE.events;
+    return await res.json();
+  } finally { clearTimeout(t); }
+}
+
+async function loadData(){
+  const ready = String(CONFIG.SOURCE || "").indexOf("PASTE_YOUR") === -1;
+  const cached = readStore();
+
+  /* Show whatever is already on the device straight away. */
+  let painted = cached ? apply(cached.data) : false;
+  if(painted) render();
+
+  if(!ready){
+    if(!painted){ state.reviews = SAMPLE.reviews; state.events = SAMPLE.events; }
+    return;
   }
+
+  try{
+    const stamp = await grab(CONFIG.SOURCE + "?route=version", 7000);
+    const version = String((stamp && stamp.version) || "0");
+
+    if(painted && cached && String(cached.version) === version) return;  /* nothing new */
+
+    const fresh = await grab(CONFIG.SOURCE + "?route=all&v=" + encodeURIComponent(version), 12000);
+    if(apply(fresh)){
+      painted = true;
+      writeStore({ version: version, data: { reviews: state.reviews, events: state.events } });
+    }
+  }catch(err){
+    /* Offline, or the source is unreachable. Keep showing what is already here. */
+  }
+
+  if(!painted){ state.reviews = SAMPLE.reviews; state.events = SAMPLE.events; }
 }
 
 /* ===================== HELPERS ===================== */
@@ -993,6 +1045,20 @@ document.getElementById("social").innerHTML =
   .map(([name, url, icon]) => '<a href="'+url+'" target="_blank" rel="noopener" title="'+name+
     '" aria-label="Kaydee.my on '+name+'">'+ICON[icon]+'</a>').join("");
 document.getElementById("yr").textContent = new Date().getFullYear();
+
+/* Measure the logo so it is shown whole at its own proportions. */
+function fitLogo(){
+  const probe = new Image();
+  probe.onload = () => {
+    const ar = probe.naturalWidth / probe.naturalHeight;
+    document.documentElement.style.setProperty("--logo", 'url("' + CONFIG.LOGO + '")');
+    document.documentElement.style.setProperty("--logo-ar", (ar || 1).toFixed(4));
+    document.documentElement.classList.add("has-logo");
+  };
+  probe.onerror = () => document.documentElement.classList.remove("has-logo");
+  probe.src = CONFIG.LOGO;
+}
+fitLogo();
 
 let mode = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
 function setTheme(m){
