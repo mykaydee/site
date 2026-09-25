@@ -446,7 +446,9 @@ async function grab(url, ms){
   const ctl = new AbortController();
   const t = setTimeout(() => ctl.abort(), ms || 9000);
   try{
-    const res = await fetch(url, { signal: ctl.signal, redirect: "follow" });
+    /* no-store matters on the stamp request. Without it the browser can keep
+       answering from its own copy and never notice that something was published. */
+    const res = await fetch(url, { signal: ctl.signal, redirect: "follow", cache: "no-store" });
     if(!res.ok) throw 0;
     return await res.json();
   } finally { clearTimeout(t); }
@@ -466,14 +468,18 @@ async function loadData(){
   }
 
   try{
-    const stamp = await grab(CONFIG.SOURCE + "?route=version", 7000);
+    const stamp = await grab(CONFIG.SOURCE + "?route=version&t=" + Date.now(), 7000);
     const version = String((stamp && stamp.version) || "0");
 
-    if(painted && cached && String(cached.version) === version) return;  /* nothing new */
+    if(painted && cached && String(cached.version) === version){
+      seenVersion = version;
+      return;                                    /* nothing new */
+    }
 
     const fresh = await grab(CONFIG.SOURCE + "?route=all&v=" + encodeURIComponent(version), 12000);
     if(apply(fresh)){
       painted = true;
+      seenVersion = version;
       writeStore({ version: version, data: { reviews: state.reviews, events: state.events } });
     }
   }catch(err){
@@ -482,6 +488,27 @@ async function loadData(){
 
   if(!painted){ state.reviews = SAMPLE.reviews; state.events = SAMPLE.events; }
 }
+
+/* Look again when the tab is brought back to the front, so a page left open
+   picks up a publish without needing a reload. Throttled to once a minute. */
+let seenVersion = null, lastLook = 0;
+async function refresh(){
+  if(String(CONFIG.SOURCE || "").indexOf("PASTE_YOUR") !== -1) return;
+  if(Date.now() - lastLook < 60000) return;
+  lastLook = Date.now();
+  try{
+    const stamp = await grab(CONFIG.SOURCE + "?route=version&t=" + Date.now(), 7000);
+    const version = String((stamp && stamp.version) || "0");
+    if(version === seenVersion) return;
+    const fresh = await grab(CONFIG.SOURCE + "?route=all&v=" + encodeURIComponent(version), 12000);
+    if(apply(fresh)){
+      seenVersion = version;
+      writeStore({ version: version, data: { reviews: state.reviews, events: state.events } });
+      render(true);
+    }
+  }catch(err){}
+}
+addEventListener("visibilitychange", () => { if(!document.hidden) refresh(); });
 
 /* ===================== HELPERS ===================== */
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -499,14 +526,23 @@ const parseDate = v => {
 const fmtDate = v => { const d = parseDate(v); return d ? d.getDate()+" "+MON[d.getMonth()]+" "+d.getFullYear() : esc(v||""); };
 const runtime = m => { const n = num(m); return n ? Math.floor(n/60)+" hr "+(n%60)+" min" : ""; };
 const dots = a => a.filter(Boolean).map(esc).join(" · ");
-const bg = u => 'url("' + esc(String(u).replace(/"/g, "%22")) + '")';   // safe inside a style attribute
+/* Single quotes inside url(), because this sits in a double quoted style
+   attribute. Double quotes here would close the attribute early. */
+const bg = u => "url('" + esc(String(u).replace(/'/g, "%27")) + "')";
 const isFeatured = x => ["true","yes","1","y"].includes(String(x.featured||"").trim().toLowerCase());
 const upcoming = e => { const d = parseDate(e.date_end || e.date_start); return !d || d.getTime() >= Date.now() - 864e5; };
 const byDate = k => (a,b) => (parseDate(a[k])?.getTime()||0) - (parseDate(b[k])?.getTime()||0);
 const today0 = () => { const d = new Date(); d.setHours(0,0,0,0); return d.getTime(); };
 /* A film with a release date still ahead of us is upcoming; it becomes a normal
    review the moment a rating is filled in. */
-const unreleased = r => { const d = parseDate(r.release_date); return !!d && d.getTime() > today0(); };
+/* A film sits under Upcoming until there is something to read: a score or a
+   written review. A release date still ahead keeps it there regardless. */
+const hasReview = r => num(r.rating) !== null || String(r.review_body || "").trim() !== "";
+const unreleased = r => {
+  const d = parseDate(r.release_date);
+  if(d && d.getTime() > today0()) return true;
+  return !hasReview(r);
+};
 const rated = r => num(r.rating) !== null;
 const dayKey = d => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
 
@@ -549,14 +585,19 @@ function poster(r, withScore){
   return '<div class="poster">'+ph+img+(withScore ? mark(r,"sm") : "")+'</div>';
 }
 function card(r){
-  const line = unreleased(r)
-    ? '<span style="color:var(--red-bright)">In cinemas ' + fmtDate(r.release_date) + '</span>'
+  const soon = unreleased(r);
+  const when = r.release_date ? fmtDate(r.release_date) : "";
+  const line = soon
+    ? '<span style="color:var(--red-bright)">' + (when ? "In cinemas " + when : "Date to be announced") + '</span>'
     : dots([r.year, r.language, runtime(r.runtime_min)]);
   return '<a class="card" href="#/review/'+slugOf(r)+'">'+poster(r,true)+
     '<h3>'+esc(r.title)+'</h3><div class="meta">'+line+'</div></a>';
 }
 function media(url){
-  return url ? '<div class="slide-media" style="background-image:'+bg(url)+'"></div>' : '<div class="slide-fallback"></div>';
+  if(!url) return '<div class="slide-fallback"></div>';
+  /* The gradient sits underneath, so a picture that fails to load still reads
+     as a designed panel rather than an empty box. */
+  return '<div class="slide-fallback"></div><div class="slide-media" style="background-image:'+bg(url)+'"></div>';
 }
 
 /* ===================== CAROUSEL ===================== */
@@ -861,7 +902,8 @@ function pageReview(slug){
       (r.verdict ? '<div style="font-size:19px;font-weight:600;letter-spacing:-.02em;margin-top:14px">'+esc(r.verdict)+'</div>' : "")+
     '</div><div><p class="eyebrow">'+(soon ? "Coming soon" : "Kaydee review")+'</p>'+
       '<h1 style="font-size:clamp(32px,5vw,52px);margin-bottom:12px">'+esc(r.title)+'</h1>'+
-      '<div class="meta">'+(soon ? '<span style="color:var(--red-bright)">In cinemas ' + fmtDate(r.release_date) + '</span>'
+      '<div class="meta">'+(soon
+        ? '<span style="color:var(--red-bright)">'+(r.release_date ? "In cinemas "+fmtDate(r.release_date) : "Date to be announced")+'</span>'
         : dots([r.year,r.language,runtime(r.runtime_min),r.review_date?fmtDate(r.review_date):""]))+'</div>'+
       (clips ? '<div class="actions" style="margin-top:20px">'+clips+'</div>' : "")+
       '<dl class="list" style="margin:26px 0">'+facts.map(([k,v]) => '<div class="list-row"><dt>'+k+'</dt><dd>'+esc(v)+'</dd></div>').join("")+'</dl>'+
