@@ -402,44 +402,122 @@ html::-webkit-scrollbar,body::-webkit-scrollbar,.scroller::-webkit-scrollbar{wid
 @media (prefers-reduced-motion: reduce){ .rail,.rail-thumb{transition:none} }
 
 /* ===================== LIQUID LOADER =====================
-   A drop falls, the surface takes it, rings spread. Nothing is implied about
-   the content that is coming, which is the point.
+   One body of liquid. The drop gathers at the spout, the neck thins and
+   snaps, it falls under gravity, and the surface takes it: crown, two
+   escaping beads, a rebound, and rings. The merging is done by an SVG
+   filter, which is what stops it reading as a circle sliding downward.
    ========================================================= */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
   clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .load{min-height:clamp(320px,52vh,520px);display:grid;place-items:center;text-align:center;padding:40px 24px}
-.liquid{position:relative;width:170px;height:150px;margin:0 auto;display:grid;place-items:center}
+.liquid{position:relative;width:176px;height:212px;margin:0 auto;isolation:isolate}
+.liquid-svg{position:relative;width:100%;height:100%;overflow:visible;z-index:1}
+.liquid-svg *{transform-box:fill-box;transform-origin:center}
 
-.liquid .pool{position:absolute;left:50%;bottom:26px;translate:-50% 0;width:96px;height:13px;border-radius:50%;
-  background:radial-gradient(60% 100% at 50% 50%,var(--red),rgba(243,2,25,.22) 72%,transparent);
-  animation:pool 1.9s var(--spring) infinite}
-.liquid .drop{position:absolute;left:50%;top:6px;translate:-50% 0;width:23px;height:23px;
-  background:linear-gradient(180deg,var(--red-hi),var(--red) 48%,var(--red-deep));
-  border-radius:52% 52% 48% 48% / 62% 62% 38% 38%;
-  box-shadow:0 6px 20px rgba(243,2,25,.5);
-  animation:fall 1.9s cubic-bezier(.55,.06,.68,.19) infinite}
-.liquid .ring{position:absolute;left:50%;bottom:22px;translate:-50% 0;width:30px;height:30px;border-radius:50%;
-  border:2px solid var(--red);opacity:0;animation:ripple 1.9s var(--spring) infinite}
-.liquid .ring.b{animation-delay:.22s}
-.liquid .ring.c{animation-delay:.44s}
+/* a warm bloom under the whole thing, so it sits in the page rather than on it */
+.halo{position:absolute;left:50%;bottom:26px;translate:-50% 0;width:168px;height:52px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(243,2,25,.2),rgba(243,2,25,.06) 46%,transparent 72%);
+  filter:blur(10px);animation:lqHalo 2.4s ease-in-out infinite}
+@keyframes lqHalo{0%,100%{opacity:.4;transform:scaleX(.86)}70%{opacity:.8;transform:scaleX(1.1)}}
 
-@keyframes fall{
-  0%   {top:2px;   opacity:0; border-radius:50%;                          scale:.62 .62}
-  14%  {opacity:1}
-  56%  {border-radius:44% 44% 56% 56% / 40% 40% 60% 60%;                  scale:.82 1.26}
-  70%  {top:104px;  opacity:1; border-radius:60% 60% 40% 40% / 70% 70% 30% 30%; scale:1.35 .5}
-  80%  {top:108px;  opacity:0; scale:1.7 .2}
-  100% {top:108px;  opacity:0; scale:1.7 .2}
+/* the spout, hanging from the top edge */
+.lq-teat{transform-origin:center top;animation:lqTeat 2.4s ease-in-out infinite;will-change:transform}
+@keyframes lqTeat{
+  0%   {transform:scale(.72,.62)}
+  16%  {transform:scale(1.06,1.16)}   /* heavy, about to let go */
+  23%  {transform:scale(.8,.66)}      /* recoil after the snap */
+  36%  {transform:scale(.9,.84)}
+  100% {transform:scale(.72,.62)}
 }
-@keyframes ripple{
-  0%,62% {width:26px;height:26px;opacity:0}
-  70%    {opacity:.85}
-  100%   {width:146px;height:42px;opacity:0;border-width:1px}
+
+/* the drop. gravity lives in the easing, not in the numbers */
+.lq-bead,.lq-shine{animation:lqBead 2.4s infinite;will-change:transform}
+.lq-shine{animation-name:lqShine}
+@keyframes lqBead{
+  0%    {transform:translateY(-10px) scale(.3,.26);  animation-timing-function:ease-out}
+  13%   {transform:translateY(-3px)  scale(.92,1.02);animation-timing-function:ease-in}
+  19%   {transform:translateY(6px)   scale(.7,1.36); animation-timing-function:cubic-bezier(.33,0,.72,.3)}
+  34%   {transform:translateY(28px)  scale(.78,1.28)}
+  48%   {transform:translateY(58px)  scale(.82,1.24)}
+  58%   {transform:translateY(90px)  scale(.86,1.2)}
+  64%   {transform:translateY(112px) scale(.9,1.16); animation-timing-function:cubic-bezier(.42,0,.88,.52)}
+  68%   {transform:translateY(122px) scale(1.4,.52)}    /* contact */
+  72%   {transform:translateY(124px) scale(1.8,.22)}
+  76%   {transform:translateY(124px) scale(2,.06);      animation-timing-function:linear}
+  78%,100%{transform:translateY(124px) scale(2,0)}
 }
-@keyframes pool{
-  0%,62% {width:78px;opacity:.5}
-  72%    {width:112px;opacity:.95}
-  100%   {width:86px;opacity:.55}
+/* the specular highlight travels with the drop and dies on impact */
+@keyframes lqShine{
+  0%    {transform:translateY(-10px) scale(.3);   opacity:0; animation-timing-function:ease-out}
+  13%   {transform:translateY(-3px)  scale(.95);  opacity:.9;animation-timing-function:ease-in}
+  19%   {transform:translateY(6px)   scale(.8,1.3);        animation-timing-function:cubic-bezier(.33,0,.72,.3)}
+  48%   {transform:translateY(58px)  scale(.85,1.2); opacity:.85}
+  64%   {transform:translateY(112px) scale(.9,1.15);animation-timing-function:cubic-bezier(.42,0,.88,.52)}
+  68%   {transform:translateY(120px) scale(1.2,.5); opacity:.4}
+  72%,100%{transform:translateY(122px) scale(1.4,.1); opacity:0}
+}
+
+/* the crown the surface throws up at the moment of contact */
+.lq-crown{opacity:0;transform-origin:center bottom;animation:lqCrown 2.4s var(--spring) infinite;
+  will-change:transform,opacity}
+@keyframes lqCrown{
+  0%,66% {opacity:0;transform:scale(.4,.12)}
+  70%    {opacity:.95;transform:scale(1,1.1)}
+  76%    {opacity:.5;transform:scale(1.26,.6)}
+  82%,100%{opacity:0;transform:scale(1.44,.16)}
+}
+
+/* two beads escaping sideways, and the rebound the surface sends back up */
+.lq-spl{opacity:0;will-change:transform,opacity}
+.lq-spl-l{animation:lqSplL 2.4s cubic-bezier(.2,.7,.2,1) infinite}
+.lq-spl-r{animation:lqSplR 2.4s cubic-bezier(.2,.7,.2,1) infinite}
+@keyframes lqSplL{
+  0%,67%  {opacity:0;transform:translate(0,0) scale(.3)}
+  71%     {opacity:.95;transform:translate(-22px,-19px) scale(1)}
+  79%     {opacity:.6;transform:translate(-33px,-7px) scale(.7)}
+  86%,100%{opacity:0;transform:translate(-38px,6px) scale(.4)}
+}
+@keyframes lqSplR{
+  0%,67%  {opacity:0;transform:translate(0,0) scale(.3)}
+  71%     {opacity:.9;transform:translate(18px,-24px) scale(.9)}
+  79%     {opacity:.5;transform:translate(30px,-9px) scale(.64)}
+  86%,100%{opacity:0;transform:translate(35px,6px) scale(.34)}
+}
+.lq-fleck{opacity:0;animation:lqFleck 2.4s infinite;will-change:transform,opacity}
+@keyframes lqFleck{
+  0%,70%  {opacity:0;transform:translateY(0) scale(.2)}
+  76%     {opacity:1;transform:translateY(-20px) scale(.72,.94);animation-timing-function:cubic-bezier(.32,0,.7,.42)}
+  83%     {opacity:1;transform:translateY(-27px) scale(.6,.86)}
+  93%     {opacity:.85;transform:translateY(2px) scale(.94,.46)}
+  97%,100%{opacity:0;transform:translateY(2px) scale(1,.2)}
+}
+
+/* the surface itself takes the blow and settles */
+.lq-pool{animation:lqPool 2.4s infinite;will-change:transform}
+@keyframes lqPool{
+  0%,62% {transform:scale(.86,.9)}
+  70%    {transform:scale(1.3,.58);animation-timing-function:cubic-bezier(.34,1.56,.64,1)}
+  80%    {transform:scale(.94,1.2)}
+  90%    {transform:scale(1.05,.9)}
+  100%   {transform:scale(.86,.9)}
+}
+.lq-gleam{opacity:.55;animation:lqGleam 2.4s infinite;will-change:transform,opacity}
+@keyframes lqGleam{
+  0%,62% {opacity:.5;transform:scale(.8,1)}
+  70%    {opacity:.9;transform:scale(1.25,.5)}
+  82%    {opacity:.45;transform:scale(.9,1.2)}
+  100%   {opacity:.5;transform:scale(.8,1)}
+}
+
+/* three rings, each slower and fainter than the one before it */
+.lq-rings ellipse{opacity:0;will-change:transform,opacity}
+.lq-r1{animation:lqRing 2.4s cubic-bezier(.15,.75,.35,1) infinite}
+.lq-r2{animation:lqRing 2.4s cubic-bezier(.15,.75,.35,1) infinite .13s}
+.lq-r3{animation:lqRing 2.4s cubic-bezier(.15,.75,.35,1) infinite .27s}
+@keyframes lqRing{
+  0%,66% {opacity:0;transform:scale(.3)}
+  72%    {opacity:.9;transform:scale(.9)}
+  100%   {opacity:0;transform:scale(3.6)}
 }
 
 .load-note{margin-top:26px;color:var(--text-2);font-size:15px;opacity:0;animation:fadeUp .6s var(--spring) .45s forwards}
@@ -447,12 +525,17 @@ html::-webkit-scrollbar,body::-webkit-scrollbar,.scroller::-webkit-scrollbar{wid
 .load-note p{margin:0 auto;max-width:34ch}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
-/* Reduced motion gets the same picture, held still. */
+/* Held still it still reads as a drop above a pool. */
 @media (prefers-reduced-motion: reduce){
-  .liquid .drop{animation:none;top:52px;opacity:1}
-  .liquid .ring,.liquid .pool{animation:none}
-  .liquid .ring{opacity:.4;width:92px;height:30px}
+  .halo{animation:none;opacity:.45}
+  .lq-teat,.lq-bead,.lq-shine,.lq-pool,.lq-gleam,.lq-fleck,.lq-crown,.lq-spl,.lq-rings ellipse{animation:none}
+  .lq-bead,.lq-shine{transform:translateY(54px) scale(1,1.12)}
+  .lq-fleck,.lq-crown,.lq-spl{opacity:0}
+  .lq-r1{opacity:.35;transform:scale(1.8)}
+  .lq-r2{opacity:.2;transform:scale(2.6)}
+  .lq-r3{opacity:0}
   .load-note{animation:none;opacity:1}
+}
 }
 footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
 @media (max-width:820px){footer{padding:34px 0 10px}}
@@ -469,6 +552,7 @@ footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
   transition:transform .4s var(--bounce),background .3s,color .2s}
 .f-links a:hover{background:var(--red-solid);color:#fff;transform:scale(1.12)}
 .f-links a:active{transform:scale(.94)}
+
 
 /* ===================== EVENT SHEET ===================== */
 .backdrop{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(18px);
@@ -495,6 +579,79 @@ footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
   cursor:pointer;color:#fff;background:rgba(0,0,0,.42);z-index:2;transition:transform .45s var(--bounce),background .3s}
 .sheet-close:hover{background:var(--red-solid);transform:scale(1.14)}
 .sheet .list{margin:18px 0}
+
+
+/* ===================== MOTION SYSTEM =====================
+   Cinematic movement that stays subtle around content. Everything in this
+   block is disabled by the existing reduced-motion rules below. */
+:root{
+  --motion-fast:220ms;
+  --motion-med:520ms;
+  --motion-slow:860ms;
+  --motion-distance:22px;
+}
+
+#app{transform-origin:50% 20%}
+#app.route-in{animation:routeIn .72s var(--spring) both}
+@keyframes routeIn{
+  from{opacity:0;transform:translateY(12px) scale(.992);filter:blur(7px)}
+  55%{filter:blur(0)}
+  to{opacity:1;transform:none;filter:none}
+}
+
+/* Elements are promoted only while they are entering, then left alone. */
+.motion-reveal{opacity:0;transform:translateY(var(--motion-distance)) scale(.985);filter:blur(5px);will-change:transform,opacity,filter}
+.motion-reveal.is-visible{animation:revealIn var(--motion-slow) var(--spring) both;animation-delay:var(--reveal-delay,0ms)}
+@keyframes revealIn{
+  0%{opacity:0;transform:translateY(var(--motion-distance)) scale(.985);filter:blur(5px)}
+  58%{filter:blur(0)}
+  100%{opacity:1;transform:none;filter:none}
+}
+
+/* A tiny perspective response makes posters feel physical without changing layout. */
+.motion-tilt{transform-style:preserve-3d;will-change:transform;transition:transform .42s var(--spring)}
+.motion-tilt .poster,.motion-tilt .slide-media{transform:translateZ(0);transition:transform .42s var(--spring),box-shadow .5s var(--spring)}
+.motion-tilt.is-tilting .poster{transform:translateZ(12px)}
+
+/* Magnetic controls move only a few pixels and snap back with the site's bounce. */
+.motion-magnet{will-change:transform}
+
+/* The floating chrome subtly settles as the page starts moving. */
+.topbar{transition:top .45s var(--spring),padding .45s var(--spring),box-shadow .45s,background .45s,border-color .45s}
+.topbar.scrolled{top:8px;padding-top:5px;padding-bottom:5px;box-shadow:0 18px 50px rgba(0,0,0,.34),inset 0 1px 0 var(--glass-hi)}
+
+/* Give the active nav item a clean confirmation pulse after route changes. */
+.tabs a.nav-pop,.tabbar a.nav-pop{animation:navPop .52s var(--bounce)}
+@keyframes navPop{0%{transform:scale(.92)}60%{transform:scale(1.08)}100%{transform:none}}
+
+/* Theme switch feels like one continuous control instead of an instant swap. */
+.circle-btn.theme-spin svg{animation:themeSpin .48s var(--spring)}
+@keyframes themeSpin{from{opacity:0;transform:rotate(-70deg) scale(.72)}to{opacity:1;transform:none}}
+
+/* Carousel art gets a subtle depth drift as the slide comes into view. */
+.slide.is-current .slide-media{animation:heroDrift 7s ease-out both}
+@keyframes heroDrift{from{transform:scale(1.055) translate3d(0,5px,0)}to{transform:scale(1.015) translate3d(0,0,0)}}
+.slide.is-current:hover .slide-media{transform:scale(1.06)}
+
+/* Sheet contents cascade in after the panel itself lands. */
+.backdrop.open .sheet-banner{animation:sheetMediaIn .72s var(--spring) both}
+.backdrop.open .sheet-body > *{animation:sheetItemIn .58s var(--spring) both}
+.backdrop.open .sheet-body > *:nth-child(2){animation-delay:45ms}
+.backdrop.open .sheet-body > *:nth-child(3){animation-delay:90ms}
+.backdrop.open .sheet-body > *:nth-child(4){animation-delay:135ms}
+.backdrop.open .sheet-body > *:nth-child(5){animation-delay:180ms}
+@keyframes sheetMediaIn{from{opacity:0;transform:scale(1.035)}to{opacity:1;transform:none}}
+@keyframes sheetItemIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* Event rows and cards keep their existing hover lift, but gain a slight press. */
+.card:active,.ev:active,.tier:active{transform:scale(.985)}
+
+@media (hover:hover) and (pointer:fine){
+  .poster img{transition:transform .75s var(--spring),filter .45s}
+  .card:hover .poster img{transform:scale(1.045)}
+  .card:hover h3{color:var(--red-bright)}
+  .card h3{transition:color .25s}
+}
 
 .rise{opacity:0;transform:translateY(16px);animation:rise .7s var(--spring) forwards}
 @keyframes rise{to{opacity:1;transform:none}}
@@ -532,6 +689,99 @@ footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
 </div>
 
 <script>
+/* ===================== MOTION ===================== */
+const reduceMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+let revealObserver = null;
+
+function routeMotion(){
+  if(reduceMotion()) return;
+  const app = document.getElementById("app");
+  app.classList.remove("route-in");
+  void app.offsetWidth;
+  app.classList.add("route-in");
+  setTimeout(() => app.classList.remove("route-in"), 800);
+
+  document.querySelectorAll('.tabs a.on, .tabbar a.on').forEach(a => {
+    a.classList.remove('nav-pop'); void a.offsetWidth; a.classList.add('nav-pop');
+    setTimeout(() => a.classList.remove('nav-pop'), 620);
+  });
+}
+
+function initReveals(){
+  if(revealObserver) revealObserver.disconnect();
+  const targets = [...document.querySelectorAll(
+    '#app .sec-head, #app .card, #app .ev, #app .tier, #app .list-row, #app .detail, #app .prose, #app .toolbar, #app .cal, #app .empty'
+  )];
+  if(!targets.length) return;
+  if(reduceMotion()){
+    targets.forEach(el => el.classList.add('is-visible'));
+    return;
+  }
+  targets.forEach((el,i) => {
+    el.classList.add('motion-reveal');
+    el.style.setProperty('--reveal-delay', Math.min((i % 8) * 42, 210) + 'ms');
+  });
+  revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      revealObserver.unobserve(entry.target);
+    });
+  }, { threshold:.12, rootMargin:'0px 0px -6% 0px' });
+  targets.forEach(el => revealObserver.observe(el));
+}
+
+function initTilt(){
+  if(reduceMotion() || !matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+  document.querySelectorAll('#app .card').forEach(el => {
+    el.classList.add('motion-tilt');
+    let raf = 0;
+    el.addEventListener('pointermove', e => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const r = el.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - .5;
+        const y = (e.clientY - r.top) / r.height - .5;
+        el.classList.add('is-tilting');
+        el.style.transform = `translateY(-8px) scale(1.02) rotateX(${-y*3.2}deg) rotateY(${x*4.2}deg)`;
+      });
+    }, {passive:true});
+    el.addEventListener('pointerleave', () => {
+      cancelAnimationFrame(raf);
+      el.classList.remove('is-tilting');
+      el.style.transform = '';
+    });
+  });
+}
+
+function initMagnets(){
+  if(reduceMotion() || !matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+  document.querySelectorAll('.btn, .cnav, .circle-btn, .sec-head a').forEach(el => {
+    if(el.dataset.magnet === '1') return;
+    el.dataset.magnet = '1';
+    el.classList.add('motion-magnet');
+    /* Some of these already rely on a transform to sit where they do. The
+       carousel arrows are centred with translateY(-50%), so the magnet has
+       to be added to that rather than written over it. */
+    const base = el.classList.contains('cnav') ? 'translateY(-50%) ' : '';
+    el.addEventListener('pointermove', e => {
+      const r = el.getBoundingClientRect();
+      const x = (e.clientX - (r.left + r.width/2)) / r.width;
+      const y = (e.clientY - (r.top + r.height/2)) / r.height;
+      el.style.transform = base + `translate(${x*5}px,${y*4}px) scale(1.04)`;
+    }, {passive:true});
+    el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+  });
+}
+
+function initMotion(){
+  routeMotion();
+  initReveals();
+  initTilt();
+  initMagnets();
+}
+
+
 /* ===================== DATA =====================
    A visitor reads the copy already held on their own device. The site asks the
    source only for a short version stamp, and pulls the full content again only
@@ -931,7 +1181,12 @@ function initCarousels(){
       track.scrollTo({ left: at(((i % n) + n) % n), behavior: "smooth" });
     };
     let timer, paused = false;
-    const sync = () => dots.forEach((d,i) => d.classList.toggle("on", i === idx()));
+    const sync = () => {
+      const current = idx();
+      dots.forEach((d,i) => d.classList.toggle("on", i === current));
+      [...track.children].forEach((slide,i) => slide.classList.toggle("is-current", i === current));
+    };
+    sync();
     track.addEventListener("scroll", () => { clearTimeout(track._t); track._t = setTimeout(sync, 90); }, { passive:true });
     dots.forEach((d,i) => d.addEventListener("click", () => go(i)));
     c.querySelector(".prev")?.addEventListener("click", () => go(idx()-1));
@@ -1374,13 +1629,52 @@ function render(keepScroll){
     if(q) q.addEventListener("input", applyFilters);
   }
   initCarousels();
+  initMotion();
   pageRail.paint();
 }
 
 /* The three states the page can be in before content exists. */
-const LIQUID = '<div class="liquid" aria-hidden="true">' +
-  '<span class="pool"></span><span class="ring"></span><span class="ring b"></span>' +
-  '<span class="ring c"></span><span class="drop"></span></div>';
+const LIQUID =
+  '<div class="liquid" aria-hidden="true">' +
+    '<span class="halo"></span>' +
+    '<svg class="liquid-svg" viewBox="0 0 140 168" preserveAspectRatio="xMidYMid meet">' +
+      '<defs>' +
+        '<linearGradient id="kdDrop" x1=".28" y1="0" x2=".72" y2="1">' +
+          '<stop offset="0" stop-color="#FF9BA0"/><stop offset=".18" stop-color="#FF5964"/>' +
+          '<stop offset=".55" stop-color="#F30219"/><stop offset="1" stop-color="#A60210"/>' +
+        '</linearGradient>' +
+        '<radialGradient id="kdPool" cx=".5" cy=".38" r=".62">' +
+          '<stop offset="0" stop-color="#FF7079"/><stop offset=".3" stop-color="#F51E30"/>' +
+          '<stop offset="1" stop-color="#B90210"/>' +
+        '</radialGradient>' +
+        '<filter id="kdGoo" x="-70%" y="-40%" width="240%" height="200%" color-interpolation-filters="sRGB">' +
+          '<feGaussianBlur in="SourceGraphic" stdDeviation="3.4" result="blur"/>' +
+          '<feColorMatrix in="blur" type="matrix" result="goo" ' +
+            'values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10"/>' +
+          '<feComposite in="SourceGraphic" in2="goo" operator="atop"/>' +
+        '</filter>' +
+      '</defs>' +
+      /* everything inside this group is one body of liquid */
+      '<g filter="url(#kdGoo)">' +
+        '<path class="lq-teat" d="M53 0h34v7c0 6-2 10-6 14-3 3-7 5-11 5s-8-2-11-5c-4-4-6-8-6-14Z" fill="url(#kdDrop)"/>' +
+        '<ellipse class="lq-bead" cx="70" cy="26" rx="10.5" ry="12" fill="url(#kdDrop)"/>' +
+        '<circle class="lq-fleck" cx="70" cy="132" r="4.4" fill="url(#kdDrop)"/>' +
+        '<ellipse class="lq-pool" cx="70" cy="139" rx="27" ry="7.5" fill="url(#kdPool)"/>' +
+      '</g>' +
+      /* the gloss rides on top, outside the filter, so it stays crisp */
+      '<ellipse class="lq-shine" cx="66" cy="21" rx="3.1" ry="4.4" fill="rgba(255,255,255,.62)" transform="rotate(-22 66 21)"/>' +
+      '<ellipse class="lq-gleam" cx="70" cy="136" rx="13" ry="2.2" fill="rgba(255,255,255,.5)"/>' +
+      '<path class="lq-crown" d="M48 140c2-13 9-20 22-20s20 7 22 20" fill="none" stroke="#F51E30" ' +
+        'stroke-width="3.2" stroke-linecap="round"/>' +
+      '<g class="lq-rings" fill="none" stroke="#F30219" stroke-linecap="round">' +
+        '<ellipse class="lq-r1" cx="70" cy="139" rx="11" ry="3.2" stroke-width="2.2"/>' +
+        '<ellipse class="lq-r2" cx="70" cy="139" rx="11" ry="3.2" stroke-width="1.7"/>' +
+        '<ellipse class="lq-r3" cx="70" cy="139" rx="11" ry="3.2" stroke-width="1.3"/>' +
+      '</g>' +
+      '<circle class="lq-spl lq-spl-l" cx="70" cy="136" r="3.6" fill="url(#kdDrop)"/>' +
+      '<circle class="lq-spl lq-spl-r" cx="70" cy="136" r="3" fill="url(#kdDrop)"/>' +
+    '</svg>' +
+  '</div>';
 
 function stateView(){
   const offline = state.status === "offline";
@@ -1476,12 +1770,22 @@ function setTheme(m){
   document.getElementById("themeBtn").innerHTML = m === "dark" ? ICON.sun : ICON.moon;
 }
 setTheme(mode);
-document.getElementById("themeBtn").addEventListener("click", () => { mode = mode === "dark" ? "light" : "dark"; setTheme(mode); });
+document.getElementById("themeBtn").addEventListener("click", () => {
+  mode = mode === "dark" ? "light" : "dark";
+  setTheme(mode);
+  const b = document.getElementById("themeBtn");
+  if(!reduceMotion()){
+    b.classList.remove("theme-spin"); void b.offsetWidth; b.classList.add("theme-spin");
+    setTimeout(() => b.classList.remove("theme-spin"), 540);
+  }
+});
 
 let lastY = 0;
 addEventListener("scroll", () => {
   const bar = document.getElementById("tabbar"), y = scrollY;
+  const top = document.getElementById("topbar");
   bar.classList.toggle("min", y > lastY && y > 180);
+  top.classList.toggle("scrolled", y > 24);
   lastY = y;
 }, { passive:true });
 addEventListener("hashchange", () => { closeEvent(); render(); });
