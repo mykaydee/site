@@ -39,6 +39,7 @@ const CONFIG = {
 :root{
   color-scheme: dark light;
   --red:#F30219; --red-deep:#C9020D; --red-hi:#FF4A52; --red-bright:#FF4A52;
+  --red-solid:#D6020F;   /* filled controls that carry white text */
   --tint:rgba(243,2,25,.18); --tint-2:rgba(243,2,25,.28);
 
   --bg:#000; --bg-2:#0C0C0E;
@@ -61,7 +62,7 @@ const CONFIG = {
 @media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){
   --bg:#F2F2F5; --bg-2:#fff;
   --card:rgba(0,0,0,.045); --card-2:rgba(0,0,0,.08); --card-solid:#fff;
-  --text:#1D1D1F; --text-2:#6E6E73; --line:rgba(0,0,0,.10);
+  --text:#1D1D1F; --text-2:#48484D; --line:rgba(0,0,0,.10);
   --glass:rgba(255,255,255,.62); --glass-edge:rgba(255,255,255,.85);
   --glass-hi:rgba(255,255,255,.95); --glass-lo:rgba(0,0,0,.04);
   --glass-shadow:0 14px 40px rgba(0,0,0,.16), 0 2px 8px rgba(0,0,0,.07);
@@ -70,7 +71,7 @@ const CONFIG = {
 :root[data-theme="light"]{
   --bg:#F2F2F5; --bg-2:#fff;
   --card:rgba(0,0,0,.045); --card-2:rgba(0,0,0,.08); --card-solid:#fff;
-  --text:#1D1D1F; --text-2:#6E6E73; --line:rgba(0,0,0,.10);
+  --text:#1D1D1F; --text-2:#48484D; --line:rgba(0,0,0,.10);
   --glass:rgba(255,255,255,.62); --glass-edge:rgba(255,255,255,.85);
   --glass-hi:rgba(255,255,255,.95); --glass-lo:rgba(0,0,0,.04);
   --glass-shadow:0 14px 40px rgba(0,0,0,.16), 0 2px 8px rgba(0,0,0,.07);
@@ -130,7 +131,7 @@ html.has-logo footer .mark{width:auto;height:30px;max-width:150px}
 .tabs a{padding:7px 15px;border-radius:999px;font-size:14.5px;font-weight:500;color:var(--text-2);
   transition:background .32s var(--spring),color .22s}
 .tabs a:hover{color:var(--text);background:var(--card)}
-.tabs a.on{color:#fff;background:var(--red);font-weight:600;
+.tabs a.on{color:#fff;background:var(--red-solid);font-weight:600;
   box-shadow:0 5px 16px rgba(243,2,25,.45), inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 0 .5px rgba(255,255,255,.24)}
 .tabs a.on:hover{background:var(--red-deep)}
 .circle-btn{width:34px;height:34px;border-radius:999px;display:grid;place-items:center;cursor:pointer;color:var(--text-2);
@@ -147,7 +148,7 @@ html.has-logo footer .mark{width:auto;height:30px;max-width:150px}
   .tabbar a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 14px;border-radius:999px;
     font-size:10.5px;font-weight:500;color:var(--text-2);transition:background .32s var(--spring),color .22s}
   .tabbar a:hover{color:var(--text);background:var(--card)}
-  .tabbar a.on{color:#fff;background:var(--red);font-weight:600;
+  .tabbar a.on{color:#fff;background:var(--red-solid);font-weight:600;
     box-shadow:0 5px 16px rgba(243,2,25,.45), inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 0 .5px rgba(255,255,255,.24)}
 }
 @media (max-width:430px){
@@ -161,16 +162,16 @@ main{padding-top:84px;min-height:60vh}
 }
 
 /* ===================== CONTROLS ===================== */
-.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;font-size:15px;font-weight:600;
+.btn{white-space:nowrap;display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;font-size:15px;font-weight:600;
   cursor:pointer;transition:transform .45s var(--bounce),background .3s,box-shadow .3s,color .2s;will-change:transform}
-.btn.prominent{background:var(--red);color:#fff;border:.5px solid rgba(255,255,255,.24);
+.btn.prominent{background:var(--red-solid);color:#fff;border:.5px solid rgba(255,255,255,.24);
   box-shadow:0 6px 20px rgba(243,2,25,.42), inset 0 1px 0 rgba(255,255,255,.3)}
 .btn.quiet{background:var(--card);color:var(--text)}
 .btn:hover{background:var(--red-deep);color:#fff;transform:scale(1.08);box-shadow:0 10px 28px rgba(243,2,25,.5), inset 0 1px 0 rgba(255,255,255,.3)}
 .btn:active{transform:scale(.95)}
 .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
 
-.score{display:inline-flex;align-items:baseline;gap:2px;padding:9px 15px;border-radius:15px;background:var(--red);color:#fff;
+.score{display:inline-flex;align-items:baseline;gap:2px;padding:9px 15px;border-radius:15px;background:var(--red-solid);color:#fff;
   font-weight:700;letter-spacing:-.03em;border:.5px solid rgba(255,255,255,.26);
   box-shadow:0 4px 14px rgba(243,2,25,.42), inset 0 1px 0 rgba(255,255,255,.32);
   transition:transform .45s var(--bounce),box-shadow .3s}
@@ -185,7 +186,7 @@ main{padding-top:84px;min-height:60vh}
   -ms-overflow-style:none;max-width:100%;cursor:grab;scroll-behavior:smooth}
 .seg::-webkit-scrollbar{display:none}
 .seg.dragging{cursor:grabbing;scroll-behavior:auto}
-.seg-thumb{position:absolute;top:4px;bottom:4px;left:0;width:0;border-radius:999px;background:var(--red);z-index:0;
+.seg-thumb{position:absolute;top:4px;bottom:4px;left:0;width:0;border-radius:999px;background:var(--red-solid);z-index:0;
   border:.5px solid rgba(255,255,255,.26);box-shadow:0 5px 16px rgba(243,2,25,.45), inset 0 1px 0 rgba(255,255,255,.35);
   transition:transform .55s var(--spring),width .55s var(--spring);will-change:transform,width}
 .seg button{position:relative;z-index:1;padding:9px 18px;border-radius:999px;font-size:14.5px;font-weight:500;
@@ -209,25 +210,48 @@ main{padding-top:84px;min-height:60vh}
 .slide-media{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 1.4s var(--spring)}
 .slide:hover .slide-media{transform:scale(1.05)}
 .slide-fallback{position:absolute;inset:0;background:radial-gradient(120% 95% at 12% 0%,#F30219,#C9020D 40%,#3A0206 74%,#080002)}
-.slide-veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.92),rgba(0,0,0,.42) 46%,rgba(0,0,0,.08))}
-.slide-card{position:relative;margin:clamp(14px,2.4vw,22px);padding:clamp(18px,2.8vw,28px);border-radius:var(--r-lg);
-  width:min(100%,580px);color:#F5F5F7}
-.slide-card h2,.slide-card h1{margin-bottom:10px}
-.slide-card .meta{color:rgba(245,245,247,.78)}
-.slide-row{display:flex;align-items:center;gap:15px;margin:16px 0 0;flex-wrap:wrap}
+.slide-veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,.34) 42%,rgba(0,0,0,.06) 72%)}
+/* A bar along the foot of the image rather than a panel over it, so most of
+   the artwork stays visible. It keeps its own dark glass in both appearances,
+   because it always sits on a photograph, never on the page. */
+.slide-bar{position:relative;flex:1;min-width:0;margin:clamp(11px,1.7vw,16px);
+  padding:clamp(12px,1.6vw,16px) clamp(15px,2vw,20px);border-radius:var(--r-lg);
+  display:flex;align-items:center;gap:clamp(12px,2vw,22px);color:#F5F5F7;
+  background:rgba(14,14,16,.64);
+  -webkit-backdrop-filter:blur(32px) saturate(180%);backdrop-filter:blur(32px) saturate(180%);
+  border:.5px solid rgba(255,255,255,.15);
+  box-shadow:0 14px 44px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.16)}
+.slide-txt{min-width:0;flex:1}
+.slide-bar .eyebrow{color:rgba(255,255,255,.88);margin-bottom:3px}
+.slide-bar h2{font-size:clamp(17px,2.1vw,25px);line-height:1.22;margin:0 0 4px;color:#F5F5F7;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.slide-bar .meta{color:rgba(245,245,247,.92);font-size:clamp(12.5px,1.15vw,14.5px);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slide-act{display:flex;align-items:center;gap:clamp(10px,1.4vw,16px);flex:none}
+.slide-act .verdict{font-size:15px;font-weight:600;letter-spacing:-.02em;color:#F5F5F7;
+  max-width:22ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.slide-act .price{font-size:14.5px;font-weight:600;color:#F5F5F7;white-space:nowrap}
+@media (max-width:700px){
+  /* stretch, not flex-start, or a long title sizes the column past the bar */
+  .slide-bar{flex-direction:column;align-items:stretch;gap:11px}
+  .slide-txt{width:100%}
+  .slide-bar h2{-webkit-line-clamp:3}
+  .slide-act{width:100%;justify-content:flex-start;flex-wrap:wrap;gap:9px 13px}
+  .slide-act .verdict{max-width:100%;flex:1}
+  .slide-act .price{min-width:0;overflow:hidden;text-overflow:ellipsis}
+}
+@media (prefers-reduced-transparency: reduce){
+  .slide-bar{background:rgba(14,14,16,.92);backdrop-filter:none;-webkit-backdrop-filter:none}
+}
 .cnav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;display:none;
   place-items:center;cursor:pointer;z-index:3;color:#fff;background:rgba(0,0,0,.42);
   -webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%);
   border:.5px solid rgba(255,255,255,.16);
   transition:transform .45s var(--bounce),background .3s,opacity .3s}
-.cnav:hover{background:var(--red);transform:translateY(-50%) scale(1.14)}
+.cnav:hover{background:var(--red-solid);transform:translateY(-50%) scale(1.14)}
 .cnav:active{transform:translateY(-50%) scale(.95)}
 .cnav.prev{left:14px}.cnav.next{right:14px}
-@media(hover:hover) and (min-width:821px){
-  .cnav{display:grid}
-  /* The copy is inset past the arrows, so a control is never over a word. */
-  .slide-card{margin-left:72px;margin-right:72px;width:min(100% - 144px,580px)}
-}
+@media(hover:hover) and (min-width:821px){ .cnav{display:grid} }
 .dots{display:flex;justify-content:center;gap:7px;margin-top:14px}
 .dots button{position:relative;width:7px;height:7px;border-radius:999px;background:var(--card-2);cursor:pointer;
   transition:width .45s var(--spring),background .3s,transform .4s var(--bounce)}
@@ -268,14 +292,14 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 .prose p{margin:0 0 18px}
 .back{display:inline-flex;align-items:center;gap:5px;color:var(--red-bright);font-size:15px;font-weight:500;
   margin-bottom:24px;padding:7px 15px 7px 11px;border-radius:999px;transition:transform .4s var(--bounce),background .3s,color .2s}
-.back:hover{background:var(--red);color:#fff;transform:scale(1.06)}
+.back:hover{background:var(--red-solid);color:#fff;transform:scale(1.06)}
 
 .events{display:grid;gap:12px}
 .ev{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;padding:15px 18px;border-radius:var(--r-lg);
   background:var(--card);width:100%;text-align:left;cursor:pointer;transition:transform .45s var(--spring),background .3s}
 .ev:hover{background:var(--card-2);transform:translateY(-3px) scale(1.005)}
 .datechip{width:60px;height:60px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:3px;border-radius:15px;background:var(--red);color:#fff;font-variant-numeric:tabular-nums lining-nums;
+  gap:3px;border-radius:15px;background:var(--red-solid);color:#fff;font-variant-numeric:tabular-nums lining-nums;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 4px 12px rgba(243,2,25,.28);transition:transform .45s var(--bounce)}
 .ev:hover .datechip{transform:scale(1.08)}
 .datechip b{font-size:23px;font-weight:700;letter-spacing:-.02em;line-height:1}
@@ -286,8 +310,8 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 .ev:hover .thumb{transform:scale(1.06)}
 .pill{display:inline-block;padding:3px 11px;border-radius:999px;background:var(--card-2);color:var(--text-2);
   font-size:12px;font-weight:600;margin-bottom:7px;transition:transform .4s var(--bounce),background .3s,color .2s}
-.pill.hot{background:rgba(243,2,25,.16);color:var(--red-bright)}
-.ev:hover .pill{background:var(--red);color:#fff;transform:scale(1.06)}
+.pill.hot{background:var(--red-solid);color:#fff}
+.ev:hover .pill{background:var(--red-solid);color:#fff;transform:scale(1.06)}
 .chev{color:var(--text-2);transition:transform .45s var(--bounce),color .3s}
 .ev:hover .chev{color:var(--red-bright);transform:translateX(4px) scale(1.2)}
 @media(max-width:620px){.ev{grid-template-columns:auto 1fr}.ev .chev{display:none}}
@@ -297,9 +321,9 @@ section{padding:clamp(40px,5.6vw,68px) 0}
   transition:transform .45s var(--bounce),background .3s,box-shadow .3s,color .2s}
 .tier b{display:block;font-size:30px;font-weight:700;letter-spacing:-.04em}
 .tier span{color:var(--text-2);font-size:14px;transition:color .2s}
-.tier.top{background:var(--red);color:#fff}.tier.top span{color:rgba(255,255,255,.85)}
-.tier:hover{background:var(--red);color:#fff;transform:scale(1.06);box-shadow:0 12px 30px rgba(243,2,25,.42)}
-.tier:hover span{color:rgba(255,255,255,.85)}
+.tier.top{background:var(--red-solid);color:#fff}.tier.top span{color:rgba(255,255,255,.92)}
+.tier:hover{background:var(--red-solid);color:#fff;transform:scale(1.06);box-shadow:0 12px 30px rgba(243,2,25,.42)}
+.tier:hover span{color:rgba(255,255,255,.92)}
 
 .badge{display:inline-flex;align-items:center;padding:9px 15px;border-radius:14px;background:var(--tint);
   color:var(--red-bright);border:.5px solid var(--tint-2);font-weight:600;font-size:13.5px;letter-spacing:-.01em;
@@ -322,8 +346,8 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 .cal-nav{display:flex;gap:6px;align-items:center}
 .cal-nav button{width:36px;height:36px;border-radius:999px;display:grid;place-items:center;cursor:pointer;
   color:var(--text-2);background:var(--card-2);transition:transform .4s var(--bounce),background .3s,color .2s}
-.cal-nav button.today{width:auto;padding:0 15px;font-size:13.5px;font-weight:600}
-.cal-nav button:hover{background:var(--red);color:#fff;transform:scale(1.1)}
+.cal-nav button.today{width:auto;padding:0 15px;font-size:13.5px;font-weight:600;color:var(--text)}
+.cal-nav button:hover{background:var(--red-solid);color:#fff;transform:scale(1.1)}
 .cal-dow,.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:clamp(2px,.8vw,6px)}
 .cal-dow{margin-bottom:6px}
 .cal-dow span{text-align:center;font-size:clamp(10px,2.9vw,11.5px);font-weight:600;color:var(--text-2)}
@@ -338,9 +362,9 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 .cal-cell.empty{visibility:hidden}
 .cal-cell.none{color:var(--text-2);opacity:.45}
 .cal-cell.has{cursor:pointer;background:var(--card-2)}
-.cal-cell.has:hover{background:var(--tint);color:var(--red-bright);transform:scale(1.08)}
+.cal-cell.has:hover{background:var(--tint);color:var(--red-deep);transform:scale(1.08)}
 .cal-cell.today{box-shadow:inset 0 0 0 1.5px var(--red);color:var(--red-bright);font-weight:700}
-.cal-cell.on{background:var(--red);color:#fff;transform:scale(1.06);box-shadow:0 6px 18px rgba(243,2,25,.4)}
+.cal-cell.on{background:var(--red-solid);color:#fff;transform:scale(1.06);box-shadow:0 6px 18px rgba(243,2,25,.4)}
 .marks{display:flex;gap:clamp(2px,.7vw,3px);height:clamp(4px,1.4vw,5px);align-items:center}
 .marks i{width:clamp(4px,1.3vw,5px);height:clamp(4px,1.3vw,5px);border-radius:50%;background:var(--red);flex:none}
 .marks i.evt{background:var(--text-2)}
@@ -352,37 +376,30 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 .empty{padding:50px 24px;border-radius:var(--r-lg);background:var(--card);text-align:center;color:var(--text-2)}
 
 /* ===================== SCROLLBARS =====================
-   A thin red bar that lives in its own reserved gutter, so it never sits over
-   the content and the layout never shifts when it appears. It stays invisible
-   until the surface is scrolled or hovered, the way macOS behaves.
+   The native bar is switched off everywhere, arrows and all, because it is
+   drawn inside the element it belongs to and takes a slice of it. In its
+   place a rail is drawn alongside the content, touching nothing.
    ====================================================== */
-html{scrollbar-gutter:stable}
-*{scrollbar-width:thin;scrollbar-color:transparent transparent}
-html:hover,html.scrolling,
-.scroller:hover,.scroller.scrolling{scrollbar-color:var(--red) transparent}
-
-::-webkit-scrollbar{width:11px;height:11px;background:transparent}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-corner{background:transparent}
-::-webkit-scrollbar-thumb{
-  background:transparent;border-radius:999px;
-  border:3.5px solid transparent;background-clip:content-box;
-  transition:background-color .3s}
-html:hover::-webkit-scrollbar-thumb,
-html.scrolling::-webkit-scrollbar-thumb{background-color:rgba(243,2,25,.55);background-clip:content-box}
-html:hover::-webkit-scrollbar-thumb:hover,
-html.scrolling::-webkit-scrollbar-thumb:hover{background-color:var(--red)}
-::-webkit-scrollbar-thumb:active{background-color:var(--red-deep);background-clip:content-box}
-
-/* Inner surfaces keep their own gutter, so text never runs under the bar. */
-.scroller{scrollbar-gutter:stable}
-.scroller:hover::-webkit-scrollbar-thumb,
-.scroller.scrolling::-webkit-scrollbar-thumb{background-color:rgba(243,2,25,.55);background-clip:content-box}
-.scroller::-webkit-scrollbar{width:10px}
-
-/* Horizontal rails carry no bar at all. They are dragged and snapped. */
+html,body,.scroller{scrollbar-width:none;-ms-overflow-style:none}
+html::-webkit-scrollbar,body::-webkit-scrollbar,.scroller::-webkit-scrollbar{width:0;height:0;display:none}
+::-webkit-scrollbar-button{display:none;width:0;height:0}
 .track::-webkit-scrollbar,.seg::-webkit-scrollbar{display:none}
 .track,.seg{scrollbar-width:none}
+
+.rail{position:fixed;width:12px;z-index:200;opacity:0;pointer-events:none;transition:opacity .4s}
+.rail.show{opacity:1;pointer-events:auto}
+.rail::before{content:"";position:absolute;inset:0;border-radius:999px;background:var(--card);opacity:0;
+  transition:opacity .3s}
+.rail:hover::before,.rail.drag::before{opacity:.5}
+.rail-thumb{position:absolute;left:3px;width:6px;min-height:34px;border-radius:999px;
+  background:var(--red);box-shadow:0 1px 5px rgba(243,2,25,.45);
+  transition:width .25s var(--spring),left .25s var(--spring),background .25s}
+.rail:hover .rail-thumb,.rail.drag .rail-thumb{width:12px;left:0;background:var(--red-hi)}
+.rail.drag .rail-thumb{background:var(--red-deep)}
+
+/* Touch surfaces never showed a bar in the first place. */
+@media (hover:none),(pointer:coarse){ .rail{display:none} }
+@media (prefers-reduced-motion: reduce){ .rail,.rail-thumb{transition:none} }
 
 /* ===================== LIQUID LOADER =====================
    A drop falls, the surface takes it, rings spread. Nothing is implied about
@@ -450,7 +467,7 @@ footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
 .f-links a{width:44px;height:44px;border-radius:999px;display:grid;place-items:center;flex:none;
   background:var(--card);color:var(--text-2);
   transition:transform .4s var(--bounce),background .3s,color .2s}
-.f-links a:hover{background:var(--red);color:#fff;transform:scale(1.12)}
+.f-links a:hover{background:var(--red-solid);color:#fff;transform:scale(1.12)}
 .f-links a:active{transform:scale(.94)}
 
 /* ===================== EVENT SHEET ===================== */
@@ -459,7 +476,7 @@ footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
 .grabber{display:none;width:38px;height:5px;border-radius:999px;background:var(--line);margin:9px auto 0}
 .sheet-back{position:absolute;top:14px;left:14px;width:34px;height:34px;border-radius:999px;display:grid;place-items:center;
   cursor:pointer;color:#fff;background:rgba(0,0,0,.42);z-index:2;transition:transform .45s var(--bounce),background .3s}
-.sheet-back:hover{background:var(--red);transform:scale(1.14)}
+.sheet-back:hover{background:var(--red-solid);transform:scale(1.14)}
 @media (max-width:640px){
   .backdrop{place-items:end center;padding:0}
   .sheet{width:100%;max-height:88vh;border-radius:26px 26px 0 0;transform:translateY(100%) scale(1);
@@ -476,7 +493,7 @@ footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
 .sheet-body{padding:clamp(20px,3.4vw,28px)}
 .sheet-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:999px;display:grid;place-items:center;
   cursor:pointer;color:#fff;background:rgba(0,0,0,.42);z-index:2;transition:transform .45s var(--bounce),background .3s}
-.sheet-close:hover{background:var(--red);transform:scale(1.14)}
+.sheet-close:hover{background:var(--red-solid);transform:scale(1.14)}
 .sheet .list{margin:18px 0}
 
 .rise{opacity:0;transform:translateY(16px);animation:rise .7s var(--spring) forwards}
@@ -511,7 +528,7 @@ footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
 </footer>
 
 <div class="backdrop" id="sheet" hidden>
-  <div class="sheet glass scroller" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" id="sheetInner"></div>
+  <div class="sheet glass" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" id="sheetInner"></div>
 </div>
 
 <script>
@@ -741,24 +758,160 @@ function carousel(slides, id){
       '<div class="dots">'+slides.map((_,i) => '<button aria-label="Go to slide '+(i+1)+'"'+(i?"":' class="on"')+'></button>').join("")+'</div>' : "")+
     '</div>';
 }
+/* ===================== SCROLL RAILS =====================
+   One rail per scrolling surface, drawn beside it rather than inside it.
+   The surface keeps its full width and knows nothing about the rail.
+   ======================================================== */
+const RAILS = [];
+
+function makeRail(opts){
+  const rail = document.createElement("div");
+  rail.className = "rail";
+  rail.innerHTML = '<div class="rail-thumb"></div>';
+  document.body.appendChild(rail);
+
+  const thumb = rail.firstElementChild;
+  const GAP = opts.gap === undefined ? 6 : opts.gap;
+  const INSET = opts.inset === undefined ? 8 : opts.inset;
+  const MIN = 34;
+
+  let idle, dragging = false, trackH = 0, thumbH = 0;
+
+  const box = () => opts.box();
+
+  function paint(){
+    const m = box();
+    if(!m || m.scrollH - m.clientH < 4){ rail.classList.remove("show"); return; }
+
+    trackH = Math.max(m.height - INSET * 2, 40);
+    thumbH = Math.max(MIN, trackH * (m.clientH / m.scrollH));
+
+    const span = m.scrollH - m.clientH;
+    const pos = span > 0 ? (m.scrollTop / span) * (trackH - thumbH) : 0;
+
+    rail.style.left = (m.right + GAP) + "px";
+    rail.style.top = (m.top + INSET) + "px";
+    rail.style.height = trackH + "px";
+    thumb.style.height = thumbH + "px";
+    thumb.style.transform = "translateY(" + Math.max(0, Math.min(pos, trackH - thumbH)) + "px)";
+  }
+
+  function show(){
+    paint();
+    const m = box();
+    if(!m || m.scrollH - m.clientH < 4) return;
+    rail.classList.add("show");
+    clearTimeout(idle);
+    if(!dragging) idle = setTimeout(() => rail.classList.remove("show"), 1400);
+  }
+
+  /* Dragging the thumb scrolls the surface, one pixel of rail to one page of travel. */
+  thumb.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    const m = box();
+    if(!m) return;
+    dragging = true;
+    rail.classList.add("drag", "show");
+    thumb.setPointerCapture(e.pointerId);
+
+    const startY = e.clientY;
+    const startTop = m.scrollTop;
+    const span = m.scrollH - m.clientH;
+    const travel = trackH - thumbH;
+
+    const move = ev => {
+      if(travel <= 0) return;
+      opts.scrollTo(startTop + ((ev.clientY - startY) / travel) * span);
+    };
+    const up = () => {
+      dragging = false;
+      rail.classList.remove("drag");
+      thumb.removeEventListener("pointermove", move);
+      thumb.removeEventListener("pointerup", up);
+      thumb.removeEventListener("pointercancel", up);
+      show();
+    };
+    thumb.addEventListener("pointermove", move);
+    thumb.addEventListener("pointerup", up);
+    thumb.addEventListener("pointercancel", up);
+  });
+
+  /* Clicking the empty rail jumps a page. */
+  rail.addEventListener("pointerdown", e => {
+    if(e.target === thumb) return;
+    const m = box();
+    if(!m) return;
+    const above = e.clientY < thumb.getBoundingClientRect().top;
+    opts.scrollTo(m.scrollTop + (above ? -m.clientH : m.clientH) * 0.9);
+  });
+
+  rail.addEventListener("pointerenter", () => { clearTimeout(idle); rail.classList.add("show"); });
+  rail.addEventListener("pointerleave", () => { if(!dragging) show(); });
+
+  /* Moving the pointer toward the edge brings the rail back, so it can be
+     grabbed without having to scroll first. */
+  function near(x, y){
+    const m = box();
+    if(!m || m.scrollH - m.clientH < 4) return false;
+    const left = m.right + GAP;
+    return x > left - 34 && x < left + 26 && y > m.top && y < m.top + m.height;
+  }
+
+  const api = { paint, show, near, hide: () => { clearTimeout(idle); rail.classList.remove("show"); },
+                live: () => rail.isConnected, el: rail };
+  RAILS.push(api);
+  return api;
+}
+
+/* The page itself. */
+const pageRail = makeRail({
+  box: () => ({
+    top: 0, right: document.documentElement.clientWidth, height: innerHeight,
+    scrollTop: scrollY, scrollH: document.documentElement.scrollHeight, clientH: innerHeight
+  }),
+  gap: -18,
+  scrollTo: y => scrollTo({ top: y })
+});
+
+let quietUntil = 0;
+addEventListener("scroll", () => { if(Date.now() > quietUntil) pageRail.show(); }, { passive: true });
+addEventListener("resize", () => RAILS.forEach(r => r.paint()), { passive: true });
+
+/* One shared pointer watcher rather than one per rail. */
+let nearQueued = false;
+addEventListener("pointermove", e => {
+  if(nearQueued) return;
+  nearQueued = true;
+  requestAnimationFrame(() => {
+    nearQueued = false;
+    RAILS.forEach(r => {
+      if(r.el.dataset.off === "1") return;
+      if(r.near(e.clientX, e.clientY)) r.show();
+    });
+  });
+}, { passive: true });
+
+/* The event sheet, which scrolls inside itself. */
+let sheetRail = null;
+function sheetRailFor(el){
+  if(!sheetRail){
+    sheetRail = makeRail({
+      box: () => {
+        const b = el.getBoundingClientRect();
+        if(!b.height) return null;
+        return { top: b.top, right: b.right, height: b.height,
+                 scrollTop: el.scrollTop, scrollH: el.scrollHeight, clientH: el.clientHeight };
+      },
+      gap: 8,
+      scrollTo: y => { el.scrollTop = y; }
+    });
+    el.addEventListener("scroll", () => sheetRail.show(), { passive: true });
+  }
+  return sheetRail;
+}
+
 let TIMERS = [];
 
-/* The bar shows while a surface is being scrolled, then fades back out.
-   One shared handler rather than a listener per element. */
-function flagScrolling(el){
-  el.classList.add("scrolling");
-  clearTimeout(el._sb);
-  el._sb = setTimeout(() => el.classList.remove("scrolling"), 900);
-}
-addEventListener("scroll", () => flagScrolling(document.documentElement), { passive:true });
-
-function watchScrollers(){
-  document.querySelectorAll(".scroller").forEach(el => {
-    if(el._watched) return;
-    el._watched = true;
-    el.addEventListener("scroll", () => flagScrolling(el), { passive:true });
-  });
-}
 function initCarousels(){
   TIMERS.forEach(clearInterval); TIMERS = [];
   document.querySelectorAll("[data-carousel]").forEach(c => {
@@ -857,6 +1010,14 @@ function sheetOpen(html){
   }
   const x = document.getElementById("sheetClose");
   if(x){ x.addEventListener("click", closeEvent); x.focus(); }
+
+  /* The sheet has its own rail. It appears once the open transition settles,
+     otherwise it would be measured against a panel that is still moving. */
+  const rail = sheetRailFor(inner);
+  pageRail.hide();
+  pageRail.el.dataset.off = "1";              /* the page cannot be scrolled while the sheet is open */
+  rail.el.dataset.off = "0";
+  setTimeout(() => rail.show(), 380);
 }
 
 function openEvent(i){
@@ -895,6 +1056,8 @@ function closeEvent(){
   b.classList.remove("open");
   lockScroll(false);
   sheetBack = null;
+  if(sheetRail){ sheetRail.hide(); sheetRail.el.dataset.off = "1"; }
+  pageRail.el.dataset.off = "0";
   setTimeout(() => { b.hidden = true; }, 340);
   lastFocus?.focus();
 }
@@ -909,6 +1072,9 @@ function lockScroll(on){
   }else if(body.classList.contains("locked")){
     body.classList.remove("locked");
     body.style.top = "";
+    /* Putting the page back where it was is not a scroll the reader made,
+       so the rail should not flash on the way out. */
+    quietUntil = Date.now() + 400;
     window.scrollTo(0, heldY);
   }
 }
@@ -946,22 +1112,24 @@ function eventRow(e){
 }
 function reviewSlide(r){
   return '<a class="slide" href="#/review/'+slugOf(r)+'">'+media(r.banner_url || r.poster_url)+'<div class="slide-veil"></div>'+
-    '<div class="slide-card glass"><p class="eyebrow" style="color:#FF6068">'+(unreleased(r) ? "Coming soon" : "Featured review")+'</p>'+
-    '<h2 style="font-size:clamp(28px,4.6vw,46px)">'+esc(r.title)+'</h2>'+
-    '<div class="meta">'+(unreleased(r) ? "In cinemas " + fmtDate(r.release_date)
-      : dots([r.year,r.language,runtime(r.runtime_min)]))+'</div>'+
-    '<div class="slide-row">'+mark(r,"lg")+
-    (r.verdict ? '<span style="font-size:18px;font-weight:600;letter-spacing:-.02em">'+esc(r.verdict)+'</span>' : "")+
+    '<div class="slide-bar"><div class="slide-txt">'+
+      '<p class="eyebrow">'+(unreleased(r) ? "Coming soon" : "Featured review")+'</p>'+
+      '<h2>'+esc(r.title)+'</h2>'+
+      '<div class="meta">'+(unreleased(r) ? esc("In cinemas " + fmtDate(r.release_date))
+        : dots([r.year,r.language,runtime(r.runtime_min)]))+'</div>'+
+    '</div><div class="slide-act">'+mark(r,"lg")+
+      (r.verdict ? '<span class="verdict">'+esc(r.verdict)+'</span>' : "")+
     '</div></div></a>';
 }
 function eventSlide(e){
   const i = state.events.indexOf(e);
   return '<button class="slide" data-event="'+i+'">'+media(e.banner_url || e.poster_url)+'<div class="slide-veil"></div>'+
-    '<div class="slide-card glass"><p class="eyebrow" style="color:#FF6068">'+esc(e.category || "Featured event")+'</p>'+
-    '<h2 style="font-size:clamp(26px,4.2vw,42px)">'+esc(e.title)+'</h2>'+
-    '<div class="meta">'+dots([fmtDate(e.date_start), e.time, e.venue, e.city])+'</div>'+
-    '<div class="slide-row"><span class="btn prominent">View details</span>'+
-    (e.price ? '<span style="font-size:15px;font-weight:600">From '+esc(e.price)+'</span>' : "")+
+    '<div class="slide-bar"><div class="slide-txt">'+
+      '<p class="eyebrow">'+esc(e.category || "Featured event")+'</p>'+
+      '<h2>'+esc(e.title)+'</h2>'+
+      '<div class="meta">'+dots([fmtDate(e.date_start), e.time, e.venue, e.city])+'</div>'+
+    '</div><div class="slide-act"><span class="btn prominent">View details</span>'+
+      (e.price ? '<span class="price">From '+esc(e.price)+'</span>' : "")+
     '</div></div></button>';
 }
 const featured = (arr, fallbackAll) => {
@@ -1206,7 +1374,7 @@ function render(keepScroll){
     if(q) q.addEventListener("input", applyFilters);
   }
   initCarousels();
-  watchScrollers();
+  pageRail.paint();
 }
 
 /* The three states the page can be in before content exists. */
@@ -1318,7 +1486,6 @@ addEventListener("scroll", () => {
 }, { passive:true });
 addEventListener("hashchange", () => { closeEvent(); render(); });
 
-watchScrollers();
 render();                 /* the loader paints first, so the page is never blank */
 loadData().then(() => render());
 </script>
