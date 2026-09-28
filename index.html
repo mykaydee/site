@@ -337,13 +337,12 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 /* ===================== CALENDAR ===================== */
 .cal-wrap{display:grid;gap:clamp(24px,4vw,36px);align-items:start}
 @media (min-width:900px){.cal-wrap{grid-template-columns:minmax(0,430px) 1fr}}
-/* contain:paint keeps every descendant's paint inside this box. Safari on iOS
-   can otherwise flash a composited layer well outside its element during a
-   touch drag, which is what produced the red disc over the grid. */
-.cal{background:var(--card);border-radius:var(--r-lg);padding:clamp(10px,3vw,18px);
+/* No transforms, no filters and no standing layer promotion live inside this box.
+   Every one of those is a way for Safari on iOS to paint a layer at the
+   wrong size, which is what put a red disc across the grid. */
+.cal{position:relative;background:var(--card);border-radius:var(--r-lg);padding:clamp(10px,3vw,18px);
   touch-action:pan-y;-webkit-user-select:none;user-select:none;
-  overflow:hidden;contain:paint;isolation:isolate;
-  -webkit-tap-highlight-color:transparent}
+  overflow:hidden;-webkit-tap-highlight-color:transparent}
 .cal *{-webkit-tap-highlight-color:transparent}
 .cal-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;padding:0 2px}
 .cal-top h3{font-size:clamp(17px,4.6vw,20px)}
@@ -357,28 +356,61 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 .cal-dow,.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:clamp(2px,.8vw,6px)}
 .cal-dow{margin-bottom:6px}
 .cal-dow span{text-align:center;font-size:clamp(10px,2.9vw,11.5px);font-weight:600;color:var(--text-2)}
-.cal-grid{will-change:transform}
-.cal-grid.settle{transition:transform .34s var(--spring),opacity .34s var(--spring)}
-.cal-grid.enter{animation:calIn .42s var(--spring)}
-.cal-grid.enter.back{animation:calBack .42s var(--spring)}
-@keyframes calIn{from{opacity:0;transform:translate3d(26px,0,0)}to{opacity:1;transform:none}}
-@keyframes calBack{from{opacity:0;transform:translate3d(-26px,0,0)}to{opacity:1;transform:none}}
+.cal-grid{backface-visibility:hidden}
+.cal.turning .cal-grid{will-change:transform}
+.cal-grid.settle{transition:transform .38s var(--spring),opacity .38s var(--spring)}
+.cal-grid.enter{animation:calIn .5s var(--spring)}
+.cal-grid.enter.back{animation:calBack .5s var(--spring)}
+/* The month arrives slightly behind the glass and settles forward into it. */
+@keyframes calIn{
+  from{opacity:0;transform:translate3d(34px,0,0) scale(.93)}
+  to  {opacity:1;transform:none}
+}
+@keyframes calBack{
+  from{opacity:0;transform:translate3d(-34px,0,0) scale(.93)}
+  to  {opacity:1;transform:none}
+}
+
+/* A pane of glass sits over the grid. It catches a highlight as the month
+   turns, and a soft edge shows on the side the month is coming from. */
+/* The pane only exists while the month is turning. At rest there is nothing
+   here at all, so it can never become a standing composited layer. */
+.cal-glass{display:none;position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2}
+.cal.turning .cal-glass,.cal.swept .cal-glass{display:block}
+.cal-glass::before{content:"";position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(100deg,transparent 34%,rgba(255,255,255,.16) 47%,
+    rgba(255,255,255,.28) 50%,rgba(255,255,255,.16) 53%,transparent 66%);
+  transform:translate3d(-130%,0,0)}
+.cal.swept .cal-glass::before{animation:calSheen .62s var(--spring)}
+@keyframes calSheen{from{transform:translate3d(-130%,0,0)}to{transform:translate3d(130%,0,0)}}
+/* the leading edge, so the pane reads as thick rather than flat */
+.cal-glass::after{content:"";position:absolute;top:0;bottom:0;width:38%;border-radius:inherit;
+  background:linear-gradient(90deg,rgba(255,255,255,.1),transparent);
+  opacity:0;transition:opacity .28s}
+.cal.turning[data-dir="fwd"] .cal-glass::after{opacity:1;right:0;left:auto;
+  background:linear-gradient(270deg,rgba(255,255,255,.1),transparent)}
+.cal.turning[data-dir="back"] .cal-glass::after{opacity:1;left:0;right:auto}
+@media (prefers-reduced-transparency: reduce){ .cal-glass{display:none} }
 /* The heading slides with the grid, so the month reads as one moving object. */
 .cal-top h3{transition:opacity .22s}
 .cal.turning .cal-top h3{opacity:.45}
 .cal-cell{aspect-ratio:1;min-width:0;border-radius:clamp(9px,2.8vw,13px);display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:clamp(2px,.9vw,4px);font-size:clamp(13px,3.7vw,15px);font-weight:500;
   color:var(--text);font-variant-numeric:tabular-nums lining-nums;padding:0;
-  transition:background .3s,transform .4s var(--bounce),color .2s}
+  transition:background .3s,color .2s,box-shadow .3s}
 .cal-cell.empty{visibility:hidden}
 .cal-cell.none{color:var(--text-2);opacity:.45}
 .cal-cell.has{cursor:pointer;background:var(--card-2)}
 @media (hover:hover) and (pointer:fine){
-  .cal-cell.has:hover{background:var(--tint);color:var(--red-deep);transform:scale(1.08)}
+  .cal-cell.has:hover{background:var(--tint);color:var(--red-deep)}
   
 }
 .cal-cell.today{box-shadow:inset 0 0 0 1.5px var(--red);color:var(--red-bright);font-weight:700}
-.cal-cell.on{background:var(--red-solid);color:#fff;transform:scale(1.06);box-shadow:0 6px 18px rgba(243,2,25,.4)}
+/* Paint only. A transform or an outer shadow here makes the cell its own
+   compositing layer, and Safari on iOS can rasterise that layer at the wrong
+   size, which painted a red disc across the whole grid. */
+.cal-cell.on{background:var(--red-solid);color:#fff;font-weight:700;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.34), inset 0 0 0 .5px rgba(255,255,255,.22)}
 .marks{display:flex;gap:clamp(2px,.7vw,3px);height:clamp(4px,1.4vw,5px);align-items:center}
 .marks i{width:clamp(4px,1.3vw,5px);height:clamp(4px,1.3vw,5px);border-radius:50%;background:var(--red);flex:none}
 .marks i.evt{background:var(--text-2)}
@@ -1481,7 +1513,7 @@ function pageCalendar(){
 
   return '<div class="wrap rise"><section><p class="eyebrow">What is on when</p><h2>Calendar</h2>'+
     '<p class="sub" style="margin:10px 0 26px">Film releases and events, day by day. Tap a date to see what is on.</p>'+
-    '<div class="cal-wrap"><div class="cal" id="calBox">'+
+    '<div class="cal-wrap"><div class="cal" id="calBox"><span class="cal-glass" aria-hidden="true"></span>'+
       '<div class="cal-top"><h3>'+MONTH[m]+' '+y+'</h3><div class="cal-nav">'+
         '<button data-cal="-1" aria-label="Previous month">'+ICON.left+'</button>'+
         '<button class="today" data-cal="today">Today</button>'+
@@ -1624,6 +1656,16 @@ function shiftMonth(step){
   calTurned = false;
 }
 
+/* Available to the arrows and to Today, which live outside the drag closure. */
+function sweepCal(){
+  const box = document.getElementById("calBox");
+  if(!box) return;
+  box.classList.remove("swept");
+  void box.offsetWidth;
+  box.classList.add("swept");
+  setTimeout(() => box.classList.remove("swept"), 700);
+}
+
 function wireCalendar(){
   document.querySelectorAll("[data-cal]").forEach(b => b.addEventListener("click", e => {
     e.preventDefault();
@@ -1636,8 +1678,10 @@ function wireCalendar(){
       calPick = dayKey(n);
       render(true);
       calTurned = false;
+      sweepCal();
     }else{
       shiftMonth(Number(v));
+      sweepCal();
     }
   }));
 
@@ -1662,17 +1706,24 @@ function wireCalendar(){
     const w = width(), lim = w * .34;
     return Math.abs(d) <= lim ? d : Math.sign(d) * (lim + (Math.abs(d) - lim) * .28);
   };
+  /* The grid slides and sinks slightly, so the month reads as a pane moving
+     behind glass rather than a flat image being dragged. */
   const place = d => {
-    grid.style.transform = d ? "translate3d(" + d.toFixed(1) + "px,0,0)" : "";
-    grid.style.opacity = d ? String(Math.max(.45, 1 - Math.abs(d) / (width() * .9))) : "";
+    if(!d){ grid.style.transform = ""; grid.style.opacity = ""; box.removeAttribute("data-dir"); return; }
+    const f = Math.min(1, Math.abs(d) / (width() * .5));
+    grid.style.transform = "translate3d(" + d.toFixed(1) + "px,0,0) scale(" + (1 - f * .06).toFixed(3) + ")";
+    grid.style.opacity = String(Math.max(.4, 1 - f * .5));
+    box.setAttribute("data-dir", d < 0 ? "fwd" : "back");
   };
   const release = () => {
     down = false; axis = ""; dx = 0;
     box.classList.remove("turning");
     grid.classList.add("settle");
     place(0);
-    setTimeout(() => grid.classList.remove("settle"), 360);
+    setTimeout(() => { grid.classList.remove("settle"); box.removeAttribute("data-dir"); }, 400);
   };
+
+  const sweep = sweepCal;
 
   box.addEventListener("pointerdown", e => {
     if(e.target.closest("button[data-cal]")) return;   /* the arrows are their own control */
@@ -1706,7 +1757,7 @@ function wireCalendar(){
     const far = Math.abs(moved) > Math.min(72, width() * .22);
     const wasX = axis === "x";
     release();
-    if(wasX && far) shiftMonth(moved < 0 ? 1 : -1);
+    if(wasX && far){ shiftMonth(moved < 0 ? 1 : -1); sweep(); }
   };
   box.addEventListener("pointerup", finish);
   box.addEventListener("pointercancel", e => { if(down && e.pointerId === id) release(); });
