@@ -83,7 +83,7 @@ html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:17px;
   line-height:1.47;letter-spacing:-.011em;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 body.locked{position:fixed;width:100%;overflow:hidden}
-img{display:block;max-width:100%}
+img{display:block;max-width:100%;-webkit-user-drag:none;-webkit-touch-callout:none}
 a{color:inherit;text-decoration:none}
 button,input{font:inherit;color:inherit;background:none;border:none}
 :focus-visible{outline:3px solid var(--red-hi);outline-offset:3px;border-radius:8px}
@@ -207,7 +207,9 @@ main{padding-top:84px;min-height:60vh}
 .slide{position:relative;flex:0 0 100%;scroll-snap-align:center;border-radius:var(--r-xl);overflow:hidden;
   min-height:clamp(340px,52vh,520px);display:flex;align-items:flex-end;background:var(--card-solid);
   cursor:pointer;text-align:left;width:100%;transition:transform .5s var(--spring)}
-.slide-media{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 1.4s var(--spring)}
+.slide-media{position:absolute;inset:0;background-size:cover;background-position:center;
+  pointer-events:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  transition:transform 1.4s var(--spring)}
 .slide:hover .slide-media{transform:scale(1.05)}
 .slide-fallback{position:absolute;inset:0;background:radial-gradient(120% 95% at 12% 0%,#F30219,#C9020D 40%,#3A0206 74%,#080002)}
 .slide-veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,.34) 42%,rgba(0,0,0,.06) 72%)}
@@ -271,7 +273,11 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 .poster{position:relative;aspect-ratio:2/3;border-radius:var(--r-md);overflow:hidden;background:var(--card);
   box-shadow:0 8px 26px rgba(0,0,0,.32);transition:box-shadow .5s var(--spring)}
 .card:hover .poster{box-shadow:0 20px 48px rgba(0,0,0,.5)}
-.poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+/* Every piece of artwork on the site is painted through this one class. */
+.art{position:absolute;inset:0;width:100%;height:100%;
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  pointer-events:none;-webkit-user-select:none;user-select:none;
+  -webkit-touch-callout:none;-webkit-user-drag:none}
 .poster .ph{position:absolute;inset:0;display:grid;place-items:center;font-size:38px;font-weight:700;letter-spacing:-.04em;
   color:rgba(255,255,255,.16);background:linear-gradient(150deg,#2A1418,#120609)}
 .poster .score{position:absolute;left:10px;bottom:10px}
@@ -304,9 +310,9 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 .ev:hover .datechip{transform:scale(1.08)}
 .datechip b{font-size:23px;font-weight:700;letter-spacing:-.02em;line-height:1}
 .datechip span{font-size:10.5px;font-weight:600;letter-spacing:.06em;line-height:1;opacity:.92}
-.ev .thumb{width:46px;height:60px;flex:none;border-radius:11px;overflow:hidden;background:var(--card-2);
+.ev .thumb{position:relative;width:46px;height:60px;flex:none;border-radius:11px;overflow:hidden;background:var(--card-2);
   display:grid;place-items:center;color:var(--red-bright);transition:transform .45s var(--bounce)}
-.ev .thumb img{width:100%;height:100%;object-fit:cover}
+.ev .thumb .art{position:absolute;inset:0}
 .ev:hover .thumb{transform:scale(1.06)}
 .pill{display:inline-block;padding:3px 11px;border-radius:999px;background:var(--card-2);color:var(--text-2);
   font-size:12px;font-weight:600;margin-bottom:7px;transition:transform .4s var(--bounce),background .3s,color .2s}
@@ -356,8 +362,10 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 .cal-dow,.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:clamp(2px,.8vw,6px)}
 .cal-dow{margin-bottom:6px}
 .cal-dow span{text-align:center;font-size:clamp(10px,2.9vw,11.5px);font-weight:600;color:var(--text-2)}
-.cal-grid{backface-visibility:hidden}
-.cal.turning .cal-grid{will-change:transform}
+/* No backface-visibility, no will-change. Both promote this grid to its own
+   composited layer, and a promoted layer is what Safari on iOS was painting
+   at the wrong size. A seven column grid does not need one. */
+.cal-grid{}
 .cal-grid.settle{transition:transform .38s var(--spring),opacity .38s var(--spring)}
 .cal-grid.enter{animation:calIn .5s var(--spring)}
 .cal-grid.enter.back{animation:calBack .5s var(--spring)}
@@ -378,11 +386,12 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 .cal-glass{display:none;position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2}
 .cal.turning .cal-glass,.cal.swept .cal-glass{display:block}
 .cal-glass::before{content:"";position:absolute;inset:0;border-radius:inherit;
-  background:linear-gradient(100deg,transparent 34%,rgba(255,255,255,.16) 47%,
-    rgba(255,255,255,.28) 50%,rgba(255,255,255,.16) 53%,transparent 66%);
-  transform:translate3d(-130%,0,0)}
-.cal.swept .cal-glass::before{animation:calSheen .62s var(--spring)}
-@keyframes calSheen{from{transform:translate3d(-130%,0,0)}to{transform:translate3d(130%,0,0)}}
+  background:linear-gradient(100deg,transparent 40%,rgba(255,255,255,.14) 47%,
+    rgba(255,255,255,.26) 50%,rgba(255,255,255,.14) 53%,transparent 60%);
+  background-size:320% 100%;background-position:140% 0}
+.cal.swept .cal-glass::before{animation:calSheen .64s var(--spring)}
+/* background-position rather than transform, so the pane never becomes a layer */
+@keyframes calSheen{from{background-position:140% 0}to{background-position:-140% 0}}
 /* the leading edge, so the pane reads as thick rather than flat */
 .cal-glass::after{content:"";position:absolute;top:0;bottom:0;width:38%;border-radius:inherit;
   background:linear-gradient(90deg,rgba(255,255,255,.1),transparent);
@@ -524,7 +533,11 @@ footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
 /* ===================== EVENT SHEET ===================== */
 .backdrop{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(18px);
   backdrop-filter:blur(18px);display:grid;place-items:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .35s}
-.grabber{display:none;width:38px;height:5px;border-radius:999px;background:var(--line);margin:9px auto 0}
+.grabber{display:none;position:absolute;top:9px;left:0;right:0;z-index:4;
+  width:42px;height:5px;border-radius:999px;margin:0 auto;
+  background:rgba(255,255,255,.5);box-shadow:0 1px 3px rgba(0,0,0,.35);
+  transition:width .3s var(--spring),background .3s}
+.backdrop.dragging .grabber{width:56px;background:rgba(255,255,255,.75)}
 .sheet-back{position:absolute;top:14px;left:14px;width:34px;height:34px;border-radius:999px;display:grid;place-items:center;
   cursor:pointer;color:#fff;background:rgba(0,0,0,.42);z-index:2;transition:transform .45s var(--bounce),background .3s}
 .sheet-back:hover{background:var(--red-solid);transform:scale(1.14)}
@@ -533,13 +546,25 @@ footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
   .sheet{width:100%;max-height:88vh;border-radius:26px 26px 0 0;transform:translateY(100%) scale(1);
     padding-bottom:env(safe-area-inset-bottom)}
   .grabber{display:block}
-  .sheet-close,.sheet-back{top:10px}
+  .sheet-close,.sheet-back{top:18px}
+  /* the strip the grabber sits in belongs to the gesture, not to scrolling */
+  .sheet::before{content:"";position:absolute;top:0;left:0;right:0;height:30px;z-index:3;
+    touch-action:none}
 }
 .backdrop.open{opacity:1;pointer-events:auto}
-.sheet{width:min(560px,100%);max-height:88vh;overflow-y:auto;border-radius:var(--r-xl);
+/* The panel is one piece. Its grabber and close button belong to the panel,
+   and only the content inside it scrolls, so nothing can be pulled away from
+   the holder the way a bouncing scroll region can. */
+.sheet{width:min(560px,100%);max-height:88vh;border-radius:var(--r-xl);
+  display:flex;flex-direction:column;overflow:hidden;
   transform:translateY(28px) scale(.96);transition:transform .55s var(--spring)}
+.sheet-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch}
+.backdrop.dragging .sheet{transition:none}
+.backdrop.dragging{transition:none}
 .backdrop.open .sheet{transform:none}
 .sheet-banner{aspect-ratio:16/9;background-size:cover;background-position:center;
+  pointer-events:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
   background-image:radial-gradient(115% 120% at 78% 0%,#F30219,#C9020D 46%,#180104)}
 .sheet-body{padding:clamp(20px,3.4vw,28px)}
 .sheet-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:999px;display:grid;place-items:center;
@@ -566,7 +591,7 @@ footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
 }
 
 /* Elements are promoted only while they are entering, then left alone. */
-.motion-reveal{opacity:0;transform:translateY(var(--motion-distance)) scale(.985);will-change:transform,opacity}
+.motion-reveal{opacity:0;transform:translateY(var(--motion-distance)) scale(.985)}
 .motion-reveal.is-visible{animation:revealIn var(--motion-slow) var(--spring) both;animation-delay:var(--reveal-delay,0ms)}
 @keyframes revealIn{
   0%{opacity:0;transform:translateY(var(--motion-distance)) scale(.985)}
@@ -612,8 +637,8 @@ footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
 .card:active,.ev:active,.tier:active{transform:scale(.985)}
 
 @media (hover:hover) and (pointer:fine){
-  .poster img{transition:transform .75s var(--spring),filter .45s}
-  .card:hover .poster img{transform:scale(1.045)}
+  .poster .art{transition:transform .75s var(--spring)}
+  .card:hover .poster .art{transform:scale(1.045)}
   .card:hover h3{color:var(--red-bright)}
   .card h3{transition:color .25s}
 }
@@ -689,8 +714,15 @@ function initReveals(){
   revealObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if(!entry.isIntersecting) return;
-      entry.target.classList.add('is-visible');
-      revealObserver.unobserve(entry.target);
+      const el = entry.target;
+      el.classList.add('is-visible');
+      revealObserver.unobserve(el);
+      /* Once it has arrived it goes back to being ordinary markup, with no
+         transform and nothing for the compositor to hold on to. */
+      el.addEventListener('animationend', () => {
+        el.classList.remove('motion-reveal', 'is-visible');
+        el.style.removeProperty('--reveal-delay');
+      }, { once:true });
     });
   }, { threshold:.12, rootMargin:'0px 0px -6% 0px' });
   targets.forEach(el => revealObserver.observe(el));
@@ -739,8 +771,8 @@ function initMagnets(){
   });
 }
 
-function initMotion(){
-  routeMotion();
+function initMotion(isRoute){
+  if(isRoute) routeMotion();
   initReveals();
   initTilt();
   initMagnets();
@@ -943,9 +975,12 @@ function mark(r, size){
 }
 function poster(r, withScore){
   const ph = '<div class="ph">'+esc((r.title||"KD").slice(0,2).toUpperCase())+'</div>';
-  const src = safeUrl(r.poster_url);
-  const img = src ? '<img src="'+esc(src)+'" alt="'+esc(r.title)+'" loading="lazy" onerror="this.remove()">' : "";
-  return '<div class="poster">'+ph+img+(withScore ? mark(r,"sm") : "")+'</div>';
+  /* Painted, not an <img>. There is no image element to long press, drag,
+     save or open in a tab, and no alt text carrying the address around. */
+  const art = safeUrl(r.poster_url)
+    ? '<div class="art" role="img" aria-label="'+esc(r.title)+'" style="background-image:'+bg(r.poster_url)+'"></div>'
+    : "";
+  return '<div class="poster">'+ph+art+(withScore ? mark(r,"sm") : "")+'</div>';
 }
 function card(r){
   const soon = unreleased(r);
@@ -973,6 +1008,27 @@ function carousel(slides, id){
       '<div class="dots">'+slides.map((_,i) => '<button aria-label="Go to slide '+(i+1)+'"'+(i?"":' class="on"')+'></button>').join("")+'</div>' : "")+
     '</div>';
 }
+/* ===================== ARTWORK =====================
+   Posters and banners are painted backgrounds rather than image elements, so
+   there is nothing to long press, drag out, save, or open in a tab. The long
+   press menu is suppressed over artwork on top of that.
+
+   Worth being plain about the limit: anything a browser renders has been
+   downloaded, so the address is still visible in developer tools and in the
+   network panel. This stops ordinary visitors, not a determined one.
+   ==================================================== */
+addEventListener("contextmenu", e => {
+  const t = e.target;
+  if(t.closest && (t.closest(".art, .slide-media, .sheet-banner, .poster, .slide, .thumb") || t.tagName === "IMG")){
+    e.preventDefault();
+  }
+}, { capture:true });
+
+addEventListener("dragstart", e => {
+  const t = e.target;
+  if(t.tagName === "IMG" || (t.closest && t.closest(".art, .slide-media, .sheet-banner"))) e.preventDefault();
+}, { capture:true });
+
 /* ===================== SCROLL RAILS =====================
    One rail per scrolling surface, drawn beside it rather than inside it.
    The surface keeps its full width and knows nothing about the rail.
@@ -1108,18 +1164,31 @@ addEventListener("pointermove", e => {
 
 /* The event sheet, which scrolls inside itself. */
 let sheetRail = null;
-function sheetRailFor(el){
+/* The sheet's scrolling region is rebuilt on every open, so the rail reads it
+   by id each time. Holding a reference would leave the rail measuring a node
+   that is no longer on the page. */
+function sheetRailFor(){
+  const live = () => document.getElementById("sheetScroll");
+
   if(!sheetRail){
     sheetRail = makeRail({
       box: () => {
+        const el = live();
+        if(!el) return null;
         const b = el.getBoundingClientRect();
         if(!b.height) return null;
         return { top: b.top, right: b.right, height: b.height,
                  scrollTop: el.scrollTop, scrollH: el.scrollHeight, clientH: el.clientHeight };
       },
       gap: 8,
-      scrollTo: y => { el.scrollTop = y; }
+      scrollTo: y => { const el = live(); if(el) el.scrollTop = y; }
     });
+  }
+
+  /* one listener per freshly built region */
+  const el = live();
+  if(el && el.dataset.railed !== "1"){
+    el.dataset.railed = "1";
     el.addEventListener("scroll", () => sheetRail.show(), { passive: true });
   }
   return sheetRail;
@@ -1218,11 +1287,16 @@ const SHEET_CHROME = dayBack =>
   (dayBack ? '<button class="sheet-back" data-day-back aria-label="Back to the day">'+ICON.left+'</button>' : "") +
   '<button class="sheet-close" id="sheetClose" aria-label="Close">'+ICON.close+'</button>';
 
-function sheetOpen(html){
+function sheetOpen(html, dayBack){
   const b = document.getElementById("sheet"), inner = document.getElementById("sheetInner");
   if(b.hidden) lastFocus = document.activeElement;
-  inner.innerHTML = html;
-  inner.scrollTop = 0;
+
+  inner.innerHTML = SHEET_CHROME(dayBack) +
+    '<div class="sheet-scroll" id="sheetScroll">' + html + '</div>';
+
+  const scroll = document.getElementById("sheetScroll");
+  scroll.scrollTop = 0;
+
   if(b.hidden){
     b.hidden = false;
     lockScroll(true);
@@ -1231,13 +1305,91 @@ function sheetOpen(html){
   const x = document.getElementById("sheetClose");
   if(x){ x.addEventListener("click", closeEvent); x.focus(); }
 
-  /* The sheet has its own rail. It appears once the open transition settles,
-     otherwise it would be measured against a panel that is still moving. */
-  const rail = sheetRailFor(inner);
+  wireSheetDrag(inner);
+
+  /* The rail belongs to the scrolling region, not the panel, and appears once
+     the opening transition has settled so it is not measured mid flight. */
+  const rail = sheetRailFor();
   pageRail.hide();
   pageRail.el.dataset.off = "1";              /* the page cannot be scrolled while the sheet is open */
   rail.el.dataset.off = "0";
   setTimeout(() => rail.show(), 380);
+}
+
+/* Pull the panel down to let it go, the way a sheet behaves on a phone.
+
+   This uses touch events rather than pointer events on purpose. The panel
+   allows vertical panning so its content can scroll, and once the browser
+   decides a gesture is a scroll it cancels the pointer stream. A non passive
+   touchmove can still veto the scroll while the content is already at the top,
+   which is exactly when the pull should take over. */
+function wireSheetDrag(panel){
+  if(panel.dataset.drag === "1") return;
+  panel.dataset.drag = "1";
+
+  /* The scrolling region is rebuilt every time the sheet opens, so it is
+     looked up on each gesture rather than captured once. A captured node goes
+     stale on the second open and reports a scroll position of zero forever. */
+  const scroller = () => document.getElementById("sheetScroll");
+
+  const back = document.getElementById("sheet");
+  let y0 = 0, dy = 0, live = false, armed = false, t0 = 0;
+
+  const paint = d => {
+    panel.style.transform = d ? "translateY(" + d.toFixed(1) + "px)" : "";
+    back.style.opacity = d ? String(Math.max(.12, 1 - d / (innerHeight * .8))) : "";
+  };
+  const rest = () => {
+    live = false; armed = false; dy = 0;
+    back.classList.remove("dragging");
+    panel.style.transform = "";
+    back.style.opacity = "";
+  };
+
+  panel.addEventListener("touchstart", e => {
+    if(e.touches.length !== 1) { armed = false; return; }
+    const t = e.touches[0];
+    if(t.target && t.target.closest && t.target.closest("a,button")) { armed = false; return; }
+    /* Either the content is already at the top, or the finger is on the grip. */
+    const onGrip = (t.clientY - panel.getBoundingClientRect().top) < 34;
+    const sc = scroller();
+    armed = onGrip || !sc || sc.scrollTop <= 0;
+    y0 = t.clientY; dy = 0; t0 = Date.now();
+  }, { passive:true });
+
+  panel.addEventListener("touchmove", e => {
+    if(!armed || e.touches.length !== 1) return;
+    const d = e.touches[0].clientY - y0;
+
+    if(!live){
+      if(d < 8) return;                       /* wait for a clear downward pull */
+      const sc = scroller();
+      if(sc && sc.scrollTop > 0){ armed = false; return; }
+      live = true;
+      back.classList.add("dragging");
+    }
+    if(e.cancelable) e.preventDefault();      /* the pull wins over the scroll */
+    dy = d < 0 ? 0 : (d > 180 ? 180 + (d - 180) * .45 : d);
+    paint(dy);
+  }, { passive:false });
+
+  const finish = () => {
+    if(!live){ armed = false; return; }
+    const flick = (Date.now() - t0) < 380 && dy > 46;
+    const far = dy > Math.min(150, innerHeight * .18);
+    if(far || flick){
+      rest();
+      closeEvent();
+    }else{
+      /* let the panel spring home under its own transition */
+      live = false; armed = false; dy = 0;
+      back.classList.remove("dragging");
+      panel.style.transform = "";
+      back.style.opacity = "";
+    }
+  };
+  panel.addEventListener("touchend", finish);
+  panel.addEventListener("touchcancel", () => { if(live) rest(); else armed = false; });
 }
 
 function openEvent(i){
@@ -1245,14 +1397,14 @@ function openEvent(i){
   const span = fmtDate(e.date_start) + (e.date_end && e.date_end !== e.date_start ? " – " + fmtDate(e.date_end) : "");
   const facts = [["When", [span, e.time].filter(Boolean).join(", ")],
     ["Where", [e.venue, e.city].filter(Boolean).join(", ")], ["Type", e.category], ["Price", e.price]].filter(([,v]) => v);
-  sheetOpen(SHEET_CHROME(sheetBack) +
+  sheetOpen(
     '<div class="sheet-banner"'+(safeUrl(e.banner_url || e.poster_url) ? ' style="background-image:'+bg(e.banner_url || e.poster_url)+'"' : "")+'></div>'+
     '<div class="sheet-body">'+(e.category ? '<span class="pill hot">'+esc(e.category)+'</span>' : "")+
       '<h2 id="sheetTitle" style="font-size:clamp(23px,3.4vw,32px);margin:4px 0 0">'+esc(e.title)+'</h2>'+
       '<dl class="list">'+facts.map(([k,v]) => '<div class="list-row"><dt>'+k+'</dt><dd>'+esc(v)+'</dd></div>').join("")+'</dl>'+
       (e.description ? '<p class="prose" style="font-size:16.5px">'+esc(e.description)+'</p>' : "")+
       (safeUrl(e.ticket_url) ? '<div class="actions"><a class="btn prominent" href="'+esc(safeUrl(e.ticket_url))+'" target="_blank" rel="noopener">Get tickets</a></div>' : "")+
-    '</div>');
+    '</div>', sheetBack);
 }
 
 /* A tapped date opens the same sheet, listing everything on that day. */
@@ -1260,13 +1412,13 @@ function openDay(key){
   const items = calendarMap()[key] || [];
   const d = parseDate(key);
   sheetBack = null;
-  sheetOpen(SHEET_CHROME(false) +
+  sheetOpen(
     '<div class="sheet-body"><p class="eyebrow">'+["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][d.getDay()]+'</p>'+
     '<h2 id="sheetTitle" style="font-size:clamp(23px,3.4vw,30px)">'+fmtDate(key)+'</h2>'+
     (items.length
       ? '<div class="events" style="margin-top:20px">'+items.map(dayRow).join("")+'</div>'
       : '<div class="empty" style="margin-top:20px">Nothing listed on this day.</div>')+
-    '</div>');
+    '</div>', false);
   sheetBack = key;
 }
 
@@ -1274,6 +1426,10 @@ function closeEvent(){
   const b = document.getElementById("sheet");
   if(b.hidden) return;
   b.classList.remove("open");
+  b.classList.remove("dragging");
+  b.style.opacity = "";
+  const panel = document.getElementById("sheetInner");
+  if(panel) panel.style.transform = "";
   lockScroll(false);
   sheetBack = null;
   if(sheetRail){ sheetRail.hide(); sheetRail.el.dataset.off = "1"; }
@@ -1478,8 +1634,8 @@ function calendarMap(){
   return map;
 }
 function filmRow(r){
-  const thumb = r.poster_url
-    ? '<img src="'+esc(r.poster_url)+'" alt="" loading="lazy" onerror="this.remove()">'
+  const thumb = safeUrl(r.poster_url)
+    ? '<span class="art" style="background-image:'+bg(r.poster_url)+'"></span>'
     : ICON.star;
   return '<a class="ev" href="#/review/'+slugOf(r)+'"><span class="thumb">'+thumb+'</span><div>'+
     '<span class="pill hot">'+(unreleased(r) ? "Release" : "Released")+'</span>'+
@@ -1594,7 +1750,7 @@ function render(keepScroll){
     if(q) q.addEventListener("input", applyFilters);
   }
   initCarousels();
-  initMotion();
+  initMotion(!keepScroll);
   pageRail.paint();
 }
 
