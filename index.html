@@ -147,10 +147,27 @@ html.has-logo footer .mark{width:auto;height:30px;max-width:150px}
   .tabbar.min{transform:translateX(-50%) translateY(150%);opacity:0}
   .tabbar a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 14px;border-radius:999px;
     font-size:10.5px;font-weight:500;color:var(--text-2);transition:background .32s var(--spring),color .22s}
-  .tabbar a:hover{color:var(--text);background:var(--card)}
-  .tabbar a.on{color:#fff;background:var(--red-solid);font-weight:600;
-    box-shadow:0 5px 16px rgba(243,2,25,.45), inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 0 .5px rgba(255,255,255,.24)}
+  .tabbar a{position:relative;z-index:1;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+  .tabbar a.on{color:#fff;font-weight:600}
+  /* One red highlight that slides between the tabs and can be dragged along
+     the bar. The tab beneath it lights up, and letting go lands there. */
+  .tabbar{touch-action:pan-y;-webkit-user-select:none;user-select:none}
+  .tb-pill{position:absolute;top:0;left:0;width:0;height:0;border-radius:999px;pointer-events:none;
+    background:var(--red-solid);opacity:0;
+    box-shadow:0 5px 16px rgba(243,2,25,.45), inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 0 .5px rgba(255,255,255,.24);
+    transition:transform .5s var(--spring),width .5s var(--spring),opacity .25s}
+  .tb-pill[data-tb-set]{opacity:1}
+  .tabbar[data-tb-drag] .tb-pill{transition:width .22s var(--spring);
+    box-shadow:0 10px 26px rgba(243,2,25,.6), inset 0 1px 0 rgba(255,255,255,.4), inset 0 0 0 .5px rgba(255,255,255,.3)}
+  .tabbar[data-tb-drag] a.on{color:var(--text-2)}
+  .tabbar[data-tb-drag] a[data-tb-hot]{color:#fff}
+  .tabbar[data-tb-drag] a[data-tb-hot] svg{transform:scale(1.14)}
+  .tabbar a svg{transition:transform .3s var(--bounce)}
 }
+@media (max-width:820px) and (hover:hover) and (pointer:fine){
+  .tabbar a:not(.on):hover{color:var(--text);background:var(--card)}
+}
+@media (prefers-reduced-motion:reduce){ .tb-pill{transition:opacity .25s} }
 @media (max-width:430px){
   .tabbar{padding:6px;gap:2px}
   .tabbar a{padding:7px 10px;font-size:10px;gap:2px}
@@ -253,16 +270,21 @@ main{padding-top:84px;min-height:60vh}
   background:rgba(0,0,0,.82);-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);
   opacity:0;pointer-events:none;transition:opacity .34s}
 .vbox.open{opacity:1;pointer-events:auto}
-.vframe{position:relative;width:min(1100px,100%);aspect-ratio:16/9;border-radius:var(--r-lg);
-  overflow:hidden;background:#000;box-shadow:0 30px 90px rgba(0,0,0,.6);
+/* The close control sits on the panel, outside the frame, because the frame
+   clips its own corners and would clip the control with them. */
+.vpanel{position:relative;width:min(1100px,100%,calc((100vh - 150px) * 16 / 9));
   transform:scale(.96);transition:transform .45s var(--spring)}
-.vbox.open .vframe{transform:none}
+.vbox.open .vpanel{transform:none}
+.vbox.dragging,.vbox.dragging .vpanel{transition:none}
+.vframe{position:relative;aspect-ratio:16/9;border-radius:var(--r-lg);overflow:hidden;background:#000;
+  box-shadow:0 30px 90px rgba(0,0,0,.6)}
 .vframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.vclose{position:absolute;top:-46px;right:0;width:38px;height:38px;border-radius:999px;display:grid;
-  place-items:center;cursor:pointer;color:#fff;background:rgba(255,255,255,.14);
-  transition:background .3s}
-.vclose:hover{background:var(--red-solid)}
-@media (max-width:620px){ .vclose{top:auto;bottom:-46px;right:50%;translate:50% 0} }
+.vclose{position:absolute;top:-54px;right:0;width:42px;height:42px;border-radius:999px;display:grid;
+  place-items:center;cursor:pointer;color:#fff;background:var(--red-solid);
+  box-shadow:0 8px 24px rgba(243,2,25,.45), inset 0 1px 0 rgba(255,255,255,.3);
+  transition:transform .45s var(--bounce),background .3s}
+.vclose:active{transform:scale(.92)}
+@media (hover:hover) and (pointer:fine){ .vclose:hover{background:var(--red-deep);transform:scale(1.1)} }
 
 .slide-txt{min-width:0;flex:1}
 .slide-bar .eyebrow{color:rgba(255,255,255,.88);margin-bottom:3px}
@@ -678,11 +700,11 @@ footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
 </footer>
 
 <div class="vbox" id="video" hidden>
-  <div class="vframe">
+  <div class="vpanel" id="videoPanel">
     <button class="vclose" id="videoClose" aria-label="Close the trailer">
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
     </button>
-    <div id="videoSlot"></div>
+    <div class="vframe" id="videoSlot"></div>
   </div>
 </div>
 
@@ -1045,7 +1067,9 @@ function openVideo(id){
 function closeVideo(){
   const box = document.getElementById("video"), slot = document.getElementById("videoSlot");
   if(!box || box.hidden) return;
-  box.classList.remove("open");
+  box.classList.remove("open", "dragging");
+  box.style.opacity = "";
+  document.getElementById("videoPanel").style.transform = "";
   slot.innerHTML = "";                       /* stops playback immediately */
   lockScroll(false);
   setTimeout(() => { box.hidden = true; }, 340);
@@ -1054,10 +1078,47 @@ function closeVideo(){
 }
 
 addEventListener("click", e => {
-  const play = e.target.closest && e.target.closest(".play");
+  if(!e.target.closest) return;
+  const play = e.target.closest("[data-yt]");
   if(play){ e.preventDefault(); openVideo(play.dataset.yt); return; }
-  if(e.target.id === "video" || (e.target.closest && e.target.closest("#videoClose"))) closeVideo();
+  /* The button, or anywhere on the dark surround, closes the player. */
+  if(e.target.closest("#video") && !e.target.closest(".vframe")) closeVideo();
 });
+
+/* On a phone the player can be thrown away downward, like the event sheet.
+   The gesture starts on the surround, since the video keeps its own touches. */
+(() => {
+  const box = document.getElementById("video"), panel = document.getElementById("videoPanel");
+  let y0 = 0, x0 = 0, dy = 0, axis = "", on = false;
+  box.addEventListener("touchstart", e => {
+    on = e.touches.length === 1 && !e.target.closest("#videoClose");
+    y0 = e.touches[0].clientY; x0 = e.touches[0].clientX; dy = 0; axis = "";
+  }, { passive:true });
+  box.addEventListener("touchmove", e => {
+    if(!on) return;
+    const my = e.touches[0].clientY - y0, mx = e.touches[0].clientX - x0;
+    if(!axis){
+      if(Math.abs(my) < 8 && Math.abs(mx) < 8) return;
+      axis = my > 0 && Math.abs(my) > Math.abs(mx) ? "y" : "no";
+      if(axis === "y") box.classList.add("dragging");
+    }
+    if(e.cancelable) e.preventDefault();          /* the page behind must not move */
+    if(axis !== "y") return;
+    dy = Math.max(0, my);
+    panel.style.transform = "translateY(" + dy.toFixed(1) + "px)";
+    box.style.opacity = String(Math.max(.3, 1 - dy / 420));
+  }, { passive:false });
+  const lift = cancelled => () => {
+    if(!on) return;
+    on = false;
+    const far = !cancelled && axis === "y" && dy > 90;
+    box.classList.remove("dragging");
+    if(far) closeVideo();
+    else{ panel.style.transform = ""; box.style.opacity = ""; }
+  };
+  box.addEventListener("touchend", lift(false));
+  box.addEventListener("touchcancel", lift(true));
+})();
 addEventListener("keydown", e => {
   if(e.key === "Escape" && !document.getElementById("video").hidden) closeVideo();
 });
@@ -1721,8 +1782,9 @@ function pageReview(slug){
     ["Year", r.release_date ? "" : r.year],["Watch on",r.watch_on]].filter(([,v]) => v);
   const clips = [["Watch trailer", safeUrl(r.trailer_url), "prominent"], ["Watch teaser", safeUrl(r.teaser_url), "quiet"]]
     .filter(([,u]) => u)
-    .map(([label,u,style]) => '<a class="btn '+style+'" href="'+esc(u)+'" target="_blank" rel="noopener">'+
-      ICON.play+label+'</a>').join("");
+    .map(([label,u,style]) => ytId(u)
+      ? '<button type="button" class="btn '+style+'" data-yt="'+ytId(u)+'">'+ICON.play+label+'</button>'
+      : '<a class="btn '+style+'" href="'+esc(u)+'" target="_blank" rel="noopener">'+ICON.play+label+'</a>').join("");
   const body = String(r.review_body || r.synopsis || "").split(/\n+/).filter(Boolean).map(p => "<p>"+esc(p)+"</p>").join("");
   return '<div class="wrap rise"><section style="padding-top:20px"><a class="back" href="#/movies">'+ICON.left+'Movies</a>'+
     '<div class="detail"><div>'+poster(r,false)+
@@ -1881,6 +1943,80 @@ function notFound(m){
 function markNav(key){
   document.querySelectorAll(".tabs a, .tabbar a")
     .forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + key));
+  placeTabPill();
+}
+
+/* ===================== TAB BAR HIGHLIGHT ===================== */
+/* Rests the red highlight on the current tab, or hides it on a page that
+   belongs to no tab. */
+function placeTabPill(){
+  const bar = document.getElementById("tabbar");
+  const pill = bar && bar.querySelector(".tb-pill"), a = bar && bar.querySelector("a.on");
+  if(!pill) return;
+  if(!a || !a.offsetWidth){ pill.removeAttribute("data-tb-set"); return; }
+  pill.style.width = a.offsetWidth + "px";
+  pill.style.height = a.offsetHeight + "px";
+  pill.style.transform = "translate(" + a.offsetLeft + "px," + a.offsetTop + "px)";
+  pill.setAttribute("data-tb-set", "");
+}
+
+function wireTabPill(){
+  const bar = document.getElementById("tabbar"), pill = bar.querySelector(".tb-pill");
+  const tabs = () => [...bar.querySelectorAll("a")];
+  let x0 = 0, y0 = 0, axis = "", hot = null, on = false;
+
+  const clear = () => {
+    bar.removeAttribute("data-tb-drag");
+    tabs().forEach(a => a.removeAttribute("data-tb-hot"));
+    hot = null; axis = ""; on = false;
+  };
+  const follow = x => {
+    const box = bar.getBoundingClientRect(), all = tabs();
+    const first = all[0], last = all[all.length - 1];
+    /* The tab whose middle is nearest the finger. */
+    const at = x - box.left;
+    const near = all.reduce((best, a) =>
+      Math.abs(a.offsetLeft + a.offsetWidth / 2 - at) < Math.abs(best.offsetLeft + best.offsetWidth / 2 - at) ? a : best);
+    if(near !== hot){
+      if(hot) hot.removeAttribute("data-tb-hot");
+      hot = near;
+      hot.setAttribute("data-tb-hot", "");
+      pill.style.width = hot.offsetWidth + "px";
+    }
+    const w = hot.offsetWidth;
+    const left = Math.min(Math.max(at - w / 2, first.offsetLeft), last.offsetLeft + last.offsetWidth - w);
+    pill.style.transform = "translate(" + left.toFixed(1) + "px," + hot.offsetTop + "px) scale(1.06)";
+  };
+
+  bar.addEventListener("touchstart", e => {
+    on = e.touches.length === 1 && !!bar.querySelector("a.on");
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; axis = "";
+  }, { passive:true });
+  bar.addEventListener("touchmove", e => {
+    if(!on) return;
+    const mx = e.touches[0].clientX - x0, my = e.touches[0].clientY - y0;
+    if(!axis){
+      if(Math.abs(mx) < 6 && Math.abs(my) < 6) return;
+      axis = Math.abs(mx) >= Math.abs(my) ? "x" : "y";
+      if(axis === "x") bar.setAttribute("data-tb-drag", "");
+    }
+    if(axis !== "x") return;
+    if(e.cancelable) e.preventDefault();         /* a drag is not a tap and not a scroll */
+    follow(e.touches[0].clientX);
+  }, { passive:false });
+  const lift = cancelled => () => {
+    if(!on) return;
+    const to = !cancelled && axis === "x" && hot ? hot.getAttribute("href") : "";
+    clear();
+    if(to && to !== location.hash && !(to === "#/" && !location.hash)) location.hash = to;
+    else placeTabPill();
+  };
+  bar.addEventListener("touchend", lift(false));
+  bar.addEventListener("touchcancel", lift(true));
+
+  /* Tab widths change when the font arrives or the phone is turned. */
+  if("ResizeObserver" in window) new ResizeObserver(placeTabPill).observe(bar);
+  else addEventListener("resize", placeTabPill);
 }
 
 function render(keepScroll){
@@ -2058,7 +2194,7 @@ function wireCalendar(){
 
 /* ===================== CHROME ===================== */
 document.getElementById("tabs").innerHTML = NAV.map(([h,l]) => '<a href="#'+h+'">'+l+'</a>').join("");
-document.getElementById("tabbar").innerHTML = NAV.map(([h,l,i]) => '<a href="#'+h+'">'+ICON[i]+'<span>'+l+'</span></a>').join("");
+document.getElementById("tabbar").innerHTML = '<span class="tb-pill" aria-hidden="true"></span>' + NAV.map(([h,l,i]) => '<a href="#'+h+'">'+ICON[i]+'<span>'+l+'</span></a>').join("");
 document.getElementById("social").innerHTML =
   [["Instagram", CONFIG.INSTAGRAM, "instagram"], ["TikTok", CONFIG.TIKTOK, "tiktok"],
    ["Facebook", CONFIG.FACEBOOK, "facebook"], ["Email", "mailto:" + CONFIG.EMAIL, "mail"]]
@@ -2096,6 +2232,8 @@ document.getElementById("themeBtn").addEventListener("click", () => {
     setTimeout(() => b.classList.remove("theme-spin"), 540);
   }
 });
+
+wireTabPill();
 
 let lastY = 0;
 addEventListener("scroll", () => {
