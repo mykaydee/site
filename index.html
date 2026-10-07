@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kaydee.my — Indian Cinema Portal</title>
-<meta name="description" content="Kaydee.my — Indian cinema reviews, movie news and event promotions. Every film scored on the Kaydee Rating Board.">
+<title>Kaydee.my | Indian Cinema Portal</title>
+<meta name="description" content="Kaydee.my: Indian cinema reviews, movie news and event promotions. Every film scored on the Kaydee Rating Board.">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#F5F5F7" media="(prefers-color-scheme: light)">
-<meta property="og:title" content="Kaydee.my — Indian Cinema Portal">
+<meta property="og:title" content="Kaydee.my | Indian Cinema Portal">
 <meta property="og:description" content="Movies · Reviews · Entertainment updates">
 <meta property="og:image" content="logo.png">
 <meta property="og:type" content="website">
@@ -378,104 +378,61 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 .card:hover .badge,.badge:hover{transform:scale(1.08)}
 .poster .badge{position:absolute;left:10px;bottom:10px}
 
-/* ===================== CALENDAR ===================== */
-.cal-wrap{display:grid;gap:clamp(24px,4vw,36px);align-items:start}
-@media (min-width:900px){.cal-wrap{grid-template-columns:minmax(0,430px) 1fr}}
-/* No transforms, no filters and no standing layer promotion live inside this box.
-   Every one of those is a way for Safari on iOS to paint a layer at the
-   wrong size, which is what put a red disc across the grid. */
-.cal{position:relative;background:var(--card);border-radius:var(--r-lg);padding:clamp(10px,3vw,18px);
-  touch-action:pan-y;-webkit-user-select:none;user-select:none;
-  overflow:hidden;-webkit-tap-highlight-color:transparent}
-.cal *{-webkit-tap-highlight-color:transparent}
-.cal-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;padding:0 2px}
-.cal-top h3{font-size:clamp(17px,4.6vw,20px)}
-.cal-nav button{flex:none}
-@media (max-width:380px){.cal-nav button.today{padding:0 11px;font-size:12.5px}}
-.cal-nav{display:flex;gap:6px;align-items:center}
-.cal-nav button{width:36px;height:36px;border-radius:999px;display:grid;place-items:center;cursor:pointer;
-  color:var(--text-2);background:var(--card-2);transition:background .3s,color .2s}
-.cal-nav button.today{width:auto;padding:0 15px;font-size:13.5px;font-weight:600;color:var(--text)}
-
-.cal-dow,.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:clamp(2px,.8vw,6px)}
-.cal-dow{margin-bottom:6px}
-.cal-dow span{text-align:center;font-size:clamp(10px,2.9vw,11.5px);font-weight:600;color:var(--text-2)}
-/* The month moves by layout position, never by transform, and never fades.
-   transform and opacity are the two properties that hand an element to the
-   compositor, and a composited layer inside this card is what Safari on iOS
-   was rasterising at the wrong scale. Nothing here may become a layer. */
-.cal-grid{position:relative;left:0}
-.cal-grid.settle{transition:left .38s var(--spring)}
-.cal-grid.enter{animation:calIn .46s var(--spring)}
-.cal-grid.enter.back{animation:calBack .46s var(--spring)}
-@keyframes calIn{ from{left:34px} to{left:0} }
-@keyframes calBack{ from{left:-34px} to{left:0} }
-
-/* A pane of glass sits over the grid. It catches a highlight as the month
-   turns, and a soft edge shows on the side the month is coming from. */
-/* The pane only exists while the month is turning. At rest there is nothing
-   here at all, so it can never become a standing composited layer. */
-.cal-glass{display:none;position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2}
-.cal.turning .cal-glass,.cal.swept .cal-glass{display:block}
-.cal-glass::before{content:"";position:absolute;inset:0;border-radius:inherit;
-  background:linear-gradient(100deg,transparent 40%,rgba(255,255,255,.14) 47%,
-    rgba(255,255,255,.26) 50%,rgba(255,255,255,.14) 53%,transparent 60%);
-  background-size:320% 100%;background-position:140% 0}
-.cal.swept .cal-glass::before{animation:calSheen .64s var(--spring)}
-/* background-position rather than transform, so the pane never becomes a layer */
-@keyframes calSheen{from{background-position:140% 0}to{background-position:-140% 0}}
-/* the leading edge, so the pane reads as thick rather than flat */
-.cal-glass::after{content:"";position:absolute;top:0;bottom:0;width:38%;border-radius:inherit;
-  background:linear-gradient(90deg,rgba(255,255,255,.1),transparent);
-  opacity:0;transition:opacity .28s}
-.cal.turning[data-dir="fwd"] .cal-glass::after{opacity:1;right:0;left:auto;
-  background:linear-gradient(270deg,rgba(255,255,255,.1),transparent)}
-.cal.turning[data-dir="back"] .cal-glass::after{opacity:1;left:0;right:auto}
-@media (prefers-reduced-transparency: reduce){ .cal-glass{display:none} }
-/* The heading dims while the month is being turned. Colour, not opacity, so
-   there is still nothing in this card that can be handed to the compositor. */
-.cal-top h3{transition:color .22s}
-.cal.turning .cal-top h3{color:var(--text-2)}
-.cal-cell{aspect-ratio:1;min-width:0;border-radius:clamp(9px,2.8vw,13px);display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:clamp(2px,.9vw,4px);font-size:clamp(13px,3.7vw,15px);font-weight:500;
-  color:var(--text);font-variant-numeric:tabular-nums lining-nums;padding:0;
-  transition:background .3s,color .2s,box-shadow .3s}
-.cal-cell.empty{visibility:hidden}
-.cal-cell.none{color:var(--text-2);opacity:.45}
-.cal-cell.has{cursor:pointer;background:var(--card-2)}
+/* ===================== CALENDAR =====================
+   Every class here carries the kc- prefix and every state is an attribute,
+   so no page-wide rule can land on any part of the calendar. */
+.kc{display:grid;gap:clamp(22px,4vw,36px);align-items:start}
+@media (min-width:900px){.kc{grid-template-columns:minmax(0,440px) minmax(0,1fr)}}
+.kc-card{background:var(--card);border-radius:var(--r-lg);overflow:hidden;
+  padding:clamp(14px,3.6vw,22px) clamp(8px,2.6vw,18px) clamp(12px,3vw,16px);
+  -webkit-user-select:none;user-select:none}
+.kc-card,.kc-card *{-webkit-tap-highlight-color:transparent}
+.kc-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 8px;margin-bottom:16px}
+.kc-title{margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:clamp(21px,6vw,27px);font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.kc-title span{display:block;margin-bottom:3px;font-size:13px;font-weight:600;letter-spacing:0;color:var(--red-bright)}
+.kc-nav{display:flex;gap:6px;align-items:center;flex:none}
+.kc-btn{height:36px;min-width:36px;padding:0;border-radius:999px;display:grid;place-items:center;cursor:pointer;
+  color:var(--text);background:var(--card-2);font-size:13.5px;font-weight:600;transition:background .25s}
+.kc-btn[data-kc="today"]{padding:0 14px}
+.kc-btn:active{background:var(--tint-2)}
+.kc-week,.kc-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.kc-week{margin-bottom:6px}
+.kc-week span{text-align:center;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text-2)}
+.kc-grid{row-gap:2px;touch-action:pan-y}
+.kc-grid[data-kc-turn="next"]{animation:kcNext .44s var(--spring)}
+.kc-grid[data-kc-turn="prev"]{animation:kcPrev .44s var(--spring)}
+.kc-grid[data-kc-settle]{transition:transform .34s var(--spring),opacity .34s}
+@keyframes kcNext{from{opacity:0;transform:translateX(30px);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+@keyframes kcPrev{from{opacity:0;transform:translateX(-30px);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+.kc-day{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;padding:3px 0 5px;cursor:pointer;
+  color:var(--text);font-variant-numeric:tabular-nums lining-nums}
+.kc-num{width:clamp(34px,9.4vw,40px);height:clamp(34px,9.4vw,40px);border-radius:50%;display:grid;place-items:center;
+  font-size:clamp(15px,4.1vw,17px);font-weight:500;transition:background .2s,color .15s}
+.kc-day[data-kc-out] .kc-num{color:var(--text-2);opacity:.5}
+.kc-day[data-kc-out] .kc-dots{opacity:.45}
+.kc-day[aria-current="date"] .kc-num{color:var(--red-bright);font-weight:700;opacity:1;box-shadow:inset 0 0 0 1.5px var(--red)}
+.kc-day[aria-pressed="true"] .kc-num{background:var(--red-solid);color:#fff;font-weight:700;opacity:1;box-shadow:none}
+.kc-day:focus-visible{outline:none}
+.kc-day:focus-visible .kc-num{outline:2px solid var(--red-bright);outline-offset:2px}
+.kc-dots{display:flex;gap:3px;height:5px}
+.kc-dots i,.kc-foot i{width:5px;height:5px;border-radius:50%;background:var(--red)}
+.kc-dots i[data-kc-kind="event"],.kc-foot i[data-kc-kind="event"]{background:var(--text-2)}
+.kc-foot{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;padding:12px 8px 0;border-top:1px solid var(--line);
+  font-size:13px;color:var(--text-2)}
+.kc-foot span{display:inline-flex;align-items:center;gap:7px}
+.kc-foot i{width:7px;height:7px}
 @media (hover:hover) and (pointer:fine){
-  .cal-cell.has:hover{background:var(--tint);color:var(--red-deep)}
-  
+  .kc-btn:hover{background:var(--tint-2)}
+  .kc-day:not([aria-pressed="true"]):hover .kc-num{background:var(--card-2)}
 }
-.cal-cell.today{box-shadow:inset 0 0 0 1.5px var(--red);color:var(--red-bright);font-weight:700}
-/* Paint only. A transform or an outer shadow here makes the cell its own
-   compositing layer, and Safari on iOS can rasterise that layer at the wrong
-   size, which painted a red disc across the whole grid. */
-.cal-cell.on{background:var(--red-solid);color:#fff;font-weight:700;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.34), inset 0 0 0 .5px rgba(255,255,255,.22)}
-/* The dots are painted into one element as radial gradients. No child
-   elements, no border radius, nothing that can be handed to the compositor. */
-.marks{height:clamp(4px,1.4vw,5px);width:100%;background-repeat:no-repeat;background-position:center;
-  --dot:var(--red); --dot2:var(--text-2)}
-.cal-cell.on .marks{--dot:#fff; --dot2:rgba(255,255,255,.85)}
-.marks[data-m="f"]  {background-image:radial-gradient(circle 2.2px at 50% 50%,var(--dot) 99%,transparent)}
-.marks[data-m="e"]  {background-image:radial-gradient(circle 2.2px at 50% 50%,var(--dot2) 99%,transparent)}
-.marks[data-m="ff"] {background-image:radial-gradient(circle 2.2px at calc(50% - 4px) 50%,var(--dot) 99%,transparent),
-                                      radial-gradient(circle 2.2px at calc(50% + 4px) 50%,var(--dot) 99%,transparent)}
-.marks[data-m="fe"] {background-image:radial-gradient(circle 2.2px at calc(50% - 4px) 50%,var(--dot) 99%,transparent),
-                                      radial-gradient(circle 2.2px at calc(50% + 4px) 50%,var(--dot2) 99%,transparent)}
-.marks[data-m="ef"] {background-image:radial-gradient(circle 2.2px at calc(50% - 4px) 50%,var(--dot2) 99%,transparent),
-                                      radial-gradient(circle 2.2px at calc(50% + 4px) 50%,var(--dot) 99%,transparent)}
-.marks[data-m="ee"] {background-image:radial-gradient(circle 2.2px at calc(50% - 4px) 50%,var(--dot2) 99%,transparent),
-                                      radial-gradient(circle 2.2px at calc(50% + 4px) 50%,var(--dot2) 99%,transparent)}
-.marks[data-m]:not([data-m="f"]):not([data-m="e"]):not([data-m="ff"]):not([data-m="fe"]):not([data-m="ef"]):not([data-m="ee"]){
-  background-image:radial-gradient(circle 2.2px at calc(50% - 8px) 50%,var(--dot) 99%,transparent),
-                   radial-gradient(circle 2.2px at 50% 50%,var(--dot) 99%,transparent),
-                   radial-gradient(circle 2.2px at calc(50% + 8px) 50%,var(--dot2) 99%,transparent)}
-.legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;padding:0 2px;font-size:clamp(12px,3.2vw,13px);color:var(--text-2)}
-.legend i{width:8px;height:8px;display:inline-block;margin-right:7px;vertical-align:middle;
-  background:radial-gradient(circle 3.4px at 50% 50%,var(--red) 99%,transparent)}
-.legend i.evt{background:radial-gradient(circle 3.4px at 50% 50%,var(--text-2) 99%,transparent)}
+.kc-agenda{min-width:0}
+.kc-when{margin:0 0 4px;font-size:13px;font-weight:600;color:var(--red-bright)}
+.kc-date{margin:0 0 16px;font-size:clamp(20px,5vw,24px);letter-spacing:-.02em}
+.kc-label{margin:22px 0 10px;font-size:13px;font-weight:600;color:var(--text-2)}
+.kc-none{margin:0;padding:18px 20px;border-radius:var(--r-lg);background:var(--card);color:var(--text-2);font-size:15px}
+@media (max-width:380px){.kc-title{font-size:20px}.kc-head{padding:0 4px;gap:6px}.kc-nav{gap:4px}.kc-btn{height:32px;min-width:32px;font-size:12.5px}.kc-btn[data-kc="today"]{padding:0 10px}}
+@media (max-width:340px){.kc-title{font-size:18px}.kc-btn{height:30px;min-width:30px}.kc-btn[data-kc="today"]{padding:0 8px}}
+@media (prefers-reduced-motion:reduce){.kc-grid{animation:none!important;transition:none!important}}
 
 .empty{padding:50px 24px;border-radius:var(--r-lg);background:var(--card);text-align:center;color:var(--text-2)}
 
@@ -567,7 +524,7 @@ footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
 .f-row{display:flex;flex-wrap:wrap;gap:22px;justify-content:space-between;align-items:center}
 @media (max-width:600px){
   .f-row{flex-direction:column;align-items:center;text-align:center;gap:20px}
-  /* only the text column stacks — the icon row must stay a row */
+  /* only the text column stacks, the icon row must stay a row */
   .f-row > div:not(.f-links){display:flex;flex-direction:column;align-items:center}
   .f-links{flex-direction:row;justify-content:center}
 }
@@ -587,15 +544,12 @@ footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
   background:rgba(255,255,255,.5);box-shadow:0 1px 3px rgba(0,0,0,.35);
   transition:width .3s var(--spring),background .3s}
 .backdrop.dragging .grabber{width:56px;background:rgba(255,255,255,.75)}
-.sheet-back{position:absolute;top:14px;left:14px;width:34px;height:34px;border-radius:999px;display:grid;place-items:center;
-  cursor:pointer;color:#fff;background:rgba(0,0,0,.42);z-index:2;transition:transform .45s var(--bounce),background .3s}
-.sheet-back:hover{background:var(--red-solid);transform:scale(1.14)}
 @media (max-width:640px){
   .backdrop{place-items:end center;padding:0}
   .sheet{width:100%;max-height:88vh;border-radius:26px 26px 0 0;transform:translateY(100%) scale(1);
     padding-bottom:env(safe-area-inset-bottom)}
   .grabber{display:block}
-  .sheet-close,.sheet-back{top:18px}
+  .sheet-close{top:18px}
   /* the strip the grabber sits in belongs to the gesture, not to scrolling */
   .sheet::before{content:"";position:absolute;top:0;left:0;right:0;height:30px;z-index:3;
     touch-action:none}
@@ -758,7 +712,7 @@ function routeMotion(){
 function initReveals(){
   if(revealObserver) revealObserver.disconnect();
   const targets = [...document.querySelectorAll(
-    '#app .sec-head, #app .card, #app .ev, #app .tier, #app .list-row, #app .detail, #app .prose, #app .toolbar, #app .empty:not(.cal-cell)'
+    '#app .sec-head, #app .card, #app .ev, #app .tier, #app .list-row, #app .detail, #app .prose, #app .toolbar, #app .empty'
   )];
   if(!targets.length) return;
   if(reduceMotion()){
@@ -1315,39 +1269,95 @@ let TIMERS = [];
 
 function initCarousels(){
   TIMERS.forEach(clearInterval); TIMERS = [];
+
   document.querySelectorAll("[data-carousel]").forEach(c => {
     const track = c.querySelector(".track"), dots = [...c.querySelectorAll(".dots button")];
-    if(!track.children.length) return;
-    const at = i => track.children[i].offsetLeft - track.children[0].offsetLeft;
-    const idx = () => {
+    const real = [...track.children];
+    const n = real.length;
+    if(!n) return;
+
+    /* A copy of the last slide goes in front and a copy of the first goes
+       behind, so moving past either end lands on a copy. Once the scroll
+       settles the track jumps, without animation, to the matching real slide.
+       The reader sees one continuous ribbon rather than a rewind. */
+    const loop = n > 1;
+    if(loop){
+      const head = real[n - 1].cloneNode(true);
+      const tail = real[0].cloneNode(true);
+      [head, tail].forEach(cl => {
+        cl.dataset.clone = "1";
+        cl.setAttribute("aria-hidden", "true");
+        cl.querySelectorAll("a,button,[tabindex]").forEach(el => el.setAttribute("tabindex", "-1"));
+      });
+      track.insertBefore(head, track.firstChild);
+      track.appendChild(tail);
+    }
+
+    const slides = [...track.children];
+    const at = i => slides[i].offsetLeft - slides[0].offsetLeft;
+    const first = loop ? 1 : 0;                     /* where the real slides begin */
+    const pos = r => first + r;                     /* real index to physical index */
+    const realOf = p => loop ? ((p - 1) % n + n) % n : p;
+
+    const current = () => {
       let best = 0, min = Infinity;
-      for(let i = 0; i < track.children.length; i++){
+      for(let i = 0; i < slides.length; i++){
         const d = Math.abs(at(i) - track.scrollLeft);
         if(d < min){ min = d; best = i; }
       }
       return best;
     };
-    const go = i => {
-      const n = track.children.length;
-      track.scrollTo({ left: at(((i % n) + n) % n), behavior: "smooth" });
+
+    let jumping = false;
+    const jump = left => {
+      jumping = true;
+      const snap = track.style.scrollSnapType;
+      track.style.scrollSnapType = "none";        /* snapping fights an instant move */
+      track.scrollLeft = left;
+      requestAnimationFrame(() => {
+        track.style.scrollSnapType = snap;
+        jumping = false;
+      });
     };
-    let timer, paused = false;
+
+    /* Standing on a copy means the ribbon has wrapped. Swap to the real one. */
+    const normalise = () => {
+      if(!loop || jumping) return false;
+      const p = current();
+      if(p === 0){ jump(at(n)); return true; }
+      if(p === n + 1){ jump(at(1)); return true; }
+      return false;
+    };
+
+    const step = d => track.scrollTo({ left: at(Math.max(0, Math.min(slides.length - 1, current() + d))), behavior: "smooth" });
+    const goTo = r => track.scrollTo({ left: at(pos(((r % n) + n) % n)), behavior: "smooth" });
+
     const sync = () => {
-      const current = idx();
-      dots.forEach((d,i) => d.classList.toggle("on", i === current));
-      [...track.children].forEach((slide,i) => slide.classList.toggle("is-current", i === current));
+      if(normalise()) return;                     /* the jump fires its own scroll */
+      const r = realOf(current());
+      dots.forEach((d, i) => d.classList.toggle("on", i === r));
+      slides.forEach((sl, i) => sl.classList.toggle("is-current", i === current()));
     };
+
+    if(loop) jump(at(1));                          /* open on the first real slide */
     sync();
-    track.addEventListener("scroll", () => { clearTimeout(track._t); track._t = setTimeout(sync, 90); }, { passive:true });
-    dots.forEach((d,i) => d.addEventListener("click", () => go(i)));
-    c.querySelector(".prev")?.addEventListener("click", () => go(idx()-1));
-    c.querySelector(".next")?.addEventListener("click", () => go(idx()+1));
-    let resume;
+
+    track.addEventListener("scroll", () => {
+      clearTimeout(track._t);
+      track._t = setTimeout(sync, 90);
+    }, { passive:true });
+
+    dots.forEach((d, i) => d.addEventListener("click", () => goTo(i)));
+    c.querySelector(".prev")?.addEventListener("click", () => step(-1));
+    c.querySelector(".next")?.addEventListener("click", () => step(1));
+
+    let timer, paused = false, resume;
     const hold = () => { paused = true; clearTimeout(resume); resume = setTimeout(() => paused = false, 9000); };
     ["pointerenter","pointerdown","focusin","touchstart"].forEach(ev => c.addEventListener(ev, hold, { passive:true }));
     ["pointerleave","focusout"].forEach(ev => c.addEventListener(ev, () => { clearTimeout(resume); paused = false; }));
-    if(track.children.length > 1 && !matchMedia("(prefers-reduced-motion: reduce)").matches){
-      timer = setInterval(() => { if(!paused) go(idx()+1); }, 6500);
+
+    if(loop && !matchMedia("(prefers-reduced-motion: reduce)").matches){
+      timer = setInterval(() => { if(!paused) step(1); }, 6500);
       TIMERS.push(timer);
     }
   });
@@ -1397,18 +1407,15 @@ function wireSegments(onChange){
 addEventListener("resize", () => document.querySelectorAll(".seg").forEach(moveThumb));
 
 /* ===================== EVENT SHEET ===================== */
-let lastFocus = null, sheetBack = null, calSwipe = "", calTurned = false;
+let lastFocus = null;
 
-const SHEET_CHROME = dayBack =>
-  '<div class="grabber"></div>' +
-  (dayBack ? '<button class="sheet-back" data-day-back aria-label="Back to the day">'+ICON.left+'</button>' : "") +
+const SHEET_CHROME = '<div class="grabber"></div>' +
   '<button class="sheet-close" id="sheetClose" aria-label="Close">'+ICON.close+'</button>';
 
-function sheetOpen(html, dayBack){
-  const b = document.getElementById("sheet"), inner = document.getElementById("sheetInner");
+function sheetOpen(html){  const b = document.getElementById("sheet"), inner = document.getElementById("sheetInner");
   if(b.hidden) lastFocus = document.activeElement;
 
-  inner.innerHTML = SHEET_CHROME(dayBack) +
+  inner.innerHTML = SHEET_CHROME +
     '<div class="sheet-scroll" id="sheetScroll">' + html + '</div>';
 
   const scroll = document.getElementById("sheetScroll");
@@ -1521,22 +1528,7 @@ function openEvent(i){
       '<dl class="list">'+facts.map(([k,v]) => '<div class="list-row"><dt>'+k+'</dt><dd>'+esc(v)+'</dd></div>').join("")+'</dl>'+
       (e.description ? '<p class="prose" style="font-size:16.5px">'+esc(e.description)+'</p>' : "")+
       (safeUrl(e.ticket_url) ? '<div class="actions"><a class="btn prominent" href="'+esc(safeUrl(e.ticket_url))+'" target="_blank" rel="noopener">Get tickets</a></div>' : "")+
-    '</div>', sheetBack);
-}
-
-/* A tapped date opens the same sheet, listing everything on that day. */
-function openDay(key){
-  const items = calendarMap()[key] || [];
-  const d = parseDate(key);
-  sheetBack = null;
-  sheetOpen(
-    '<div class="sheet-body"><p class="eyebrow">'+["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][d.getDay()]+'</p>'+
-    '<h2 id="sheetTitle" style="font-size:clamp(23px,3.4vw,30px)">'+fmtDate(key)+'</h2>'+
-    (items.length
-      ? '<div class="events" style="margin-top:20px">'+items.map(dayRow).join("")+'</div>'
-      : '<div class="empty" style="margin-top:20px">Nothing listed on this day.</div>')+
-    '</div>', false);
-  sheetBack = key;
+    '</div>');
 }
 
 function closeEvent(){
@@ -1548,7 +1540,6 @@ function closeEvent(){
   const panel = document.getElementById("sheetInner");
   if(panel) panel.style.transform = "";
   lockScroll(false);
-  sheetBack = null;
   if(sheetRail){ sheetRail.hide(); sheetRail.el.dataset.off = "1"; }
   pageRail.el.dataset.off = "0";
   setTimeout(() => { b.hidden = true; }, 340);
@@ -1586,12 +1577,8 @@ addEventListener("keydown", e => {
 document.getElementById("sheet").addEventListener("click", e => { if(e.target.id === "sheet") closeEvent(); });
 addEventListener("keydown", e => { if(e.key === "Escape" && !document.getElementById("sheet").hidden) closeEvent(); });
 document.addEventListener("click", e => {
-  if(e.target.closest("[data-day-back]") && sheetBack){ openDay(sheetBack); return; }
   const t = e.target.closest("[data-event]");
-  if(t){
-    if(!e.target.closest("#sheetInner")) sheetBack = null;   // opened from a page, not from a day
-    openEvent(Number(t.dataset.event));
-  }
+  if(t) openEvent(Number(t.dataset.event));
 });
 
 /* ===================== ROWS & SLIDES ===================== */
@@ -1769,16 +1756,18 @@ function pageEvents(){
 }
 
 /* ===================== CALENDAR ===================== */
-let calCursor = null, calPick = null;
+const WEEKDAY = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+let kcMonth = null, kcPick = null;     /* first day of the month on show, and the chosen day's key */
 
 function calendarMap(){
   const map = {};
   const put = (k, v) => { (map[k] = map[k] || []).push(v); };
-  state.reviews.forEach(r => { const d = parseDate(r.release_date); if(d) put(dayKey(d), { kind:"film", r }); });
+  state.reviews.forEach(r => { const d = parseDate(r.release_date); if(d) put(dayKey(d), { kind:"film", ref:r }); });
   state.events.forEach(e => {
     const a = parseDate(e.date_start); if(!a) return;
     const b = parseDate(e.date_end) || a;
-    for(let d = new Date(a); d <= b; d.setDate(d.getDate() + 1)) put(dayKey(d), { kind:"event", e });
+    /* A bad end date must not be able to spin this loop for years. */
+    for(let d = new Date(a), n = 0; d <= b && n < 62; d.setDate(d.getDate() + 1), n++) put(dayKey(d), { kind:"event", ref:e });
   });
   return map;
 }
@@ -1791,50 +1780,81 @@ function filmRow(r){
     '<h3>'+esc(r.title)+'</h3><div class="meta">'+dots([r.language, runtime(r.runtime_min), list(r.genres).join(", ")])+
     '</div></div><span class="chev">'+ICON.right+'</span></a>';
 }
-const dayRow = it => it.kind === "film" ? filmRow(it.r) : eventRow(it.e);
+const dayRow = it => it.kind === "film" ? filmRow(it.ref) : eventRow(it.ref);
 
-function pageCalendar(){
-  const map = calendarMap(), now = new Date();
-  if(!calCursor) calCursor = new Date(now.getFullYear(), now.getMonth(), 1);
-  const y = calCursor.getFullYear(), m = calCursor.getMonth();
-  const lead = new Date(y, m, 1).getDay(), len = new Date(y, m + 1, 0).getDate();
-  const nowKey = dayKey(now);
+/* Moves to a month and returns the direction travelled. With no day given,
+   this month selects today and any other month shows its whole listing. */
+function kcShow(y, m, pick){
+  const to = new Date(y, m, 1), turn = to > kcMonth ? "next" : to < kcMonth ? "prev" : "";
+  const now = new Date();
+  kcMonth = to;
+  kcPick = pick || (now.getFullYear() === to.getFullYear() && now.getMonth() === to.getMonth() ? dayKey(now) : null);
+  return turn;
+}
 
-  let cells = "", monthKeys = [];
-  for(let i = 0; i < lead; i++) cells += '<div class="cal-cell empty"></div>';
-  for(let d = 1; d <= len; d++){
-    const key = y + "-" + String(m+1).padStart(2,"0") + "-" + String(d).padStart(2,"0");
-    const items = map[key] || [];
-    if(items.length) monthKeys.push(key);
-    /* One painted strip rather than up to three round elements. Nothing inside
-       a cell has a radius of its own, so nothing round can be drawn oversized. */
-    const kinds = items.slice(0,3).map(i => i.kind === "event" ? "e" : "f").join("");
-    cells += '<button class="cal-cell'+(items.length ? " has" : " none")+(key === nowKey ? " today" : "")+
-      (key === calPick ? " on" : "")+'"'+(items.length ? ' data-day="'+key+'"' : " disabled")+
-      ' aria-label="'+d+" "+MONTH[m]+(items.length ? ", "+items.length+" listed" : ", nothing listed")+'">'+d+
-      (kinds ? '<span class="marks" data-m="'+kinds+'"></span>' : '<span class="marks"></span>')+'</button>';
+function kcView(){
+  const map = calendarMap(), today = dayKey(new Date());
+  const y = kcMonth.getFullYear(), m = kcMonth.getMonth(), len = new Date(y, m + 1, 0).getDate();
+  const lead = kcMonth.getDay();
+  const picked = kcPick && kcPick.slice(0, 7) === dayKey(kcMonth).slice(0, 7) ? kcPick : null;
+  const tabStop = picked || (today.slice(0, 7) === dayKey(kcMonth).slice(0, 7) ? today : dayKey(kcMonth));
+
+  /* Always six weeks, so the card never changes height between months. */
+  let cells = "";
+  for(let i = 0; i < 42; i++){
+    const d = new Date(y, m, 1 - lead + i), key = dayKey(d), items = map[key] || [];
+    cells += '<button type="button" class="kc-day" data-kc-day="'+key+'"'+(d.getMonth() !== m ? " data-kc-out" : "")+
+      (key === today ? ' aria-current="date"' : "")+' aria-pressed="'+(key === picked)+'" tabindex="'+(key === tabStop ? 0 : -1)+'"'+
+      ' aria-label="'+WEEKDAY[d.getDay()]+", "+d.getDate()+" "+MONTH[d.getMonth()]+" "+d.getFullYear()+
+      (items.length ? ", "+items.length+" listed" : "")+'">'+
+      '<span class="kc-num">'+d.getDate()+'</span><span class="kc-dots">'+
+      items.slice(0, 3).map(it => '<i data-kc-kind="'+it.kind+'"></i>').join("")+'</span></button>';
   }
 
-  const monthAll = monthKeys.flatMap(k => map[k]);
-  const films = monthAll.filter(i => i.kind === "film").length;
-  const evs = monthAll.filter(i => i.kind === "event").length;
+  /* The month's listing, each film or event once, under the first day it falls on. */
+  const seen = new Set(), mine = picked ? (map[picked] || []) : [];
+  mine.forEach(it => seen.add(it.ref));
+  let films = 0, events = 0, rest = "";
+  const tally = it => { if(it.kind === "film") films++; else events++; };
+  mine.forEach(tally);
+  for(let n = 1; n <= len; n++){
+    const d = new Date(y, m, n), fresh = (map[dayKey(d)] || []).filter(it => !seen.has(it.ref));
+    if(!fresh.length) continue;
+    fresh.forEach(it => { seen.add(it.ref); tally(it); });
+    rest += '<p class="kc-label">'+WEEKDAY[d.getDay()].slice(0, 3)+" "+n+" "+MON[m]+'</p>'+
+      '<div class="events">'+fresh.map(dayRow).join("")+'</div>';
+  }
 
+  let agenda;
+  if(picked){
+    const d = parseDate(picked);
+    agenda = '<p class="kc-when">'+(picked === today ? "Today" : WEEKDAY[d.getDay()])+'</p>'+
+      '<h3 class="kc-date">'+d.getDate()+" "+MONTH[m]+" "+y+'</h3>'+
+      (mine.length ? '<div class="events">'+mine.map(dayRow).join("")+'</div>'
+                   : '<p class="kc-none">Nothing listed on this day.</p>')+
+      (rest ? '<p class="kc-when" style="margin-top:30px">'+(mine.length ? "Also in " : "In ")+MONTH[m]+'</p>'+rest : "");
+  }else{
+    agenda = '<p class="kc-when">At a glance</p><h3 class="kc-date">'+MONTH[m]+" "+y+'</h3>'+
+      (rest || '<p class="kc-none">Nothing listed for '+MONTH[m]+' yet.</p>');
+  }
+
+  return '<div class="kc-card">'+
+      '<div class="kc-head"><h3 class="kc-title"><span>'+y+'</span>'+MONTH[m]+'</h3><div class="kc-nav">'+
+        '<button type="button" class="kc-btn" data-kc="prev" aria-label="Previous month">'+ICON.left+'</button>'+
+        '<button type="button" class="kc-btn" data-kc="today">Today</button>'+
+        '<button type="button" class="kc-btn" data-kc="next" aria-label="Next month">'+ICON.right+'</button></div></div>'+
+      '<div class="kc-week" aria-hidden="true">'+WEEKDAY.map(d => '<span>'+d.slice(0, 3)+'</span>').join("")+'</div>'+
+      '<div class="kc-grid" role="group" aria-label="'+MONTH[m]+" "+y+'">'+cells+'</div>'+
+      '<div class="kc-foot"><span><i></i>'+films+' film release'+(films === 1 ? "" : "s")+'</span>'+
+        '<span><i data-kc-kind="event"></i>'+events+' event'+(events === 1 ? "" : "s")+'</span></div>'+
+    '</div><div class="kc-agenda">'+agenda+'</div>';
+}
+
+function pageCalendar(){
+  if(!kcMonth){ const n = new Date(); kcMonth = new Date(n.getFullYear(), n.getMonth(), 1); kcPick = dayKey(n); }
   return '<div class="wrap rise"><section><p class="eyebrow">What is on when</p><h2>Calendar</h2>'+
     '<p class="sub" style="margin:10px 0 26px">Film releases and events, day by day. Tap a date to see what is on.</p>'+
-    '<div class="cal-wrap"><div class="cal" id="calBox"><span class="cal-glass" aria-hidden="true"></span>'+
-      '<div class="cal-top"><h3>'+MONTH[m]+' '+y+'</h3><div class="cal-nav">'+
-        '<button data-cal="-1" aria-label="Previous month">'+ICON.left+'</button>'+
-        '<button class="today" data-cal="today">Today</button>'+
-        '<button data-cal="1" aria-label="Next month">'+ICON.right+'</button></div></div>'+
-      '<div class="cal-dow">'+["S","M","T","W","T","F","S"].map(d => '<span>'+d+'</span>').join("")+'</div>'+
-      '<div class="cal-grid'+(calTurned ? " enter" : "")+(calSwipe === "back" ? " back" : "")+'">'+cells+'</div>'+
-      '<div class="legend"><span><i></i>'+films+' film release'+(films === 1 ? "" : "s")+'</span>'+
-      '<span><i class="evt"></i>'+evs+' event'+(evs === 1 ? "" : "s")+'</span></div>'+
-    '</div>'+
-    '<div class="cal-side"><div class="sec-head"><h2 style="font-size:22px">'+MONTH[m]+' at a glance</h2></div>'+
-      (monthAll.length ? '<div class="events">'+monthAll.map(dayRow).join("")+'</div>'
-        : '<div class="empty">Nothing listed for '+MONTH[m]+' yet.</div>')+
-    '</div></div></section></div>';
+    '<div class="kc" id="kcRoot">'+kcView()+'</div></section></div>';
 }
 
 function board(){
@@ -1844,7 +1864,7 @@ function board(){
 function pageAbout(){
   return '<div class="wrap rise"><section><p class="eyebrow">Who we are</p><h2>Kaydee.my</h2>'+
     '<div class="prose" style="margin-top:20px">'+
-    '<p>Kaydee.my is an Indian cinema portal covering Tamil, Malayalam, Telugu, Hindi and Kannada releases for audiences in Malaysia and beyond — reviews, first-day reactions, song highlights and entertainment news.</p>'+
+    '<p>Kaydee.my is an Indian cinema portal covering Tamil, Malayalam, Telugu, Hindi and Kannada releases for audiences in Malaysia and beyond: reviews, first-day reactions, song highlights and entertainment news.</p>'+
     '<p>Every film gets one score on the Kaydee Rating Board, and every review carries the credits that matter: director, producer, cast and runtime.</p></div>'+
     '<div class="actions" style="margin-top:26px">'+
       '<a class="btn prominent" href="'+esc(CONFIG.INSTAGRAM)+'" target="_blank" rel="noopener">Instagram</a>'+
@@ -1956,129 +1976,84 @@ function stateView(){
     '</span></div></div></div>';
 }
 
-function shiftMonth(step){
-  calSwipe = step < 0 ? "back" : "";
-  calTurned = true;
-  calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() + step, 1);
-  calPick = null;
-  render(true);
-  calTurned = false;
-}
-
-/* Available to the arrows and to Today, which live outside the drag closure. */
-function sweepCal(){
-  const box = document.getElementById("calBox");
-  if(!box) return;
-  box.classList.remove("swept");
-  void box.offsetWidth;
-  box.classList.add("swept");
-  setTimeout(() => box.classList.remove("swept"), 700);
+/* Redraws the calendar alone. The rest of the page is left as it is. */
+function kcPaint(turn, focus){
+  const root = document.getElementById("kcRoot");
+  if(!root) return;
+  root.innerHTML = kcView();
+  if(turn) root.querySelector(".kc-grid").setAttribute("data-kc-turn", turn);
+  if(focus){ const el = root.querySelector(focus); if(el) el.focus({ preventScroll:true }); }
 }
 
 function wireCalendar(){
-  document.querySelectorAll("[data-cal]").forEach(b => b.addEventListener("click", e => {
-    e.preventDefault();
-    const v = b.dataset.cal;
-    if(v === "today"){
-      const n = new Date();
-      calSwipe = n < calCursor ? "back" : "";
-      calTurned = true;
-      calCursor = new Date(n.getFullYear(), n.getMonth(), 1);
-      calPick = dayKey(n);
-      render(true);
-      calTurned = false;
-      sweepCal();
-    }else{
-      shiftMonth(Number(v));
-      sweepCal();
+  const root = document.getElementById("kcRoot");
+  if(!root) return;
+  const pickDay = d => kcPaint(kcShow(d.getFullYear(), d.getMonth(), dayKey(d)), '[data-kc-day="'+dayKey(d)+'"]');
+  const turnBy = (step, focus) => kcPaint(kcShow(kcMonth.getFullYear(), kcMonth.getMonth() + step), focus);
+
+  root.addEventListener("click", e => {
+    const nav = e.target.closest("[data-kc]"), day = e.target.closest("[data-kc-day]");
+    if(nav){
+      const v = nav.dataset.kc, focus = '[data-kc="'+v+'"]';
+      if(v === "today"){ const n = new Date(); kcPaint(kcShow(n.getFullYear(), n.getMonth()), focus); }
+      else turnBy(v === "next" ? 1 : -1, focus);
+    }else if(day){
+      const d = parseDate(day.dataset.kcDay);
+      if(d) pickDay(d);
     }
-  }));
-
-  document.querySelectorAll("[data-day]").forEach(b => b.addEventListener("click", () => {
-    calPick = b.dataset.day;
-    render(true);
-    openDay(calPick);
-  }));
-
-  /* The month follows the finger and settles, the way a phone calendar does,
-     rather than jumping once the finger lifts. Transform only, so nothing is
-     laid out again mid drag. */
-  const box = document.getElementById("calBox");
-  const grid = box && box.querySelector(".cal-grid");
-  if(!box || !grid) return;
-
-  let x0 = 0, y0 = 0, dx = 0, axis = "", down = false, id = null;
-  const width = () => box.clientWidth || 320;
-
-  /* Past the edge the grid resists, so a long drag never leaves the card. */
-  const rubber = d => {
-    const w = width(), lim = w * .34;
-    return Math.abs(d) <= lim ? d : Math.sign(d) * (lim + (Math.abs(d) - lim) * .28);
-  };
-  /* The grid slides and sinks slightly, so the month reads as a pane moving
-     behind glass rather than a flat image being dragged. */
-  const place = d => {
-    if(!d){ grid.style.left = ""; box.removeAttribute("data-dir"); return; }
-    grid.style.left = d.toFixed(1) + "px";
-    box.setAttribute("data-dir", d < 0 ? "fwd" : "back");
-  };
-  const release = () => {
-    down = false; axis = ""; dx = 0;
-    box.classList.remove("turning");
-    grid.classList.add("settle");
-    place(0);
-    setTimeout(() => { grid.classList.remove("settle"); box.removeAttribute("data-dir"); }, 420);
-  };
-
-  const sweep = sweepCal;
-
-  box.addEventListener("pointerdown", e => {
-    if(e.target.closest("button[data-cal]")) return;   /* the arrows are their own control */
-    down = true; id = e.pointerId; x0 = e.clientX; y0 = e.clientY; dx = 0; axis = "";
-    grid.classList.remove("settle", "enter");
   });
 
-  box.addEventListener("pointermove", e => {
-    if(!down || e.pointerId !== id) return;
-    const mx = e.clientX - x0, my = e.clientY - y0;
-
-    /* Decide once whether this is a horizontal turn or the page scrolling. */
-    if(!axis){
-      if(Math.abs(mx) < 7 && Math.abs(my) < 7) return;
-      axis = Math.abs(mx) > Math.abs(my) * 1.25 ? "x" : "y";
-      if(axis === "x"){
-        box.classList.add("turning");
-        try{ box.setPointerCapture(id); }catch(err){}
-      }
-    }
-    if(axis !== "x") return;
-
+  /* Arrow keys walk the days, Page Up and Page Down walk the months. */
+  root.addEventListener("keydown", e => {
+    const day = e.target.closest("[data-kc-day]");
+    const d = day && parseDate(day.dataset.kcDay);
+    if(!d) return;
+    const y = d.getFullYear(), m = d.getMonth(), n = d.getDate();
+    const month = step => new Date(y, m + step, Math.min(n, new Date(y, m + step + 1, 0).getDate()));
+    const to = { ArrowLeft:() => new Date(y, m, n - 1), ArrowRight:() => new Date(y, m, n + 1),
+      ArrowUp:() => new Date(y, m, n - 7), ArrowDown:() => new Date(y, m, n + 7),
+      Home:() => new Date(y, m, n - d.getDay()), End:() => new Date(y, m, n + 6 - d.getDay()),
+      PageUp:() => month(-1), PageDown:() => month(1) }[e.key];
+    if(!to) return;
     e.preventDefault();
-    dx = rubber(mx);
-    place(dx);
+    pickDay(to());
+  });
+
+  /* A sideways swipe on the grid carries the month with the finger. An upward
+     or downward one is left alone so the page scrolls as usual. */
+  let g = null;
+  root.addEventListener("touchstart", e => {
+    const grid = e.target.closest(".kc-grid");
+    if(!grid || e.touches.length !== 1){ g = null; return; }
+    g = { grid, x:e.touches[0].clientX, y:e.touches[0].clientY, axis:"", dx:0 };
+    grid.removeAttribute("data-kc-turn");
+    grid.removeAttribute("data-kc-settle");
+  }, { passive:true });
+  root.addEventListener("touchmove", e => {
+    if(!g) return;
+    const mx = e.touches[0].clientX - g.x, my = e.touches[0].clientY - g.y;
+    if(!g.axis){
+      if(Math.abs(mx) < 8 && Math.abs(my) < 8) return;
+      g.axis = Math.abs(mx) > Math.abs(my) * 1.2 ? "x" : "y";
+    }
+    if(g.axis !== "x") return;
+    if(e.cancelable) e.preventDefault();
+    g.dx = mx;
+    g.grid.style.transform = "translateX(" + (mx * .6).toFixed(1) + "px)";
+    g.grid.style.opacity = String(Math.max(.35, 1 - Math.abs(mx) / (g.grid.clientWidth || 320)));
   }, { passive:false });
-
-  const finish = e => {
-    if(!down || (e && e.pointerId !== id)) return;
-    const moved = dx;
-    const far = Math.abs(moved) > Math.min(72, width() * .22);
-    const wasX = axis === "x";
-    release();
-    if(wasX && far){ shiftMonth(moved < 0 ? 1 : -1); sweep(); }
+  const lift = cancelled => () => {
+    const s = g; g = null;
+    if(!s || s.axis !== "x") return;
+    if(!cancelled && Math.abs(s.dx) > Math.min(64, (s.grid.clientWidth || 320) * .18)) turnBy(s.dx < 0 ? 1 : -1);
+    else{
+      s.grid.setAttribute("data-kc-settle", "");
+      s.grid.style.transform = "";
+      s.grid.style.opacity = "";
+    }
   };
-  box.addEventListener("pointerup", finish);
-  box.addEventListener("pointercancel", e => { if(down && e.pointerId === id) release(); });
-  /* Taking capture releases the implicit capture the touch already had on the
-     cell under the finger, and that event bubbles up here. Only the box losing
-     its own capture means the gesture is over. */
-  box.addEventListener("lostpointercapture", e => {
-    if(down && e.target === box && e.pointerId === id) release();
-  });
-
-  /* A drag must not also count as a tap on the day underneath. */
-  box.addEventListener("click", e => {
-    if(Math.abs(dx) > 6){ e.stopPropagation(); e.preventDefault(); }
-  }, true);
+  root.addEventListener("touchend", lift(false));
+  root.addEventListener("touchcancel", lift(true));
 }
 
 /* ===================== CHROME ===================== */
