@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kaydee.my - Indian Cinema Portal</title>
+<title>Kaydee.my — Indian Cinema Portal</title>
 <meta name="description" content="Kaydee.my — Indian cinema reviews, movie news and event promotions. Every film scored on the Kaydee Rating Board.">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#F5F5F7" media="(prefers-color-scheme: light)">
@@ -223,6 +223,47 @@ main{padding-top:84px;min-height:60vh}
   -webkit-backdrop-filter:blur(32px) saturate(180%);backdrop-filter:blur(32px) saturate(180%);
   border:.5px solid rgba(255,255,255,.15);
   box-shadow:0 14px 44px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.16)}
+/* The whole face of the slide is the link, with the bar and the play control
+   sitting above it. Nothing interactive is nested inside anything else. */
+.slide-hit{position:absolute;inset:0;z-index:1;border-radius:inherit;cursor:pointer;
+  background:none;border:0;padding:0;width:100%}
+.slide-bar{z-index:2;pointer-events:none}
+.slide-bar a,.slide-bar button{pointer-events:auto}
+
+/* Play control. Reads as a trailer, not a decoration. */
+.play{position:absolute;z-index:3;left:50%;top:50%;translate:-50% -60%;
+  display:inline-flex;align-items:center;gap:10px;padding:14px 22px 14px 20px;border-radius:999px;
+  cursor:pointer;color:#fff;font:inherit;font-size:15px;font-weight:600;letter-spacing:-.01em;
+  background:rgba(12,12,14,.64);border:.5px solid rgba(255,255,255,.3);
+  -webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);
+  box-shadow:0 10px 34px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.2);
+  transition:background .3s,border-color .3s,box-shadow .3s}
+.play svg{flex:none;margin-left:2px}
+.play:hover{background:var(--red-solid);border-color:rgba(255,255,255,.4);
+  box-shadow:0 14px 40px rgba(243,2,25,.5), inset 0 1px 0 rgba(255,255,255,.3)}
+.play:active{background:var(--red-deep)}
+@media (max-width:560px){
+  .play{padding:12px 18px 12px 16px;font-size:14px;gap:8px;translate:-50% -70%}
+  .play svg{width:22px;height:22px}
+}
+@media (prefers-reduced-transparency: reduce){ .play{background:rgba(12,12,14,.9);backdrop-filter:none} }
+
+/* ===================== TRAILER ===================== */
+.vbox{position:fixed;inset:0;z-index:150;display:grid;place-items:center;padding:clamp(14px,4vw,40px);
+  background:rgba(0,0,0,.82);-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);
+  opacity:0;pointer-events:none;transition:opacity .34s}
+.vbox.open{opacity:1;pointer-events:auto}
+.vframe{position:relative;width:min(1100px,100%);aspect-ratio:16/9;border-radius:var(--r-lg);
+  overflow:hidden;background:#000;box-shadow:0 30px 90px rgba(0,0,0,.6);
+  transform:scale(.96);transition:transform .45s var(--spring)}
+.vbox.open .vframe{transform:none}
+.vframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vclose{position:absolute;top:-46px;right:0;width:38px;height:38px;border-radius:999px;display:grid;
+  place-items:center;cursor:pointer;color:#fff;background:rgba(255,255,255,.14);
+  transition:background .3s}
+.vclose:hover{background:var(--red-solid)}
+@media (max-width:620px){ .vclose{top:auto;bottom:-46px;right:50%;translate:50% 0} }
+
 .slide-txt{min-width:0;flex:1}
 .slide-bar .eyebrow{color:rgba(255,255,255,.88);margin-bottom:3px}
 .slide-bar h2{font-size:clamp(17px,2.1vw,25px);line-height:1.22;margin:0 0 4px;color:#F5F5F7;
@@ -356,28 +397,22 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 @media (max-width:380px){.cal-nav button.today{padding:0 11px;font-size:12.5px}}
 .cal-nav{display:flex;gap:6px;align-items:center}
 .cal-nav button{width:36px;height:36px;border-radius:999px;display:grid;place-items:center;cursor:pointer;
-  color:var(--text-2);background:var(--card-2);transition:transform .4s var(--bounce),background .3s,color .2s}
+  color:var(--text-2);background:var(--card-2);transition:background .3s,color .2s}
 .cal-nav button.today{width:auto;padding:0 15px;font-size:13.5px;font-weight:600;color:var(--text)}
 
 .cal-dow,.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:clamp(2px,.8vw,6px)}
 .cal-dow{margin-bottom:6px}
 .cal-dow span{text-align:center;font-size:clamp(10px,2.9vw,11.5px);font-weight:600;color:var(--text-2)}
-/* No backface-visibility, no will-change. Both promote this grid to its own
-   composited layer, and a promoted layer is what Safari on iOS was painting
-   at the wrong size. A seven column grid does not need one. */
-.cal-grid{}
-.cal-grid.settle{transition:transform .38s var(--spring),opacity .38s var(--spring)}
-.cal-grid.enter{animation:calIn .5s var(--spring)}
-.cal-grid.enter.back{animation:calBack .5s var(--spring)}
-/* The month arrives slightly behind the glass and settles forward into it. */
-@keyframes calIn{
-  from{opacity:0;transform:translate3d(34px,0,0) scale(.93)}
-  to  {opacity:1;transform:none}
-}
-@keyframes calBack{
-  from{opacity:0;transform:translate3d(-34px,0,0) scale(.93)}
-  to  {opacity:1;transform:none}
-}
+/* The month moves by layout position, never by transform, and never fades.
+   transform and opacity are the two properties that hand an element to the
+   compositor, and a composited layer inside this card is what Safari on iOS
+   was rasterising at the wrong scale. Nothing here may become a layer. */
+.cal-grid{position:relative;left:0}
+.cal-grid.settle{transition:left .38s var(--spring)}
+.cal-grid.enter{animation:calIn .46s var(--spring)}
+.cal-grid.enter.back{animation:calBack .46s var(--spring)}
+@keyframes calIn{ from{left:34px} to{left:0} }
+@keyframes calBack{ from{left:-34px} to{left:0} }
 
 /* A pane of glass sits over the grid. It catches a highlight as the month
    turns, and a soft edge shows on the side the month is coming from. */
@@ -400,9 +435,10 @@ section{padding:clamp(40px,5.6vw,68px) 0}
   background:linear-gradient(270deg,rgba(255,255,255,.1),transparent)}
 .cal.turning[data-dir="back"] .cal-glass::after{opacity:1;left:0;right:auto}
 @media (prefers-reduced-transparency: reduce){ .cal-glass{display:none} }
-/* The heading slides with the grid, so the month reads as one moving object. */
-.cal-top h3{transition:opacity .22s}
-.cal.turning .cal-top h3{opacity:.45}
+/* The heading dims while the month is being turned. Colour, not opacity, so
+   there is still nothing in this card that can be handed to the compositor. */
+.cal-top h3{transition:color .22s}
+.cal.turning .cal-top h3{color:var(--text-2)}
 .cal-cell{aspect-ratio:1;min-width:0;border-radius:clamp(9px,2.8vw,13px);display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:clamp(2px,.9vw,4px);font-size:clamp(13px,3.7vw,15px);font-weight:500;
   color:var(--text);font-variant-numeric:tabular-nums lining-nums;padding:0;
@@ -420,13 +456,29 @@ section{padding:clamp(40px,5.6vw,68px) 0}
    size, which painted a red disc across the whole grid. */
 .cal-cell.on{background:var(--red-solid);color:#fff;font-weight:700;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.34), inset 0 0 0 .5px rgba(255,255,255,.22)}
-.marks{display:flex;gap:clamp(2px,.7vw,3px);height:clamp(4px,1.4vw,5px);align-items:center}
-.marks i{width:clamp(4px,1.3vw,5px);height:clamp(4px,1.3vw,5px);border-radius:50%;background:var(--red);flex:none}
-.marks i.evt{background:var(--text-2)}
-.cal-cell.on .marks i{background:#fff}
+/* The dots are painted into one element as radial gradients. No child
+   elements, no border radius, nothing that can be handed to the compositor. */
+.marks{height:clamp(4px,1.4vw,5px);width:100%;background-repeat:no-repeat;background-position:center;
+  --dot:var(--red); --dot2:var(--text-2)}
+.cal-cell.on .marks{--dot:#fff; --dot2:rgba(255,255,255,.85)}
+.marks[data-m="f"]  {background-image:radial-gradient(circle 2.2px at 50% 50%,var(--dot) 99%,transparent)}
+.marks[data-m="e"]  {background-image:radial-gradient(circle 2.2px at 50% 50%,var(--dot2) 99%,transparent)}
+.marks[data-m="ff"] {background-image:radial-gradient(circle 2.2px at calc(50% - 4px) 50%,var(--dot) 99%,transparent),
+                                      radial-gradient(circle 2.2px at calc(50% + 4px) 50%,var(--dot) 99%,transparent)}
+.marks[data-m="fe"] {background-image:radial-gradient(circle 2.2px at calc(50% - 4px) 50%,var(--dot) 99%,transparent),
+                                      radial-gradient(circle 2.2px at calc(50% + 4px) 50%,var(--dot2) 99%,transparent)}
+.marks[data-m="ef"] {background-image:radial-gradient(circle 2.2px at calc(50% - 4px) 50%,var(--dot2) 99%,transparent),
+                                      radial-gradient(circle 2.2px at calc(50% + 4px) 50%,var(--dot) 99%,transparent)}
+.marks[data-m="ee"] {background-image:radial-gradient(circle 2.2px at calc(50% - 4px) 50%,var(--dot2) 99%,transparent),
+                                      radial-gradient(circle 2.2px at calc(50% + 4px) 50%,var(--dot2) 99%,transparent)}
+.marks[data-m]:not([data-m="f"]):not([data-m="e"]):not([data-m="ff"]):not([data-m="fe"]):not([data-m="ef"]):not([data-m="ee"]){
+  background-image:radial-gradient(circle 2.2px at calc(50% - 8px) 50%,var(--dot) 99%,transparent),
+                   radial-gradient(circle 2.2px at 50% 50%,var(--dot) 99%,transparent),
+                   radial-gradient(circle 2.2px at calc(50% + 8px) 50%,var(--dot2) 99%,transparent)}
 .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;padding:0 2px;font-size:clamp(12px,3.2vw,13px);color:var(--text-2)}
-.legend i{width:7px;height:7px;border-radius:50%;background:var(--red);display:inline-block;margin-right:7px;vertical-align:middle}
-.legend i.evt{background:var(--text-2)}
+.legend i{width:8px;height:8px;display:inline-block;margin-right:7px;vertical-align:middle;
+  background:radial-gradient(circle 3.4px at 50% 50%,var(--red) 99%,transparent)}
+.legend i.evt{background:radial-gradient(circle 3.4px at 50% 50%,var(--text-2) 99%,transparent)}
 
 .empty{padding:50px 24px;border-radius:var(--r-lg);background:var(--card);text-align:center;color:var(--text-2)}
 
@@ -673,6 +725,15 @@ footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
     <div class="f-links" id="social"></div>
   </div>
 </footer>
+
+<div class="vbox" id="video" hidden>
+  <div class="vframe">
+    <button class="vclose" id="videoClose" aria-label="Close the trailer">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+    </button>
+    <div id="videoSlot"></div>
+  </div>
+</div>
 
 <div class="backdrop" id="sheet" hidden>
   <div class="sheet glass" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" id="sheetInner"></div>
@@ -991,11 +1052,13 @@ function card(r){
   return '<a class="card" href="#/review/'+slugOf(r)+'">'+poster(r,true)+
     '<h3>'+esc(r.title)+'</h3><div class="meta">'+line+'</div></a>';
 }
-function media(url){
+function media(url, ytid){
   if(!safeUrl(url)) return '<div class="slide-fallback"></div>';
   /* The gradient sits underneath, so a picture that fails to load still reads
      as a designed panel rather than an empty box. */
-  return '<div class="slide-fallback"></div><div class="slide-media" style="background-image:'+bg(url)+'"></div>';
+  return '<div class="slide-fallback"></div><div class="slide-media"'+
+    (ytid ? ' data-yt="'+esc(ytid)+'"' : "")+
+    ' style="background-image:'+bg(url)+'"></div>';
 }
 
 /* ===================== CAROUSEL ===================== */
@@ -1008,6 +1071,63 @@ function carousel(slides, id){
       '<div class="dots">'+slides.map((_,i) => '<button aria-label="Go to slide '+(i+1)+'"'+(i?"":' class="on"')+'></button>').join("")+'</div>' : "")+
     '</div>';
 }
+/* ===================== TRAILER =====================
+   The player is built when it is opened and torn down when it is closed, so a
+   video can never keep playing behind the page.
+   ==================================================== */
+let videoBack = null;
+
+function openVideo(id){
+  const box = document.getElementById("video"), slot = document.getElementById("videoSlot");
+  if(!box || !slot || !/^[A-Za-z0-9_-]{11}$/.test(id)) return;
+  videoBack = document.activeElement;
+  slot.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id +
+    '?autoplay=1&rel=0&modestbranding=1&playsinline=1" title="Trailer" ' +
+    'allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+  box.hidden = false;
+  lockScroll(true);
+  requestAnimationFrame(() => box.classList.add("open"));
+  const x = document.getElementById("videoClose");
+  if(x) x.focus();
+}
+
+function closeVideo(){
+  const box = document.getElementById("video"), slot = document.getElementById("videoSlot");
+  if(!box || box.hidden) return;
+  box.classList.remove("open");
+  slot.innerHTML = "";                       /* stops playback immediately */
+  lockScroll(false);
+  setTimeout(() => { box.hidden = true; }, 340);
+  if(videoBack && videoBack.focus) videoBack.focus();
+  videoBack = null;
+}
+
+addEventListener("click", e => {
+  const play = e.target.closest && e.target.closest(".play");
+  if(play){ e.preventDefault(); openVideo(play.dataset.yt); return; }
+  if(e.target.id === "video" || (e.target.closest && e.target.closest("#videoClose"))) closeVideo();
+});
+addEventListener("keydown", e => {
+  if(e.key === "Escape" && !document.getElementById("video").hidden) closeVideo();
+});
+
+/* YouTube always has a hqdefault frame but only sometimes a maxres one, and it
+   answers a missing maxres with a small grey placeholder rather than an error.
+   Measuring it is the only way to tell. */
+function checkTrailerArt(){
+  document.querySelectorAll(".slide-media[data-yt]").forEach(el => {
+    if(el.dataset.checked === "1") return;
+    el.dataset.checked = "1";
+    const id = el.dataset.yt;
+    const probe = new Image();
+    probe.onload = () => {
+      if(probe.naturalWidth <= 160) el.style.backgroundImage = bg(ytArtFallback(id));
+    };
+    probe.onerror = () => { el.style.backgroundImage = bg(ytArtFallback(id)); };
+    probe.src = ytArt(id);
+  });
+}
+
 /* ===================== ARTWORK =====================
    Posters and banners are painted backgrounds rather than image elements, so
    there is nothing to long press, drag out, save, or open in a tab. The long
@@ -1487,7 +1607,10 @@ function eventRow(e){
     '</div></div><span class="chev">'+ICON.right+'</span></button>';
 }
 function reviewSlide(r){
-  return '<a class="slide" href="#/review/'+slugOf(r)+'">'+media(r.banner_url || r.poster_url)+'<div class="slide-veil"></div>'+
+  const art = slideArt(r);
+  return '<div class="slide">'+ media(art.url, art.yt) +'<div class="slide-veil"></div>'+
+    '<a class="slide-hit" href="#/review/'+slugOf(r)+'" aria-label="'+esc(r.title)+'"></a>'+
+    (art.yt ? playButton(art.yt, r.title) : "")+
     '<div class="slide-bar"><div class="slide-txt">'+
       '<p class="eyebrow">'+(unreleased(r) ? "Coming soon" : "Featured review")+'</p>'+
       '<h2>'+esc(r.title)+'</h2>'+
@@ -1495,19 +1618,51 @@ function reviewSlide(r){
         : dots([r.year,r.language,runtime(r.runtime_min)]))+'</div>'+
     '</div><div class="slide-act">'+mark(r,"lg")+
       (r.verdict ? '<span class="verdict">'+esc(r.verdict)+'</span>' : "")+
-    '</div></div></a>';
+    '</div></div></div>';
+}
+
+/* The play control sits outside the link, so a tap on it opens the trailer
+   and a tap anywhere else opens the film. */
+function playButton(id, title){
+  return '<button class="play" data-yt="'+esc(id)+'" aria-label="Play the trailer for '+esc(title)+'">'+
+    '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">'+
+      '<path d="M8 5.2v13.6a.6.6 0 0 0 .93.5l10.5-6.8a.6.6 0 0 0 0-1l-10.5-6.8A.6.6 0 0 0 8 5.2Z" fill="currentColor"/>'+
+    '</svg><span>Trailer</span></button>';
 }
 function eventSlide(e){
   const i = state.events.indexOf(e);
-  return '<button class="slide" data-event="'+i+'">'+media(e.banner_url || e.poster_url)+'<div class="slide-veil"></div>'+
+  const art = slideArt(e);
+  return '<div class="slide">'+ media(art.url, art.yt) +'<div class="slide-veil"></div>'+
+    '<button class="slide-hit" data-event="'+i+'" aria-label="'+esc(e.title)+'"></button>'+
+    (art.yt ? playButton(art.yt, e.title) : "")+
     '<div class="slide-bar"><div class="slide-txt">'+
       '<p class="eyebrow">'+esc(e.category || "Featured event")+'</p>'+
       '<h2>'+esc(e.title)+'</h2>'+
       '<div class="meta">'+dots([fmtDate(e.date_start), e.time, e.venue, e.city])+'</div>'+
     '</div><div class="slide-act"><span class="btn prominent">View details</span>'+
       (e.price ? '<span class="price">From '+esc(e.price)+'</span>' : "")+
-    '</div></div></button>';
+    '</div></div></div>';
 }
+/* A YouTube id out of any of the shapes a link can take. */
+function ytId(url){
+  const u = safeUrl(url);
+  if(!u) return "";
+  const m = u.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/))([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : "";
+}
+/* maxres is the wide, clean frame. It does not exist for every video, so the
+   page checks and falls back to the one that always does. */
+const ytArt = id => "https://i.ytimg.com/vi/" + id + "/maxresdefault.jpg";
+const ytArtFallback = id => "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg";
+
+/* The artwork for a slide, preferring the trailer frame because it is shot
+   wide, which is the shape a banner needs. */
+function slideArt(r){
+  const id = ytId(r.trailer_url || r.teaser_url);
+  if(id) return { url: ytArt(id), yt: id };
+  return { url: r.banner_url || r.poster_url, yt: "" };
+}
+
 const featured = (arr, fallbackAll) => {
   const f = arr.filter(isFeatured).slice(0, CONFIG.MAX_FEATURED);
   return f.length ? f : arr.slice(0, fallbackAll ? 1 : 0);
@@ -1657,11 +1812,13 @@ function pageCalendar(){
     const key = y + "-" + String(m+1).padStart(2,"0") + "-" + String(d).padStart(2,"0");
     const items = map[key] || [];
     if(items.length) monthKeys.push(key);
-    const marks = items.slice(0,3).map(i => '<i class="'+(i.kind === "event" ? "evt" : "")+'"></i>').join("");
+    /* One painted strip rather than up to three round elements. Nothing inside
+       a cell has a radius of its own, so nothing round can be drawn oversized. */
+    const kinds = items.slice(0,3).map(i => i.kind === "event" ? "e" : "f").join("");
     cells += '<button class="cal-cell'+(items.length ? " has" : " none")+(key === nowKey ? " today" : "")+
       (key === calPick ? " on" : "")+'"'+(items.length ? ' data-day="'+key+'"' : " disabled")+
       ' aria-label="'+d+" "+MONTH[m]+(items.length ? ", "+items.length+" listed" : ", nothing listed")+'">'+d+
-      '<span class="marks">'+marks+'</span></button>';
+      (kinds ? '<span class="marks" data-m="'+kinds+'"></span>' : '<span class="marks"></span>')+'</button>';
   }
 
   const monthAll = monthKeys.flatMap(k => map[k]);
@@ -1750,6 +1907,7 @@ function render(keepScroll){
     if(q) q.addEventListener("input", applyFilters);
   }
   initCarousels();
+  checkTrailerArt();
   initMotion(!keepScroll);
   pageRail.paint();
 }
@@ -1866,10 +2024,8 @@ function wireCalendar(){
   /* The grid slides and sinks slightly, so the month reads as a pane moving
      behind glass rather than a flat image being dragged. */
   const place = d => {
-    if(!d){ grid.style.transform = ""; grid.style.opacity = ""; box.removeAttribute("data-dir"); return; }
-    const f = Math.min(1, Math.abs(d) / (width() * .5));
-    grid.style.transform = "translate3d(" + d.toFixed(1) + "px,0,0) scale(" + (1 - f * .06).toFixed(3) + ")";
-    grid.style.opacity = String(Math.max(.4, 1 - f * .5));
+    if(!d){ grid.style.left = ""; box.removeAttribute("data-dir"); return; }
+    grid.style.left = d.toFixed(1) + "px";
     box.setAttribute("data-dir", d < 0 ? "fwd" : "back");
   };
   const release = () => {
@@ -1877,7 +2033,7 @@ function wireCalendar(){
     box.classList.remove("turning");
     grid.classList.add("settle");
     place(0);
-    setTimeout(() => { grid.classList.remove("settle"); box.removeAttribute("data-dir"); }, 400);
+    setTimeout(() => { grid.classList.remove("settle"); box.removeAttribute("data-dir"); }, 420);
   };
 
   const sweep = sweepCal;
