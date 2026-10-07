@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kaydee.my | Indian Cinema Portal</title>
-<meta name="description" content="Kaydee.my: Indian cinema reviews, movie news and event promotions. Every film scored on the Kaydee Rating Board.">
+<title>Kaydee.my | Indian cinema, reviewed</title>
+<meta name="description" content="Reviews, release dates and events for Tamil, Malayalam, Telugu, Hindi and Kannada films. One score for every film.">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#F5F5F7" media="(prefers-color-scheme: light)">
-<meta property="og:title" content="Kaydee.my | Indian Cinema Portal">
-<meta property="og:description" content="Movies · Reviews · Entertainment updates">
+<meta property="og:title" content="Kaydee.my | Indian cinema, reviewed">
+<meta property="og:description" content="Reviews, release dates and events for Indian cinema.">
 <meta property="og:image" content="logo.png">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -93,7 +93,7 @@ h1{font-size:clamp(36px,6.4vw,64px)}
 h2{font-size:clamp(26px,3.6vw,38px)}
 h3{font-size:19px;letter-spacing:-.02em;line-height:1.25}
 p{margin:0 0 15px}
-.sub{color:var(--text-2);font-size:16px}
+.sub{color:var(--text-2);font-size:16px;margin:8px 0 22px}
 .eyebrow{font-size:13px;font-weight:600;color:var(--red-bright);margin:0 0 10px}
 .meta{color:var(--text-2);font-size:14px}
 
@@ -214,10 +214,10 @@ main{padding-top:84px;min-height:60vh}
 .search input{width:100%;font-size:16px;-webkit-appearance:none;appearance:none;border-radius:0}
 .search input::-webkit-search-cancel-button{-webkit-appearance:none}
 .search input::placeholder{color:var(--text-2)}
-.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:28px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:22px}
 
 /* ===================== CAROUSEL ===================== */
-.carousel{position:relative;margin-bottom:12px}
+.carousel{position:relative;margin-bottom:6px}
 .track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;
   -ms-overflow-style:none;-webkit-overflow-scrolling:touch;padding-bottom:4px}
 .track::-webkit-scrollbar{display:none}
@@ -322,12 +322,18 @@ main{padding-top:84px;min-height:60vh}
 .dots button.on{width:24px;background:var(--red)}
 
 /* ===================== CONTENT ===================== */
-section{padding:clamp(40px,5.6vw,68px) 0}
-.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:24px}
+section{padding:clamp(22px,3.2vw,36px) 0}
+section.page-top{padding-top:clamp(8px,2vw,20px)}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:20px}
 .sec-head a{font-size:15px;font-weight:500;color:var(--red-bright);padding:6px 14px;border-radius:999px;
   transition:transform .4s var(--bounce),background .3s,color .2s;white-space:nowrap}
 .sec-head a:hover{background:var(--card);transform:scale(1.05)}
 .grid{display:grid;gap:clamp(16px,2.4vw,26px);grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+@media (max-width:560px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 12px}
+  .grid .card h3{font-size:15.5px;margin-top:10px}
+  .grid .card .meta{font-size:12.5px}
+}
 .card{display:block;transition:transform .5s var(--spring)}
 .card:hover{transform:translateY(-8px) scale(1.02)}
 .poster{position:relative;aspect-ratio:2/3;border-radius:var(--r-md);overflow:hidden;background:var(--card);
@@ -352,8 +358,20 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 .list-row dd{margin:0;font-size:16px}
 @media(max-width:540px){.list-row{grid-template-columns:1fr;gap:2px}}
 
-.detail{display:grid;grid-template-columns:272px 1fr;gap:clamp(24px,4vw,52px);align-items:start}
-@media(max-width:760px){.detail{grid-template-columns:1fr}.detail .poster{max-width:210px}}
+.detail{display:grid;grid-template-columns:272px minmax(0,1fr);grid-template-rows:auto 1fr;align-items:start;
+  grid-template-areas:"side head" "side body";gap:22px clamp(24px,4vw,52px)}
+.detail-side{grid-area:side}.detail-head{grid-area:head}.detail-body{grid-area:body;min-width:0}
+.detail-verdict{font-size:19px;font-weight:600;letter-spacing:-.02em;margin-top:14px}
+.detail-score{margin-top:18px}
+/* On a phone the title leads, then a small poster with the score beside it. */
+@media(max-width:760px){
+  .detail{grid-template-columns:minmax(0,1fr);grid-template-rows:auto;grid-template-areas:"head" "side" "body";gap:20px}
+  .detail-side{display:grid;grid-template-columns:118px minmax(0,1fr);gap:4px 16px;align-content:center;align-items:center}
+  .detail-side .poster{grid-row:1 / span 2}
+  .detail-score{margin:0;align-self:end}
+  .detail-verdict{margin:0;align-self:start;font-size:17px}
+  .detail-side:not(:has(.detail-verdict)) .detail-score{grid-row:1 / span 2;align-self:center}
+}
 .prose{max-width:66ch;font-size:17.5px;line-height:1.62}
 .prose p{margin:0 0 18px}
 .back{display:inline-flex;align-items:center;gap:5px;color:var(--red-bright);font-size:15px;font-weight:500;
@@ -383,6 +401,12 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 @media(max-width:620px){.ev{grid-template-columns:auto 1fr}.ev .chev{display:none}}
 
 .board{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(146px,1fr))}
+@media (max-width:560px){
+  .board{display:flex;flex-wrap:wrap;gap:8px}
+  .board .tier{padding:9px 15px;border-radius:999px;display:flex;align-items:baseline;gap:7px}
+  .board .tier b{font-size:16px;letter-spacing:-.02em}
+  .board .tier span{font-size:13.5px}
+}
 .tier{padding:20px;border-radius:var(--r-md);background:var(--card);cursor:default;
   transition:transform .45s var(--bounce),background .3s,box-shadow .3s,color .2s}
 .tier b{display:block;font-size:30px;font-weight:700;letter-spacing:-.04em}
@@ -541,7 +565,7 @@ section{padding:clamp(40px,5.6vw,68px) 0}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 @media (prefers-reduced-motion: reduce){ .load-note{animation:none;opacity:1} }
-footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
+footer{padding:30px 0;margin-top:28px;box-shadow:inset 0 .5px 0 var(--line)}
 @media (max-width:820px){footer{padding:34px 0 10px}}
 .f-row{display:flex;flex-wrap:wrap;gap:22px;justify-content:space-between;align-items:center}
 @media (max-width:600px){
@@ -692,8 +716,7 @@ footer{padding:44px 0;margin-top:20px;box-shadow:inset 0 .5px 0 var(--line)}
   <div class="wrap f-row">
     <div>
       <div class="brand" style="font-size:17px"><span class="mark" aria-hidden="true"></span>Kaydee.my</div>
-      <div class="meta" style="margin-top:10px">Indian cinema portal · Movies · Reviews · Events</div>
-      <div class="meta" style="margin-top:4px">© <span id="yr"></span> Kaydee.my</div>
+      <div class="meta" style="margin-top:8px">Indian cinema, reviewed. © <span id="yr"></span></div>
     </div>
     <div class="f-links" id="social"></div>
   </div>
@@ -1020,8 +1043,8 @@ function card(r){
   const soon = unreleased(r);
   const when = r.release_date ? fmtDate(r.release_date) : "";
   const line = soon
-    ? '<span style="color:var(--red-bright)">' + (when ? "In cinemas " + when : "Date to be announced") + '</span>'
-    : dots([r.year, r.language, runtime(r.runtime_min)]);
+    ? '<span style="color:var(--red-bright)">' + (when ? "In cinemas " + when : "Date TBA") + '</span>'
+    : dots([r.year, r.language]);
   return '<a class="card" href="#/review/'+slugOf(r)+'">'+poster(r,true)+
     '<h3>'+esc(r.title)+'</h3><div class="meta">'+line+'</div></a>';
 }
@@ -1648,7 +1671,7 @@ function eventRow(e){
   return '<button class="ev" data-event="'+i+'"><div class="datechip"><b>'+(d?d.getDate():"–")+'</b><span>'+
     (d?MON[d.getMonth()].toUpperCase():"TBA")+'</span></div><div>'+
     (e.category ? '<span class="pill'+(upcoming(e)?' hot':'')+'">'+esc(e.category)+'</span>' : "")+
-    '<h3>'+esc(e.title)+'</h3><div class="meta">'+dots([d?fmtDate(e.date_start):"Date to be announced", e.time, e.venue, e.city])+
+    '<h3>'+esc(e.title)+'</h3><div class="meta">'+dots([d?fmtDate(e.date_start):"Date TBA", e.time, e.venue, e.city])+
     '</div></div><span class="chev">'+ICON.right+'</span></button>';
 }
 function reviewSlide(r){
@@ -1678,10 +1701,10 @@ function eventSlide(e){
     '<button class="slide-hit" data-event="'+i+'" aria-label="'+esc(e.title)+'"></button>'+
     (art.yt ? playButton(art.yt, e.title) : "")+
     '<div class="slide-bar"><div class="slide-txt">'+
-      '<p class="eyebrow">'+esc(e.category || "Featured event")+'</p>'+
+      (e.category ? '<p class="eyebrow">'+esc(e.category)+'</p>' : "")+
       '<h2>'+esc(e.title)+'</h2>'+
       '<div class="meta">'+dots([fmtDate(e.date_start), e.time, e.venue, e.city])+'</div>'+
-    '</div><div class="slide-act"><span class="btn prominent">View details</span>'+
+    '</div><div class="slide-act"><span class="btn prominent">Details</span>'+
       (e.price ? '<span class="price">From '+esc(e.price)+'</span>' : "")+
     '</div></div></div>';
 }
@@ -1717,16 +1740,13 @@ function pageHome(){
   const reviewed = state.reviews.filter(r => !unreleased(r));
   const soon = state.reviews.filter(unreleased).sort(byDate("release_date"));
   let h = banners.length ? '<div class="wrap">'+carousel(banners,"c-home")+'</div>' : "";
-  h += '<div class="wrap"><section><div class="sec-head"><div><p class="eyebrow">Fresh from the hall</p><h2>Latest reviews</h2></div>'+
-    '<a href="#/movies">See all</a></div>'+
+  h += '<div class="wrap"><section><div class="sec-head"><h2>Latest</h2><a href="#/movies">See all</a></div>'+
     (reviewed.length ? '<div class="grid">'+reviewed.slice(0,10).map(card).join("")+'</div>'
-      : '<div class="empty">Reviews are on the way. Check back shortly.</div>')+'</section>'+
-    (soon.length ? '<section><div class="sec-head"><div><p class="eyebrow">Release calendar</p><h2>Coming soon</h2></div>'+
-      '<a href="#/calendar">See dates</a></div><div class="grid">'+soon.slice(0,10).map(card).join("")+'</div></section>' : "")+
-    '<section><div class="sec-head"><div><p class="eyebrow">Promotions</p><h2>What’s on</h2></div><a href="#/events">All events</a></div>'+
-    (next.length ? '<div class="events">'+next.map(eventRow).join("")+'</div>'
-      : '<div class="empty">No events listed right now.</div>')+'</section>'+
-    '<section><div class="sec-head"><div><p class="eyebrow">How we score</p><h2>The rating board</h2></div></div>'+board()+'</section></div>';
+      : '<div class="empty">Reviews are on the way.</div>')+'</section>'+
+    (soon.length ? '<section><div class="sec-head"><h2>Coming soon</h2><a href="#/calendar">Dates</a></div>'+
+      '<div class="grid">'+soon.slice(0,10).map(card).join("")+'</div></section>' : "")+
+    (next.length ? '<section><div class="sec-head"><h2>Events</h2><a href="#/events">See all</a></div>'+
+      '<div class="events">'+next.map(eventRow).join("")+'</div></section>' : "")+'</div>';
   return h;
 }
 
@@ -1737,24 +1757,16 @@ function pageMovies(){
   const langs = [...new Set(reviewed.map(r => r.language).filter(Boolean))].sort();
 
   return '<div class="wrap">'+ (banners.length ? carousel(banners,"c-mov") : "") +
-    '<section style="padding-top:'+(banners.length ? "44px" : "24px")+'">'+
-      '<p class="eyebrow">Archive</p><h2>Movies</h2>'+
-      '<p class="sub" style="margin:10px 0 0">Reviews and upcoming movies.</p>'+
-    '</section>'+
-
-    '<section style="padding-top:10px"><div class="sec-head"><h2 style="font-size:26px">Reviews</h2>'+
+    '<section'+(banners.length ? "" : ' class="page-top"')+'><div class="sec-head"><h2>Reviews</h2>'+
       '<span class="meta">'+reviewed.length+' film'+(reviewed.length === 1 ? "" : "s")+'</span></div>'+
       '<div class="toolbar"><label class="search glass">'+ICON.search+
-        '<input id="q" type="search" placeholder="Search a title, director or actor" aria-label="Search reviews"></label>'+
+        '<input id="q" type="search" placeholder="Search films" aria-label="Search reviews"></label>'+
         segmented("sort",[["new","Newest"],["rating","Top rated"],["az","A–Z"]],"Sort reviews")+
         (langs.length > 1 ? segmented("lang",[["","All"],...langs.map(l => [l,l])],"Filter by language") : "")+
       '</div><div id="results" class="grid"></div></section>'+
-
-    '<section style="padding-top:10px"><div class="sec-head"><div><p class="eyebrow">Release calendar</p>'+
-      '<h2 style="font-size:26px">Upcoming</h2></div><a href="#/calendar">See dates</a></div>'+
-      (soon.length ? '<div class="grid">'+soon.map(card).join("")+'</div>'
-        : '<div class="empty">No films listed yet. They appear here as soon as a release date is set.</div>')+
-    '</section></div>';
+    (soon.length ? '<section><div class="sec-head"><h2>Coming soon</h2><a href="#/calendar">Dates</a></div>'+
+      '<div class="grid">'+soon.map(card).join("")+'</div></section>' : "")+
+    '</div>';
 }
 const segValue = id => document.querySelector("#"+id+' [aria-pressed="true"]')?.dataset.v ?? "";
 function applyFilters(){
@@ -1769,36 +1781,39 @@ function applyFilters(){
   else rows.sort((a,b)=> when(b) - when(a));
   const el = document.getElementById("results");
   if(el) el.innerHTML = rows.length ? rows.map(card).join("")
-    : '<div class="empty" style="grid-column:1/-1">Nothing matches that search. Try another title.</div>';
+    : '<div class="empty" style="grid-column:1/-1">No matches.</div>';
 }
 
 function pageReview(slug){
   const r = slug ? state.reviews.find(x => slugOf(x) === slug) : null;
-  if(!r) return notFound("That review isn’t available.");
+  if(!r) return notFound("We couldn’t find that page.");
   const soon = unreleased(r);
-  const facts = [["Director",r.director],["Producer",r.producer],["Cast",list(r.cast).join(", ")],
-    ["Runtime",runtime(r.runtime_min)],["Genre",list(r.genres).join(", ")],["Language",r.language],
-    ["In cinemas", r.release_date ? fmtDate(r.release_date) : ""],
-    ["Year", r.release_date ? "" : r.year],["Watch on",r.watch_on]].filter(([,v]) => v);
-  const clips = [["Watch trailer", safeUrl(r.trailer_url), "prominent"], ["Watch teaser", safeUrl(r.teaser_url), "quiet"]]
+  /* The line under the title already carries year, language and runtime for a
+     released film, so the table only repeats them for one still to come. */
+  const facts = [["Director",r.director],["Cast",list(r.cast).join(", ")],["Genre",list(r.genres).join(", ")],
+    ["Producer",r.producer],["Runtime", soon ? runtime(r.runtime_min) : ""],["Language", soon ? r.language : ""],
+    ["In cinemas", r.release_date ? fmtDate(r.release_date) : ""],["Watch on",r.watch_on]].filter(([,v]) => v);
+  const clips = [["Trailer", safeUrl(r.trailer_url), "prominent"], ["Teaser", safeUrl(r.teaser_url), "quiet"]]
     .filter(([,u]) => u)
     .map(([label,u,style]) => ytId(u)
       ? '<button type="button" class="btn '+style+'" data-yt="'+ytId(u)+'">'+ICON.play+label+'</button>'
       : '<a class="btn '+style+'" href="'+esc(u)+'" target="_blank" rel="noopener">'+ICON.play+label+'</a>').join("");
   const body = String(r.review_body || r.synopsis || "").split(/\n+/).filter(Boolean).map(p => "<p>"+esc(p)+"</p>").join("");
-  return '<div class="wrap rise"><section style="padding-top:20px"><a class="back" href="#/movies">'+ICON.left+'Movies</a>'+
-    '<div class="detail"><div>'+poster(r,false)+
-      '<div style="margin-top:18px">'+mark(r,"lg")+'</div>'+
-      (r.verdict ? '<div style="font-size:19px;font-weight:600;letter-spacing:-.02em;margin-top:14px">'+esc(r.verdict)+'</div>' : "")+
-    '</div><div><p class="eyebrow">'+(soon ? "Coming soon" : "Kaydee review")+'</p>'+
-      '<h1 style="font-size:clamp(32px,5vw,52px);margin-bottom:12px">'+esc(r.title)+'</h1>'+
-      '<div class="meta">'+(soon
-        ? '<span style="color:var(--red-bright)">'+(r.release_date ? "In cinemas "+fmtDate(r.release_date) : "Date to be announced")+'</span>'
-        : dots([r.year,r.language,runtime(r.runtime_min),r.review_date?fmtDate(r.review_date):""]))+'</div>'+
-      (clips ? '<div class="actions" style="margin-top:20px">'+clips+'</div>' : "")+
-      '<dl class="list" style="margin:26px 0">'+facts.map(([k,v]) => '<div class="list-row"><dt>'+k+'</dt><dd>'+esc(v)+'</dd></div>').join("")+'</dl>'+
-      '<div class="prose">'+body+'</div>'+
-      (soon && !r.review_body ? '<p class="meta" style="margin-top:18px">The Kaydee review lands once the film opens.</p>' : "")+
+  return '<div class="wrap rise"><section class="page-top"><a class="back" href="#/movies">'+ICON.left+'Movies</a>'+
+    '<div class="detail">'+
+      '<div class="detail-head">'+(soon ? '<p class="eyebrow">Coming soon</p>' : "")+
+        '<h1 style="font-size:clamp(30px,5vw,52px);margin-bottom:10px">'+esc(r.title)+'</h1>'+
+        '<div class="meta">'+(soon
+          ? '<span style="color:var(--red-bright)">'+(r.release_date ? "In cinemas "+fmtDate(r.release_date) : "Date TBA")+'</span>'
+          : dots([r.year,r.language,runtime(r.runtime_min)]))+'</div></div>'+
+      '<div class="detail-side">'+poster(r,false)+
+        (mark(r,"lg") ? '<div class="detail-score">'+mark(r,"lg")+'</div>' : "")+
+        (r.verdict ? '<div class="detail-verdict">'+esc(r.verdict)+'</div>' : "")+'</div>'+
+      '<div class="detail-body">'+
+        (clips ? '<div class="actions" style="margin:0 0 22px">'+clips+'</div>' : "")+
+        '<div class="prose">'+body+'</div>'+
+        (soon && !r.review_body ? '<p class="meta" style="margin-bottom:18px">Review to follow after release.</p>' : "")+
+        '<dl class="list" style="margin-top:8px">'+facts.map(([k,v]) => '<div class="list-row"><dt>'+k+'</dt><dd>'+esc(v)+'</dd></div>').join("")+'</dl>'+
       '</div></div></section></div>';
 }
 
@@ -1807,13 +1822,13 @@ function pageEvents(){
   const past = state.events.filter(e => !upcoming(e)).sort((a,b) => byDate("date_start")(b,a));
   const banners = featured(up, false).map(eventSlide);
   let h = '<div class="wrap">'+ (banners.length ? carousel(banners,"c-ev") : "") +
-    '<section style="padding-top:'+(banners.length ? "44px" : "24px")+'"><p class="eyebrow">Promotions</p><h2>Events</h2>'+
-    '<p class="sub" style="margin:10px 0 26px">Premieres, fan meets and brand promotions listed by Kaydee.my. Tap any event for details.</p>';
+    '<section'+(banners.length ? "" : ' class="page-top"')+'><h2>Events</h2>'+
+    '<p class="sub">Premieres, concerts and fan meets.</p>';
   h += up.length ? '<div class="events">'+up.map(eventRow).join("")+'</div>'
-    : '<div class="empty">No upcoming events right now. Follow us on Instagram for announcements.</div>';
-  if(past.length) h += '<div class="sec-head" style="margin-top:46px"><h2>Past events</h2></div>'+
+    : '<div class="empty">Nothing coming up yet.</div>';
+  if(past.length) h += '<div class="sec-head" style="margin-top:40px"><h2>Past</h2></div>'+
     '<div class="events" style="opacity:.62">'+past.slice(0,8).map(eventRow).join("")+'</div>';
-  h += '<div class="actions" style="margin-top:34px"><a class="btn quiet" href="mailto:'+esc(CONFIG.EMAIL)+'">Promote your event with us</a></div>';
+  h += '<div class="actions" style="margin-top:34px"><a class="btn quiet" href="mailto:'+esc(CONFIG.EMAIL)+'">List your event</a></div>';
   return h + '</section></div>';
 }
 
@@ -1893,11 +1908,11 @@ function kcView(){
     agenda = '<p class="kc-when">'+(picked === today ? "Today" : WEEKDAY[d.getDay()])+'</p>'+
       '<h3 class="kc-date">'+d.getDate()+" "+MONTH[m]+" "+y+'</h3>'+
       (mine.length ? '<div class="events">'+mine.map(dayRow).join("")+'</div>'
-                   : '<p class="kc-none">Nothing listed on this day.</p>')+
-      (rest ? '<p class="kc-when" style="margin-top:30px">'+(mine.length ? "Also in " : "In ")+MONTH[m]+'</p>'+rest : "");
+                   : '<p class="kc-none">Nothing on this day.</p>')+
+      (rest ? '<p class="kc-when" style="margin-top:30px">'+(mine.length ? "More in " : "In ")+MONTH[m]+'</p>'+rest : "");
   }else{
-    agenda = '<p class="kc-when">At a glance</p><h3 class="kc-date">'+MONTH[m]+" "+y+'</h3>'+
-      (rest || '<p class="kc-none">Nothing listed for '+MONTH[m]+' yet.</p>');
+    agenda = '<h3 class="kc-date">'+MONTH[m]+" "+y+'</h3>'+
+      (rest || '<p class="kc-none">Nothing in '+MONTH[m]+' yet.</p>');
   }
 
   return '<div class="kc-card">'+
@@ -1907,15 +1922,15 @@ function kcView(){
         '<button type="button" class="kc-btn" data-kc="next" aria-label="Next month">'+ICON.right+'</button></div></div>'+
       '<div class="kc-week" aria-hidden="true">'+WEEKDAY.map(d => '<span>'+d.slice(0, 3)+'</span>').join("")+'</div>'+
       '<div class="kc-grid" role="group" aria-label="'+MONTH[m]+" "+y+'">'+cells+'</div>'+
-      '<div class="kc-foot"><span><i></i>'+films+' film release'+(films === 1 ? "" : "s")+'</span>'+
-        '<span><i data-kc-kind="event"></i>'+events+' event'+(events === 1 ? "" : "s")+'</span></div>'+
+      '<div class="kc-foot"><span><i></i>'+(films || "No")+' release'+(films === 1 ? "" : "s")+'</span>'+
+        '<span><i data-kc-kind="event"></i>'+(events || "No")+' event'+(events === 1 ? "" : "s")+'</span></div>'+
     '</div><div class="kc-agenda">'+agenda+'</div>';
 }
 
 function pageCalendar(){
   if(!kcMonth){ const n = new Date(); kcMonth = new Date(n.getFullYear(), n.getMonth(), 1); kcPick = dayKey(n); }
-  return '<div class="wrap rise"><section><p class="eyebrow">What is on when</p><h2>Calendar</h2>'+
-    '<p class="sub" style="margin:10px 0 26px">Film releases and events, day by day. Tap a date to see what is on.</p>'+
+  return '<div class="wrap rise"><section class="page-top"><h2>Calendar</h2>'+
+    '<p class="sub">Releases and events, by date.</p>'+
     '<div class="kc" id="kcRoot">'+kcView()+'</div></section></div>';
 }
 
@@ -1924,19 +1939,19 @@ function board(){
     .map(([n,l,c]) => '<div class="tier '+c+'"><b>'+n+'</b><span>'+l+'</span></div>').join("")+'</div>';
 }
 function pageAbout(){
-  return '<div class="wrap rise"><section><p class="eyebrow">Who we are</p><h2>Kaydee.my</h2>'+
-    '<div class="prose" style="margin-top:20px">'+
-    '<p>Kaydee.my is an Indian cinema portal covering Tamil, Malayalam, Telugu, Hindi and Kannada releases for audiences in Malaysia and beyond: reviews, first-day reactions, song highlights and entertainment news.</p>'+
-    '<p>Every film gets one score on the Kaydee Rating Board, and every review carries the credits that matter: director, producer, cast and runtime.</p></div>'+
-    '<div class="actions" style="margin-top:26px">'+
+  return '<div class="wrap rise"><section class="page-top"><h2>Indian cinema, reviewed.</h2>'+
+    '<div class="prose" style="margin-top:18px">'+
+    '<p>Tamil, Malayalam, Telugu, Hindi and Kannada films, watched and scored for audiences in Malaysia and beyond.</p>'+
+    '<p>One score out of 10 for every film. Release dates and events in the same place.</p></div>'+
+    '<div class="actions" style="margin-top:22px">'+
       '<a class="btn prominent" href="'+esc(CONFIG.INSTAGRAM)+'" target="_blank" rel="noopener">Instagram</a>'+
       '<a class="btn quiet" href="'+esc(CONFIG.TIKTOK)+'" target="_blank" rel="noopener">TikTok</a>'+
       '<a class="btn quiet" href="mailto:'+esc(CONFIG.EMAIL)+'">Work with us</a></div>'+
-    '<div style="margin-top:52px"><h2 style="margin-bottom:18px">Rating board</h2>'+board()+'</div></section></div>';
+    '<div style="margin-top:44px"><h2 style="margin-bottom:18px">How we score</h2>'+board()+'</div></section></div>';
 }
 function notFound(m){
   return '<div class="wrap"><section><div class="empty"><h2 style="margin-bottom:10px">Not found</h2><p>'+esc(m||"")+'</p>'+
-    '<a class="btn quiet" href="#/" style="margin-top:12px">Back to home</a></div></section></div>';
+    '<a class="btn quiet" href="#/" style="margin-top:12px">Home</a></div></section></div>';
 }
 
 /* ===================== ROUTER ===================== */
@@ -2098,11 +2113,11 @@ function stateView(){
   let note = "";
   if(offline){
     note = '<div class="load-note"><strong>Nothing loaded</strong>' +
-      '<p>The connection dropped on the way. It may just be the network.</p>' +
+      '<p>Check your connection and try again.</p>' +
       '<button class="btn prominent" style="margin-top:20px" id="retry">Try again</button></div>';
   } else if(empty){
     note = '<div class="load-note"><strong>Nothing here yet</strong>' +
-      '<p>New reviews and events land here as soon as they go up.</p></div>';
+      '<p>Reviews and events are on the way.</p></div>';
   }
 
   return '<div class="wrap"><div class="load" role="status" aria-live="polite">' +
