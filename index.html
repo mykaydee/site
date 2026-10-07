@@ -266,13 +266,11 @@ main{padding-top:84px;min-height:60vh}
 
 .slide-txt{min-width:0;flex:1}
 .slide-bar .eyebrow{color:rgba(255,255,255,.88);margin-bottom:3px}
-.slide-bar h2{font-size:clamp(17px,2.1vw,25px);line-height:1.22;margin:0 0 4px;color:#F5F5F7;
+.slide-bar h2{font-size:clamp(19px,2.3vw,28px);line-height:1.2;margin:0 0 5px;color:#F5F5F7;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .slide-bar .meta{color:rgba(245,245,247,.92);font-size:clamp(12.5px,1.15vw,14.5px);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .slide-act{display:flex;align-items:center;gap:clamp(10px,1.4vw,16px);flex:none}
-.slide-act .verdict{font-size:15px;font-weight:600;letter-spacing:-.02em;color:#F5F5F7;
-  max-width:22ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .slide-act .price{font-size:14.5px;font-weight:600;color:#F5F5F7;white-space:nowrap}
 @media (max-width:700px){
   /* stretch, not flex-start, or a long title sizes the column past the bar */
@@ -280,7 +278,6 @@ main{padding-top:84px;min-height:60vh}
   .slide-txt{width:100%}
   .slide-bar h2{-webkit-line-clamp:3}
   .slide-act{width:100%;justify-content:flex-start;flex-wrap:wrap;gap:9px 13px}
-  .slide-act .verdict{max-width:100%;flex:1}
   .slide-act .price{min-width:0;overflow:hidden;text-overflow:ellipsis}
 }
 @media (prefers-reduced-transparency: reduce){
@@ -1612,13 +1609,10 @@ function reviewSlide(r){
     '<a class="slide-hit" href="#/review/'+slugOf(r)+'" aria-label="'+esc(r.title)+'"></a>'+
     (art.yt ? playButton(art.yt, r.title) : "")+
     '<div class="slide-bar"><div class="slide-txt">'+
-      '<p class="eyebrow">'+(unreleased(r) ? "Coming soon" : "Featured review")+'</p>'+
       '<h2>'+esc(r.title)+'</h2>'+
       '<div class="meta">'+(unreleased(r) ? esc("In cinemas " + fmtDate(r.release_date))
         : dots([r.year,r.language,runtime(r.runtime_min)]))+'</div>'+
-    '</div><div class="slide-act">'+mark(r,"lg")+
-      (r.verdict ? '<span class="verdict">'+esc(r.verdict)+'</span>' : "")+
-    '</div></div></div>';
+    '</div><div class="slide-act">'+mark(r,"lg")+'</div></div></div>';
 }
 
 /* The play control sits outside the link, so a tap on it opens the trailer
