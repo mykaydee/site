@@ -404,6 +404,43 @@ section.page-top{padding-top:clamp(8px,2vw,20px)}
 .ev:hover .chev{color:var(--red-bright);transform:translateX(4px) scale(1.2)}
 @media(max-width:620px){.ev{grid-template-columns:auto 1fr}.ev .chev{display:none}}
 
+/* ===================== EVENTS PAGE ===================== */
+.er-list{display:grid;gap:12px}
+.er{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;border-radius:var(--r-lg);
+  background:var(--card);text-align:left;width:100%;cursor:pointer;color:var(--text);transition:background .3s,transform .4s var(--spring)}
+.er[hidden]{display:none}
+.er-date{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:84px;align-self:stretch;
+  padding:16px 0;box-shadow:inset -.5px 0 0 var(--line);font-variant-numeric:tabular-nums}
+.er-date b{font-family:var(--display);font-weight:400;font-size:30px;line-height:1}
+.er-date span{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--text-2);line-height:1.1}
+.er-body{min-width:0;padding:15px 18px}
+.er-body .pill{font-size:11.5px;padding:2px 10px;margin-bottom:6px}
+.er-body h3{font-size:17px;line-height:1.25;margin:0 0 5px;letter-spacing:-.01em;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.er-where{display:flex;align-items:flex-start;gap:6px;font-size:13.5px;color:var(--text-2)}
+.er-where svg{flex:none;margin-top:2px}
+.er .chev{padding-right:18px}
+.er-past{opacity:.55}
+.er:active{transform:scale(.985)}
+@media (hover:hover) and (pointer:fine){ .er:hover{background:var(--card-2)} .er:hover .chev{color:var(--red-bright);transform:translateX(4px) scale(1.2)} }
+.er-filter{margin:0 0 18px}
+.er-filter .seg{display:inline-flex;max-width:100%}
+.er-promo{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:20px;align-items:center;margin-top:34px;padding:22px 24px;
+  border-radius:var(--r-lg);background:linear-gradient(135deg,var(--tint-2),var(--card) 70%);box-shadow:inset 0 0 0 .5px var(--tint-2)}
+.er-promo-ico{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:var(--tint);color:var(--red-bright)}
+.er-promo-ico svg{width:28px;height:28px}
+.er-promo small{display:block;font-size:11.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-2)}
+.er-promo h3{font-family:var(--display);font-weight:400;font-size:clamp(21px,2.6vw,26px);margin:4px 0}
+.er-promo p{margin:0;font-size:14.5px;color:var(--text-2)}
+@media (max-width:620px){
+  .er-date{width:68px}.er-date b{font-size:25px}.er-date span{font-size:11px}
+  .er-body{padding:13px 12px 13px 14px}.er-body h3{font-size:15.5px}
+  .er .chev{padding-right:12px}
+  .er-promo{grid-template-columns:auto minmax(0,1fr);padding:18px}
+  .er-promo-ico{width:46px;height:46px}.er-promo-ico svg{width:23px;height:23px}
+  .er-promo .btn{grid-column:1 / -1;justify-self:start}
+}
+
 /* ===================== ABOUT ===================== */
 .ab-hero h1{font-size:clamp(38px,6vw,72px);line-height:1.04;margin:0 0 18px;max-width:16ch;text-wrap:balance}
 .ab-lead{font-size:clamp(16.5px,1.6vw,19.5px);line-height:1.6;color:var(--text-2);max-width:62ch;margin:0}
@@ -744,8 +781,7 @@ footer{padding:30px 0;margin-top:28px;box-shadow:inset 0 .5px 0 var(--line)}
   <div class="wrap f-row">
     <div>
       <div class="brand" style="font-size:17px"><span class="mark" aria-hidden="true"></span>kaydee.my</div>
-      <div class="meta" style="margin-top:8px">Movies, Events &amp; Everything In Between.</div>
-      <div class="meta" style="margin-top:2px">© <span id="yr"></span></div>
+      <div class="meta" style="margin-top:8px">Movies, Events &amp; Everything In Between. © <span id="yr"></span></div>
     </div>
     <div class="f-links" id="social"></div>
   </div>
@@ -1846,20 +1882,61 @@ function pageReview(slug){
       '</div></div></section></div>';
 }
 
+const PIN = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg>';
+/* Ended, but within the last three days. After that an event leaves the page. */
+const recentPast = e => {
+  const d = parseDate(e.date_end || e.date_start);
+  return !!d && !upcoming(e) && d.getTime() >= today0() - 3 * 864e5;
+};
+const catKey = e => String(e.category || "").trim().toLowerCase() || "other";
+
+function eventCard(e, past){
+  const i = state.events.indexOf(e), d = parseDate(e.date_start);
+  const where = [e.venue, e.city].filter(Boolean).join(", ");
+  return '<button type="button" class="er'+(past ? " er-past" : "")+'" data-event="'+i+'" data-cat="'+esc(catKey(e))+'">'+
+    '<span class="er-date">'+(d
+      ? '<b>'+String(d.getDate()).padStart(2,"0")+'</b><span>'+MON[d.getMonth()].toUpperCase()+'</span><span>'+d.getFullYear()+'</span>'
+      : '<b>TBA</b>')+'</span>'+
+    '<span class="er-body">'+(e.category ? '<span class="pill'+(past ? "" : " hot")+'">'+esc(e.category)+'</span>' : "")+
+      '<h3>'+esc(e.title)+'</h3>'+
+      ((e.time || where) ? '<span class="er-where">'+PIN+'<span>'+esc([e.time, where].filter(Boolean).join(" · "))+'</span></span>' : "")+
+    '</span><span class="chev">'+ICON.right+'</span></button>';
+}
+
 function pageEvents(){
   const up = state.events.filter(upcoming).sort(byDate("date_start"));
-  const past = state.events.filter(e => !upcoming(e)).sort((a,b) => byDate("date_start")(b,a));
+  const past = state.events.filter(recentPast).sort((a,b) => byDate("date_start")(b,a));
   const banners = featured(up, false).map(eventSlide);
+
+  /* Chips come from the categories in use, so none of them can come up empty. */
+  const cats = new Map();
+  up.concat(past).forEach(e => { const k = catKey(e); if(!cats.has(k)) cats.set(k, k === "other" ? "Others" : String(e.category).trim()); });
+  const chips = [...cats].sort((a,b) => (a[0] === "other") - (b[0] === "other") || a[1].localeCompare(b[1]));
+
   let h = '<div class="wrap">'+ (banners.length ? carousel(banners,"c-ev") : "") +
-    '<section'+(banners.length ? "" : ' class="page-top"')+'><h2>Events</h2>'+
-    '<p class="sub">Premieres, concerts and fan meets.</p>';
-  h += up.length ? '<div class="events">'+up.map(eventRow).join("")+'</div>'
+    '<section'+(banners.length ? "" : ' class="page-top"')+'>'+
+    '<div class="sec-head"><h2>Upcoming events</h2><a href="#/calendar">View calendar</a></div>'+
+    (chips.length > 1 ? '<div class="er-filter">'+segmented("evcat", [["","All"], ...chips], "Filter events")+'</div>' : "");
+  h += up.length ? '<div class="er-list" id="evUp">'+up.map(e => eventCard(e, false)).join("")+'</div>'
     : '<div class="empty">Nothing coming up yet.</div>';
-  if(past.length) h += '<div class="sec-head" style="margin-top:40px"><h2>Past</h2></div>'+
-    '<div class="events" style="opacity:.62">'+past.slice(0,8).map(eventRow).join("")+'</div>';
-  h += '<div class="actions" style="margin-top:34px"><a class="btn quiet" href="mailto:'+esc(CONFIG.EMAIL)+'">List your event</a></div>'+
-    '<p class="fine">Publish or promote your event with us. Terms and conditions apply.</p>';
+  h += '<div class="empty" id="evNone" hidden>Nothing in this category yet.</div>';
+  if(past.length) h += '<div class="sec-head" style="margin-top:36px"><h2>Just ended</h2></div>'+
+    '<div class="er-list">'+past.map(e => eventCard(e, true)).join("")+'</div>';
+  h += '<div class="er-promo"><span class="er-promo-ico">'+ABOUT_ICON.cal+'</span>'+
+      '<div><small>Organising an event?</small><h3>Reach more people</h3><p>List your event and get featured on kaydee.my.</p></div>'+
+      '<a class="btn prominent" href="'+esc("mailto:" + CONFIG.EMAIL + "?subject=List%20my%20event")+'">List your event</a></div>'+
+    '<p class="fine">Event submissions and promotion are subject to terms and conditions.</p>';
   return h + '</section></div>';
+}
+function filterEvents(){
+  const v = segValue("evcat");
+  let shown = 0;
+  document.querySelectorAll(".er[data-cat]").forEach(r => {
+    r.hidden = !!v && r.dataset.cat !== v;
+    if(!r.hidden && !r.classList.contains("er-past")) shown++;
+  });
+  const none = document.getElementById("evNone"), list = document.getElementById("evUp");
+  if(none) none.hidden = !(list && shown === 0);
 }
 
 /* ===================== CALENDAR ===================== */
@@ -2130,7 +2207,7 @@ function render(keepScroll){
 
   app.innerHTML = html;
   markNav(key);
-  document.title = "kaydee.my \u2014 Indian Cinema Portal";
+  document.title = "kaydee.my | Movies, Events & Everything In Between";
   if(!keepScroll) scrollTo(0, 0);
   if(seg === "calendar") wireCalendar();
   if(seg === "movies"){
@@ -2139,6 +2216,7 @@ function render(keepScroll){
     const q = document.getElementById("q");
     if(q) q.addEventListener("input", applyFilters);
   }
+  if(seg === "events") wireSegments(filterEvents);
   initCarousels();
   checkTrailerArt();
   initMotion(!keepScroll);
