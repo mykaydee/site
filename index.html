@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kaydee.my | Indian cinema, reviewed</title>
-<meta name="description" content="Reviews, release dates and events for Tamil, Malayalam, Telugu, Hindi and Kannada films. One score for every film.">
+<title>kaydee.my | Movies, Events &amp; Everything In Between</title>
+<meta name="description" content="Films, reviews, concerts and live events for Malaysia and the region. Everything worth your time, in one place.">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#F5F5F7" media="(prefers-color-scheme: light)">
-<meta property="og:title" content="Kaydee.my | Indian cinema, reviewed">
-<meta property="og:description" content="Reviews, release dates and events for Indian cinema.">
+<meta property="og:title" content="kaydee.my | Movies, Events &amp; Everything In Between">
+<meta property="og:description" content="Films, reviews, concerts and live events for Malaysia and the region.">
 <meta property="og:image" content="logo.png">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Tilt+Warp&display=swap" rel="stylesheet">
 <link rel="icon" href="logo.png" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
@@ -28,7 +28,7 @@ const CONFIG = {
 
   INSTAGRAM: "https://www.instagram.com/kaydee.my/",
   TIKTOK: "https://www.tiktok.com/@kaydee.my",
-  FACEBOOK: "https://www.facebook.com/Kaydee.my",
+  FACEBOOK: "https://www.facebook.com/kaydee.my",
   EMAIL: "hello@kaydee.my",
   MAX_FEATURED: 5
 };
@@ -58,6 +58,7 @@ const CONFIG = {
   --spring:cubic-bezier(.32,.72,0,1);
   --bounce:cubic-bezier(.34,1.56,.64,1);
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Inter",system-ui,sans-serif;
+  --display:'Tilt Warp',var(--font);
 }
 @media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){
   --bg:#F2F2F5; --bg-2:#fff;
@@ -89,6 +90,8 @@ button,input{font:inherit;color:inherit;background:none;border:none}
 :focus-visible{outline:3px solid var(--red-hi);outline-offset:3px;border-radius:8px}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
 h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.03em;line-height:1.06}
+/* Brand face for the wordmark and headings. It has one weight, so it is never asked to fake bold. */
+h1,h2,.brand,.kc-title,.load-note strong{font-family:var(--display);font-weight:400;letter-spacing:-.01em}
 h1{font-size:clamp(36px,6.4vw,64px)}
 h2{font-size:clamp(26px,3.6vw,38px)}
 h3{font-size:19px;letter-spacing:-.02em;line-height:1.25}
@@ -96,6 +99,7 @@ p{margin:0 0 15px}
 .sub{color:var(--text-2);font-size:16px;margin:8px 0 22px}
 .eyebrow{font-size:13px;font-weight:600;color:var(--red-bright);margin:0 0 10px}
 .meta{color:var(--text-2);font-size:14px}
+.fine{margin:10px 0 0;font-size:10.5px;letter-spacing:.01em;color:var(--text-2)}
 
 /* ===================== GLASS ===================== */
 .glass{position:relative;background:var(--glass);
@@ -115,7 +119,7 @@ p{margin:0 0 15px}
 /* ===================== NAV ===================== */
 .topbar{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;
   gap:6px;padding:7px 7px 7px 15px;border-radius:999px;width:min(calc(100% - 26px),var(--max))}
-.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;letter-spacing:-.02em}
+.brand{display:flex;align-items:center;gap:10px;font-size:17px}
 /* The whole logo is shown, never cropped. Falls back to a clean red disc
    if the file is ever missing, so nothing can look broken. */
 .mark{width:34px;height:30px;border-radius:50%;flex:none;
@@ -434,7 +438,7 @@ section.page-top{padding-top:clamp(8px,2vw,20px)}
   -webkit-user-select:none;user-select:none}
 .kc-card,.kc-card *{-webkit-tap-highlight-color:transparent}
 .kc-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 8px;margin-bottom:16px}
-.kc-title{margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:clamp(21px,6vw,27px);font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.kc-title{margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:clamp(21px,6vw,27px);line-height:1.1}
 .kc-title span{display:block;margin-bottom:3px;font-size:13px;font-weight:600;letter-spacing:0;color:var(--red-bright)}
 .kc-nav{display:flex;gap:6px;align-items:center;flex:none}
 .kc-btn{height:36px;min-width:36px;padding:0;border-radius:999px;display:grid;place-items:center;cursor:pointer;
@@ -560,7 +564,7 @@ section.page-top{padding-top:clamp(8px,2vw,20px)}
 }
 
 .load-note{margin-top:26px;color:var(--text-2);font-size:15px;opacity:0;animation:fadeUp .6s var(--spring) .45s forwards}
-.load-note strong{display:block;color:var(--text);font-size:19px;font-weight:600;letter-spacing:-.02em;margin-bottom:7px}
+.load-note strong{display:block;color:var(--text);font-size:20px;margin-bottom:7px}
 .load-note p{margin:0 auto;max-width:34ch}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
@@ -704,7 +708,7 @@ footer{padding:30px 0;margin-top:28px;box-shadow:inset 0 .5px 0 var(--line)}
 <body>
 
 <div class="topbar glass" id="topbar">
-  <a class="brand" href="#/"><span class="mark" aria-hidden="true"></span>Kaydee.my</a>
+  <a class="brand" href="#/"><span class="mark" aria-hidden="true"></span>kaydee.my</a>
   <nav class="tabs" id="tabs" aria-label="Main"></nav>
   <button class="circle-btn" id="themeBtn" aria-label="Switch appearance"></button>
 </div>
@@ -715,8 +719,9 @@ footer{padding:30px 0;margin-top:28px;box-shadow:inset 0 .5px 0 var(--line)}
 <footer>
   <div class="wrap f-row">
     <div>
-      <div class="brand" style="font-size:17px"><span class="mark" aria-hidden="true"></span>Kaydee.my</div>
-      <div class="meta" style="margin-top:8px">Indian cinema, reviewed. © <span id="yr"></span></div>
+      <div class="brand" style="font-size:17px"><span class="mark" aria-hidden="true"></span>kaydee.my</div>
+      <div class="meta" style="margin-top:8px">Movies, Events &amp; Everything In Between.</div>
+      <div class="meta" style="margin-top:2px">© <span id="yr"></span></div>
     </div>
     <div class="f-links" id="social"></div>
   </div>
@@ -1828,7 +1833,8 @@ function pageEvents(){
     : '<div class="empty">Nothing coming up yet.</div>';
   if(past.length) h += '<div class="sec-head" style="margin-top:40px"><h2>Past</h2></div>'+
     '<div class="events" style="opacity:.62">'+past.slice(0,8).map(eventRow).join("")+'</div>';
-  h += '<div class="actions" style="margin-top:34px"><a class="btn quiet" href="mailto:'+esc(CONFIG.EMAIL)+'">List your event</a></div>';
+  h += '<div class="actions" style="margin-top:34px"><a class="btn quiet" href="mailto:'+esc(CONFIG.EMAIL)+'">List your event</a></div>'+
+    '<p class="fine">Publish or promote your event with us. Terms and conditions apply.</p>';
   return h + '</section></div>';
 }
 
@@ -1939,14 +1945,16 @@ function board(){
     .map(([n,l,c]) => '<div class="tier '+c+'"><b>'+n+'</b><span>'+l+'</span></div>').join("")+'</div>';
 }
 function pageAbout(){
-  return '<div class="wrap rise"><section class="page-top"><h2>Indian cinema, reviewed.</h2>'+
+  return '<div class="wrap rise"><section class="page-top"><h2>Movies, events &amp; everything in between.</h2>'+
     '<div class="prose" style="margin-top:18px">'+
-    '<p>Tamil, Malayalam, Telugu, Hindi and Kannada films, watched and scored for audiences in Malaysia and beyond.</p>'+
-    '<p>One score out of 10 for every film. Release dates and events in the same place.</p></div>'+
+    '<p>kaydee.my brings entertainment and live event updates together for Malaysia and the region. Films, concerts, premieres and fan meets, all in one place.</p>'+
+    '<p>Every film gets one score out of 10. Every event comes with its date, venue and tickets.</p>'+
+    '<p>Have an event to share? Get in touch and we will help you publish and promote it here.</p></div>'+
     '<div class="actions" style="margin-top:22px">'+
       '<a class="btn prominent" href="'+esc(CONFIG.INSTAGRAM)+'" target="_blank" rel="noopener">Instagram</a>'+
       '<a class="btn quiet" href="'+esc(CONFIG.TIKTOK)+'" target="_blank" rel="noopener">TikTok</a>'+
-      '<a class="btn quiet" href="mailto:'+esc(CONFIG.EMAIL)+'">Work with us</a></div>'+
+      '<a class="btn quiet" href="mailto:'+esc(CONFIG.EMAIL)+'">List your event</a></div>'+
+    '<p class="fine">Terms and conditions apply.</p>'+
     '<div style="margin-top:44px"><h2 style="margin-bottom:18px">How we score</h2>'+board()+'</div></section></div>';
 }
 function notFound(m){
@@ -2062,7 +2070,7 @@ function render(keepScroll){
 
   app.innerHTML = html;
   markNav(key);
-  document.title = "Kaydee.my \u2014 Indian Cinema Portal";
+  document.title = "kaydee.my \u2014 Indian Cinema Portal";
   if(!keepScroll) scrollTo(0, 0);
   if(seg === "calendar") wireCalendar();
   if(seg === "movies"){
@@ -2214,7 +2222,7 @@ document.getElementById("social").innerHTML =
   [["Instagram", CONFIG.INSTAGRAM, "instagram"], ["TikTok", CONFIG.TIKTOK, "tiktok"],
    ["Facebook", CONFIG.FACEBOOK, "facebook"], ["Email", "mailto:" + CONFIG.EMAIL, "mail"]]
   .map(([name, url, icon]) => '<a href="'+url+'" target="_blank" rel="noopener" title="'+name+
-    '" aria-label="Kaydee.my on '+name+'">'+ICON[icon]+'</a>').join("");
+    '" aria-label="kaydee.my on '+name+'">'+ICON[icon]+'</a>').join("");
 document.getElementById("yr").textContent = new Date().getFullYear();
 
 /* Measure the logo so it is shown whole at its own proportions. */
