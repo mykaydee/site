@@ -404,20 +404,44 @@ section.page-top{padding-top:clamp(8px,2vw,20px)}
 .ev:hover .chev{color:var(--red-bright);transform:translateX(4px) scale(1.2)}
 @media(max-width:620px){.ev{grid-template-columns:auto 1fr}.ev .chev{display:none}}
 
-.board{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(146px,1fr))}
-@media (max-width:560px){
-  .board{display:flex;flex-wrap:wrap;gap:8px}
-  .board .tier{padding:9px 15px;border-radius:999px;display:flex;align-items:baseline;gap:7px}
-  .board .tier b{font-size:16px;letter-spacing:-.02em}
-  .board .tier span{font-size:13.5px}
+/* ===================== ABOUT ===================== */
+.ab-hero h1{font-size:clamp(38px,6vw,72px);line-height:1.04;margin:0 0 18px;max-width:16ch;text-wrap:balance}
+.ab-lead{font-size:clamp(16.5px,1.6vw,19.5px);line-height:1.6;color:var(--text-2);max-width:62ch;margin:0}
+.ab-feats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin:34px 0 30px}
+.ab-feat{display:flex;align-items:center;gap:14px;min-width:0}
+.ab-ico{width:46px;height:46px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--tint);color:var(--red-bright)}
+.ab-ico svg{width:22px;height:22px}
+.ab-feat strong,.ab-type strong{display:block;font-size:15.5px;font-weight:600}
+.ab-feat p,.ab-type p{margin:2px 0 0;font-size:13.5px;line-height:1.45;color:var(--text-2)}
+.ab-sec{box-shadow:inset 0 .5px 0 var(--line)}
+.ab-sec h2{margin:0 0 12px;text-wrap:balance}
+.ab-intro{margin:0;max-width:64ch;color:var(--text-2);font-size:16px}
+.ab-scores{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:26px}
+.ab-score{background:var(--card);border-radius:var(--r-lg);padding:20px;display:flex;flex-direction:column;min-width:0}
+.ab-score[data-top]{background:var(--red-solid);color:#fff}
+.ab-score b{font-family:var(--display);font-weight:400;font-size:clamp(30px,3.2vw,40px);line-height:1;font-variant-numeric:tabular-nums}
+.ab-score strong{font-size:15px;font-weight:600;margin-top:12px}
+.ab-score p{margin:6px 0 0;font-size:13.5px;line-height:1.45;color:var(--text-2)}
+.ab-score[data-top] p{color:rgba(255,255,255,.88)}
+.ab-note{margin:16px 0 0;font-size:13px;color:var(--text-2)}
+.ab-events{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.86fr);gap:48px;align-items:center}
+.ab-events p.ab-intro{margin-bottom:16px}
+.ab-types{box-shadow:inset .5px 0 0 var(--line);padding-left:34px}
+.ab-type{display:flex;align-items:center;gap:14px;padding:15px 0}
+.ab-type + .ab-type{box-shadow:inset 0 .5px 0 var(--line)}
+.ab-type .ab-ico{width:40px;height:40px}
+@media (max-width:900px){.ab-scores{grid-template-columns:repeat(3,minmax(0,1fr))}.ab-events{gap:24px}.ab-types{padding-left:22px}}
+@media (max-width:680px){
+  .ab-feats{grid-template-columns:1fr;gap:16px;margin:28px 0 24px}
+  .ab-scores{grid-template-columns:1fr;gap:8px;margin-top:22px}
+  .ab-score{display:grid;grid-template-columns:62px minmax(0,1fr);column-gap:16px;align-items:center;padding:16px 18px}
+  .ab-score b{grid-row:1 / span 2;font-size:32px}
+  .ab-score strong{margin:0}
+  .ab-score p{margin-top:2px}
+  .ab-events{grid-template-columns:1fr;gap:6px}
+  .ab-types{box-shadow:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+  .ab-type,.ab-type + .ab-type{flex-direction:column;align-items:flex-start;gap:10px;padding:16px;border-radius:var(--r-md);background:var(--card);box-shadow:none}
 }
-.tier{padding:20px;border-radius:var(--r-md);background:var(--card);cursor:default;
-  transition:transform .45s var(--bounce),background .3s,box-shadow .3s,color .2s}
-.tier b{display:block;font-size:30px;font-weight:700;letter-spacing:-.04em}
-.tier span{color:var(--text-2);font-size:14px;transition:color .2s}
-.tier.top{background:var(--red-solid);color:#fff}.tier.top span{color:rgba(255,255,255,.92)}
-.tier:hover{background:var(--red-solid);color:#fff;transform:scale(1.06);box-shadow:0 12px 30px rgba(243,2,25,.42)}
-.tier:hover span{color:rgba(255,255,255,.92)}
 
 .badge{display:inline-flex;align-items:center;padding:9px 15px;border-radius:14px;background:var(--tint);
   color:var(--red-bright);border:.5px solid var(--tint-2);font-weight:600;font-size:13.5px;letter-spacing:-.01em;
@@ -687,7 +711,7 @@ footer{padding:30px 0;margin-top:28px;box-shadow:inset 0 .5px 0 var(--line)}
 @keyframes sheetItemIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
 /* Event rows and cards keep their existing hover lift, but gain a slight press. */
-.card:active,.ev:active,.tier:active{transform:scale(.985)}
+.card:active,.ev:active{transform:scale(.985)}
 
 @media (hover:hover) and (pointer:fine){
   .poster .art{transition:transform .75s var(--spring)}
@@ -762,7 +786,7 @@ function routeMotion(){
 function initReveals(){
   if(revealObserver) revealObserver.disconnect();
   const targets = [...document.querySelectorAll(
-    '#app .sec-head, #app .card, #app .ev, #app .tier, #app .list-row, #app .detail, #app .prose, #app .toolbar, #app .empty'
+    '#app .sec-head, #app .card, #app .ev, #app .ab-score, #app .list-row, #app .detail, #app .prose, #app .toolbar, #app .empty'
   )];
   if(!targets.length) return;
   if(reduceMotion()){
@@ -1940,22 +1964,58 @@ function pageCalendar(){
     '<div class="kc" id="kcRoot">'+kcView()+'</div></section></div>';
 }
 
-function board(){
-  return '<div class="board">'+[["10","Masterpiece","top"],["8–9","Good",""],["7","Above average",""],["5–6","Average",""],["4","Below average",""]]
-    .map(([n,l,c]) => '<div class="tier '+c+'"><b>'+n+'</b><span>'+l+'</span></div>').join("")+'</div>';
-}
+const ABOUT_ICON = {
+  film:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="m3 8 2-5h16l-2 5M8 3 6 8m8-5-2 5m7-5-2 5"/><path d="m10 11 5 3-5 3z"/></svg>',
+  cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18M8 14h2m4 0h2m-8 4h2"/></svg>',
+  people:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 5v1"/></svg>',
+  music:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
+  screen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M3 7h18l-2-4H5zM8 3l2 4m4-4 2 4"/></svg>',
+  tent:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 3 12h18L12 3ZM5 12l-2 9m16-9 2 9M9 12v9m6-9v9M3 21h18"/></svg>',
+  art:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="1.5"/><path d="m4 18 6-5 4 3 3-4 4 5"/></svg>'
+};
+const RATING_SCALE = [
+  ["10","Masterpiece","An exceptional film that stays with you long after the credits."],
+  ["8–9","Great","Highly recommended and well worth your time."],
+  ["7","Above average","An enjoyable film with more strengths than flaws."],
+  ["5–6","Average","A mixed experience with both highs and lows."],
+  ["1–4","Below average","Falls short in important areas and is hard to recommend."]
+];
 function pageAbout(){
-  return '<div class="wrap rise"><section class="page-top"><h2>Movies, events &amp; everything in between.</h2>'+
-    '<div class="prose" style="margin-top:18px">'+
-    '<p>kaydee.my brings entertainment and live event updates together for Malaysia and the region. Films, concerts, premieres and fan meets, all in one place.</p>'+
-    '<p>Every film gets one score out of 10. Every event comes with its date, venue and tickets.</p>'+
-    '<p>Have an event to share? Get in touch and we will help you publish and promote it here.</p></div>'+
-    '<div class="actions" style="margin-top:22px">'+
-      '<a class="btn prominent" href="'+esc(CONFIG.INSTAGRAM)+'" target="_blank" rel="noopener">Instagram</a>'+
-      '<a class="btn quiet" href="'+esc(CONFIG.TIKTOK)+'" target="_blank" rel="noopener">TikTok</a>'+
-      '<a class="btn quiet" href="mailto:'+esc(CONFIG.EMAIL)+'">List your event</a></div>'+
-    '<p class="fine">Terms and conditions apply.</p>'+
-    '<div style="margin-top:44px"><h2 style="margin-bottom:18px">How we score</h2>'+board()+'</div></section></div>';
+  const mail = esc("mailto:" + CONFIG.EMAIL + "?subject=List%20my%20event");
+  const feat = (i, t, d) => '<div class="ab-feat"><span class="ab-ico">'+ABOUT_ICON[i]+'</span><div><strong>'+t+'</strong><p>'+d+'</p></div></div>';
+  const type = (i, t, d) => '<div class="ab-type"><span class="ab-ico">'+ABOUT_ICON[i]+'</span><div><strong>'+t+'</strong><p>'+d+'</p></div></div>';
+  return '<div class="wrap rise">'+
+    '<section class="page-top ab-hero"><p class="eyebrow">About kaydee.my</p>'+
+      '<h1>Movies, events &amp; everything in between.</h1>'+
+      '<p class="ab-lead">kaydee.my brings film reviews and live event updates together for Malaysia and the region. From the latest movies and premieres to concerts, festivals and local gatherings, discover what is worth watching and what is happening around you.</p>'+
+      '<div class="ab-feats">'+
+        feat("film","Discover","Film reviews and clear ratings to help you decide what to watch.")+
+        feat("cal","Explore","See upcoming events, venues and ticket information in one place.")+
+        feat("people","Be part of it","Help more people discover local experiences and communities.")+
+      '</div>'+
+      '<div class="actions">'+
+        '<a class="btn prominent" href="'+esc(CONFIG.INSTAGRAM)+'" target="_blank" rel="noopener">Instagram</a>'+
+        '<a class="btn quiet" href="'+esc(CONFIG.TIKTOK)+'" target="_blank" rel="noopener">TikTok</a>'+
+        '<a class="btn quiet" href="'+mail+'">List your event</a></div>'+
+      '<p class="fine">Event submissions and promotion are subject to terms and conditions.</p>'+
+    '</section>'+
+    '<section class="ab-sec"><p class="eyebrow">Movie ratings</p><h2>How we score</h2>'+
+      '<p class="ab-intro">Every film on kaydee.my receives a score out of 10. Our ratings consider the overall viewing experience, storytelling, craft and how well a movie delivers on its promise.</p>'+
+      '<div class="ab-scores">'+RATING_SCALE.map(([n,l,d], i) =>
+        '<article class="ab-score"'+(i ? "" : " data-top")+'><b>'+n+'</b><strong>'+l+'</strong><p>'+d+'</p></article>').join("")+'</div>'+
+      '<p class="ab-note">Scores reflect kaydee.my’s editorial perspective. Your favourite film might be different, and that’s part of the conversation.</p>'+
+    '</section>'+
+    '<section class="ab-sec"><div class="ab-events"><div>'+
+      '<p class="eyebrow">Events on kaydee.my</p><h2>Find out what’s happening around you.</h2>'+
+      '<p class="ab-intro">From live performances and film premieres to festivals, exhibitions and neighbourhood gatherings, kaydee.my helps you discover events taking place across Malaysia and the region. Find dates, venues and ticket details, then plan something worth going out for.</p>'+
+      '<p class="ab-intro">Organising something? Share your event with kaydee.my so more people can find it. Whether it’s a big show or a community get-together, local events deserve to be seen.</p>'+
+      '<div class="actions"><a class="btn prominent" href="#/events">Explore events</a><a class="btn quiet" href="'+mail+'">List your event</a></div>'+
+    '</div><div class="ab-types">'+
+      type("music","Concerts","Live music, performances and tours.")+
+      type("screen","Premieres","Special screenings and film events.")+
+      type("tent","Festivals","Culture, food and community celebrations.")+
+      type("art","Exhibitions","Art, creativity and special showcases.")+
+    '</div></div></section></div>';
 }
 function notFound(m){
   return '<div class="wrap"><section><div class="empty"><h2 style="margin-bottom:10px">Not found</h2><p>'+esc(m||"")+'</p>'+
