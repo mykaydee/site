@@ -1,0 +1,730 @@
+/* ===================== TOKENS ===================== */
+:root{
+  color-scheme: dark light;
+  --red:#F30219; --red-deep:#C9020D; --red-hi:#FF4A52; --red-bright:#FF4A52;
+  --red-solid:#D6020F;   /* filled controls that carry white text */
+  --tint:rgba(243,2,25,.18); --tint-2:rgba(243,2,25,.28);
+
+  --bg:#000;
+  --card:rgba(255,255,255,.06); --card-2:rgba(255,255,255,.10); --card-solid:#151517;
+  --text:#F5F5F7; --text-2:#A1A1A8; --line:rgba(255,255,255,.12);
+
+  --glass:rgba(30,30,34,.55);
+  --glass-edge:rgba(255,255,255,.20);
+  --glass-hi:rgba(255,255,255,.30);
+  --glass-lo:rgba(255,255,255,.06);
+  --glass-shadow:0 14px 44px rgba(0,0,0,.55), 0 2px 10px rgba(0,0,0,.4);
+
+  --r-xl:32px; --r-lg:24px; --r-md:18px;
+  --pad:clamp(18px,4.5vw,34px);
+  --max:1140px;
+  --spring:cubic-bezier(.32,.72,0,1);
+  --bounce:cubic-bezier(.34,1.56,.64,1);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Inter",system-ui,sans-serif;
+  --display:'Tilt Warp',var(--font);
+}
+@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){
+  --bg:#F2F2F5;
+  --card:rgba(0,0,0,.045); --card-2:rgba(0,0,0,.08); --card-solid:#fff;
+  --text:#1D1D1F; --text-2:#48484D; --line:rgba(0,0,0,.10);
+  --glass:rgba(255,255,255,.62); --glass-edge:rgba(255,255,255,.85);
+  --glass-hi:rgba(255,255,255,.95); --glass-lo:rgba(0,0,0,.04);
+  --glass-shadow:0 14px 40px rgba(0,0,0,.16), 0 2px 8px rgba(0,0,0,.07);
+  --red-bright:#C9020D; --tint:rgba(243,2,25,.10); --tint-2:rgba(243,2,25,.17);
+}}
+:root[data-theme="light"]{
+  --bg:#F2F2F5;
+  --card:rgba(0,0,0,.045); --card-2:rgba(0,0,0,.08); --card-solid:#fff;
+  --text:#1D1D1F; --text-2:#48484D; --line:rgba(0,0,0,.10);
+  --glass:rgba(255,255,255,.62); --glass-edge:rgba(255,255,255,.85);
+  --glass-hi:rgba(255,255,255,.95); --glass-lo:rgba(0,0,0,.04);
+  --glass-shadow:0 14px 40px rgba(0,0,0,.16), 0 2px 8px rgba(0,0,0,.07);
+  --red-bright:#C9020D; --tint:rgba(243,2,25,.10); --tint-2:rgba(243,2,25,.17);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:17px;
+  line-height:1.47;letter-spacing:-.011em;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body.locked{position:fixed;width:100%;overflow:hidden}
+img{display:block;max-width:100%;-webkit-user-drag:none;-webkit-touch-callout:none}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit;color:inherit;background:none;border:none}
+:focus-visible{outline:3px solid var(--red-hi);outline-offset:3px;border-radius:8px}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
+h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.03em;line-height:1.06}
+/* A long unbroken word or pasted link wraps instead of widening the page. */
+h1,h2,h3,p,dd,.prose,.meta,.detail-verdict,.sheet-body,.er-body{overflow-wrap:anywhere}
+/* Brand face for the wordmark and headings. It has one weight, so it is never asked to fake bold. */
+h1,h2,.brand,.kc-title,.kc-date,.load-note strong{font-family:var(--display);font-weight:400;letter-spacing:-.01em}
+h1{font-size:clamp(36px,6.4vw,64px)}
+h2{font-size:clamp(26px,3.6vw,38px)}
+h3{font-size:19px;letter-spacing:-.02em;line-height:1.25}
+p{margin:0 0 15px}
+.sub{color:var(--text-2);font-size:16px;margin:8px 0 22px}
+.eyebrow{font-size:13px;font-weight:600;color:var(--red-bright);margin:0 0 10px}
+.meta{color:var(--text-2);font-size:14px}
+.fine{margin:10px 0 0;font-size:10.5px;letter-spacing:.01em;color:var(--text-2)}
+
+/* ===================== GLASS ===================== */
+.glass{position:relative;background:var(--glass);
+  -webkit-backdrop-filter:blur(30px) saturate(200%) brightness(1.06);
+  backdrop-filter:blur(30px) saturate(200%) brightness(1.06);
+  border:.5px solid var(--glass-edge);
+  box-shadow:var(--glass-shadow), inset 0 1px 1px var(--glass-hi), inset 0 -1px 1px var(--glass-lo);}
+.glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(160deg,var(--glass-hi),transparent 38%,transparent 72%,var(--glass-lo));
+  opacity:.55;-webkit-mask:linear-gradient(#000,#000) content-box,linear-gradient(#000,#000);
+  -webkit-mask-composite:xor;mask-composite:exclude;padding:.6px}
+
+
+/* ===================== NAV ===================== */
+.topbar{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;
+  gap:6px;padding:7px 7px 7px 15px;border-radius:999px;width:min(calc(100% - 26px),var(--max))}
+.brand{display:flex;align-items:center;gap:10px;font-size:17px}
+/* The whole logo is shown, never cropped. Falls back to a clean red disc
+   if the file is ever missing, so nothing can look broken. */
+.mark{width:34px;height:30px;border-radius:50%;flex:none;
+  background:radial-gradient(circle at 32% 28%,#FF3742,var(--red) 55%,var(--red-deep)) center/cover no-repeat;
+  box-shadow:0 2px 8px rgba(243,2,25,.42)}
+html.has-logo .mark{width:auto;height:26px;aspect-ratio:var(--logo-ar,1);max-width:132px;
+  background:var(--logo) center/contain no-repeat;border-radius:0;box-shadow:none}
+@media (hover:hover) and (pointer:fine){ .brand:hover .mark{transform:scale(1.06)} }
+.mark,.brand .mark{transition:transform .4s var(--bounce)}
+footer .mark{width:38px;height:34px}
+html.has-logo footer .mark{width:auto;height:30px;max-width:150px}
+.tabs{display:flex;gap:7px;margin-left:auto;margin-right:4px}
+.tabs a{padding:7px 15px;border-radius:999px;font-size:14.5px;font-weight:500;color:var(--text-2);
+  transition:background .32s var(--spring),color .22s}
+@media (hover:hover) and (pointer:fine){ .tabs a:hover{color:var(--text);background:var(--card)} }
+.tabs a.on{color:#fff;background:var(--red-solid);font-weight:600;
+  box-shadow:0 5px 16px rgba(243,2,25,.45), inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 0 .5px rgba(255,255,255,.24)}
+@media (hover:hover) and (pointer:fine){ .tabs a.on:hover{background:var(--red-deep)} }
+.circle-btn{width:34px;height:34px;border-radius:999px;display:grid;place-items:center;cursor:pointer;color:var(--text-2);
+  transition:background .32s var(--spring),color .22s}
+@media (hover:hover) and (pointer:fine){ .circle-btn:hover{color:var(--text);background:var(--card)} }
+.tabbar{display:none}
+@media (max-width:820px){
+  .topbar{top:10px}
+  .topbar .tabs{display:none}
+  .topbar .circle-btn{margin-left:auto}
+  .tabbar{display:flex;position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;z-index:80;
+    transform:translateX(-50%);border-radius:999px;padding:7px;gap:6px;transition:transform .5s var(--spring),opacity .3s}
+  .tabbar.min{transform:translateX(-50%) translateY(150%);opacity:0}
+  .tabbar a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 14px;border-radius:999px;
+    font-size:10.5px;font-weight:500;color:var(--text-2);transition:background .32s var(--spring),color .22s}
+  .tabbar a{position:relative;z-index:1;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+  .tabbar a.on{color:#fff;font-weight:600}
+  /* One red highlight that slides between the tabs and can be dragged along
+     the bar. The tab beneath it lights up, and letting go lands there. */
+  .tabbar{touch-action:pan-y;-webkit-user-select:none;user-select:none}
+  .tb-pill{position:absolute;top:0;left:0;width:0;height:0;border-radius:999px;pointer-events:none;
+    background:var(--red-solid);opacity:0;
+    box-shadow:0 5px 16px rgba(243,2,25,.45), inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 0 .5px rgba(255,255,255,.24);
+    transition:transform .5s var(--spring),width .5s var(--spring),opacity .25s}
+  .tb-pill[data-tb-set]{opacity:1}
+  .tabbar[data-tb-drag] .tb-pill{transition:width .22s var(--spring);
+    box-shadow:0 10px 26px rgba(243,2,25,.6), inset 0 1px 0 rgba(255,255,255,.4), inset 0 0 0 .5px rgba(255,255,255,.3)}
+  .tabbar[data-tb-drag] a.on{color:var(--text-2)}
+  .tabbar[data-tb-drag] a[data-tb-hot]{color:#fff}
+  .tabbar[data-tb-drag] a[data-tb-hot] svg{transform:scale(1.14)}
+  .tabbar a svg{transition:transform .3s var(--bounce)}
+}
+@media (max-width:820px) and (hover:hover) and (pointer:fine){
+  .tabbar a:not(.on):hover{color:var(--text);background:var(--card)}
+}
+@media (max-width:430px){
+  .tabbar{padding:6px;gap:2px}
+  .tabbar a{padding:7px 10px;font-size:10px;gap:2px}
+}
+main{padding-top:84px;min-height:60vh}
+@media (max-width:820px){
+  main{padding-top:78px}
+  body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}  /* clears the floating tab bar */
+}
+
+/* ===================== CONTROLS ===================== */
+.btn{white-space:nowrap;display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;font-size:15px;font-weight:600;
+  cursor:pointer;transition:transform .45s var(--bounce),background .3s,box-shadow .3s,color .2s;will-change:transform}
+.btn.prominent{background:var(--red-solid);color:#fff;border:.5px solid rgba(255,255,255,.24);
+  box-shadow:0 6px 20px rgba(243,2,25,.42), inset 0 1px 0 rgba(255,255,255,.3)}
+.btn.quiet{background:var(--card);color:var(--text)}
+@media (hover:hover) and (pointer:fine){ .btn:hover{background:var(--red-deep);color:#fff;transform:scale(1.08);box-shadow:0 10px 28px rgba(243,2,25,.5), inset 0 1px 0 rgba(255,255,255,.3)} }
+.btn:active{transform:scale(.95)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+
+.score{display:inline-flex;align-items:baseline;gap:2px;padding:9px 15px;border-radius:15px;background:var(--red-solid);color:#fff;
+  font-weight:700;letter-spacing:-.03em;border:.5px solid rgba(255,255,255,.26);
+  box-shadow:0 4px 14px rgba(243,2,25,.42), inset 0 1px 0 rgba(255,255,255,.32);
+  transition:transform .45s var(--bounce),box-shadow .3s}
+.score b{font-size:22px;line-height:1}
+.score i{font-style:normal;font-size:11px;font-weight:600;opacity:.75}
+.score.lg{padding:14px 22px;border-radius:21px}.score.lg b{font-size:40px}.score.lg i{font-size:14px}
+.score.sm{padding:5px 11px;border-radius:12px}.score.sm b{font-size:15px}.score.sm i{font-size:9px}
+@media (hover:hover) and (pointer:fine){ .score:hover,.card:hover .score{transform:scale(1.14);box-shadow:0 10px 26px rgba(243,2,25,.55)} }
+
+/* swipeable segmented control with sliding bubble */
+.seg{position:relative;display:flex;gap:2px;padding:4px;border-radius:999px;overflow-x:auto;scrollbar-width:none;
+  -ms-overflow-style:none;max-width:100%;cursor:grab;scroll-behavior:smooth}
+.seg::-webkit-scrollbar{display:none}
+.seg[data-drag]{cursor:grabbing;scroll-behavior:auto}
+.seg-thumb{position:absolute;top:4px;bottom:4px;left:0;width:0;border-radius:999px;background:var(--red-solid);z-index:0;
+  border:.5px solid rgba(255,255,255,.26);box-shadow:0 5px 16px rgba(243,2,25,.45), inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .55s var(--spring),width .55s var(--spring);will-change:transform,width}
+.seg button{position:relative;z-index:1;padding:9px 18px;border-radius:999px;font-size:14.5px;font-weight:500;
+  color:var(--text-2);white-space:nowrap;cursor:pointer;transition:color .3s,transform .4s var(--bounce)}
+@media (hover:hover) and (pointer:fine){ .seg button:hover{color:var(--text);transform:scale(1.06)} }
+.seg button[aria-pressed="true"]{color:#fff;font-weight:600}
+.search{display:flex;align-items:center;gap:9px;padding:12px 18px;border-radius:999px;flex:1;min-width:220px}
+.search input{width:100%;font-size:16px;-webkit-appearance:none;appearance:none;border-radius:0}
+.search input::-webkit-search-cancel-button{-webkit-appearance:none}
+.search input::placeholder{color:var(--text-2)}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:22px}
+@media (max-width:620px){
+  .toolbar{flex-direction:column;align-items:stretch;gap:8px}
+  .toolbar .search{min-width:0}
+  .toolbar .seg,.er-filter .seg{width:100%}
+  .toolbar .seg button,.er-filter .seg button{flex:1 0 auto;padding:9px 14px;font-size:14px}
+  .toolbar .seg[data-overflow],.er-filter .seg[data-overflow]{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+  .toolbar .seg[data-overflow][data-end],.er-filter .seg[data-overflow][data-end]{-webkit-mask-image:none;mask-image:none}
+}
+
+/* ===================== CAROUSEL ===================== */
+.carousel{position:relative;margin-bottom:6px}
+.track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;
+  -ms-overflow-style:none;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+.track::-webkit-scrollbar{display:none}
+.slide{position:relative;flex:0 0 100%;scroll-snap-align:center;border-radius:var(--r-xl);overflow:hidden;
+  min-height:clamp(340px,52vh,520px);display:flex;align-items:flex-end;background:var(--card-solid);
+  cursor:pointer;text-align:left;width:100%;transition:transform .5s var(--spring)}
+.slide-media{position:absolute;inset:0;background-size:cover;background-position:center;
+  pointer-events:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  transition:transform 1.4s var(--spring)}
+@media (hover:hover) and (pointer:fine){ .slide:hover .slide-media{transform:scale(1.05)} }
+.slide-fallback{position:absolute;inset:0;background:radial-gradient(120% 95% at 12% 0%,#F30219,#C9020D 40%,#3A0206 74%,#080002)}
+.slide-veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,.34) 42%,rgba(0,0,0,.06) 72%)}
+/* A bar along the foot of the image rather than a panel over it, so most of
+   the artwork stays visible. It keeps its own dark glass in both appearances,
+   because it always sits on a photograph, never on the page. */
+.slide-bar{position:relative;flex:1;min-width:0;margin:clamp(11px,1.7vw,16px);
+  padding:clamp(12px,1.6vw,16px) clamp(15px,2vw,20px);border-radius:var(--r-lg);
+  display:flex;align-items:center;gap:clamp(12px,2vw,22px);color:#F5F5F7;
+  background:rgba(14,14,16,.64);
+  -webkit-backdrop-filter:blur(32px) saturate(180%);backdrop-filter:blur(32px) saturate(180%);
+  border:.5px solid rgba(255,255,255,.15);
+  box-shadow:0 14px 44px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.16)}
+/* The whole face of the slide is the link, with the bar and the play control
+   sitting above it. Nothing interactive is nested inside anything else. */
+.slide-hit{position:absolute;inset:0;z-index:1;border-radius:inherit;cursor:pointer;
+  background:none;border:0;padding:0;width:100%}
+.slide-bar{z-index:2;pointer-events:none}
+.slide-bar a,.slide-bar button{pointer-events:auto}
+
+/* Play control. Reads as a trailer, not a decoration. */
+.play{position:absolute;z-index:3;left:50%;top:50%;translate:-50% -60%;
+  display:inline-flex;align-items:center;gap:10px;padding:14px 22px 14px 20px;border-radius:999px;
+  cursor:pointer;color:#fff;font:inherit;font-size:15px;font-weight:600;letter-spacing:-.01em;
+  background:rgba(12,12,14,.64);border:.5px solid rgba(255,255,255,.3);
+  -webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);
+  box-shadow:0 10px 34px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.2);
+  transition:background .3s,border-color .3s,box-shadow .3s}
+.play svg{flex:none;margin-left:2px}
+@media (hover:hover) and (pointer:fine){ .play:hover{background:var(--red-solid);border-color:rgba(255,255,255,.4);
+  box-shadow:0 14px 40px rgba(243,2,25,.5), inset 0 1px 0 rgba(255,255,255,.3)} }
+.play:active{background:var(--red-deep)}
+@media (max-width:560px){
+  .play{padding:12px 18px 12px 16px;font-size:14px;gap:8px;translate:-50% -70%}
+  .play svg{width:22px;height:22px}
+}
+
+/* ===================== TRAILER ===================== */
+.vbox{position:fixed;inset:0;z-index:150;display:grid;place-items:center;padding:clamp(14px,4vw,40px);
+  background:rgba(0,0,0,.82);-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);
+  opacity:0;pointer-events:none;transition:opacity .34s}
+.vbox.open{opacity:1;pointer-events:auto}
+/* The close control sits on the panel, outside the frame, because the frame
+   clips its own corners and would clip the control with them. */
+.vpanel{position:relative;width:min(1100px,100%,calc((100vh - 150px) * 16 / 9));
+  transform:scale(.96);transition:transform .45s var(--spring)}
+.vbox.open .vpanel{transform:none}
+.vbox[data-drag],.vbox[data-drag] .vpanel{transition:none}
+.vframe{position:relative;aspect-ratio:16/9;border-radius:var(--r-lg);overflow:hidden;background:#000;
+  box-shadow:0 30px 90px rgba(0,0,0,.6)}
+.vframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vclose{position:absolute;top:-54px;right:0;width:42px;height:42px;border-radius:999px;display:grid;
+  place-items:center;cursor:pointer;color:#fff;background:var(--red-solid);
+  box-shadow:0 8px 24px rgba(243,2,25,.45), inset 0 1px 0 rgba(255,255,255,.3);
+  transition:transform .45s var(--bounce),background .3s}
+.vclose:active{transform:scale(.92)}
+@media (hover:hover) and (pointer:fine){ .vclose:hover{background:var(--red-deep);transform:scale(1.1)} }
+
+.slide-txt{min-width:0;flex:1}
+.slide-bar .eyebrow{color:rgba(255,255,255,.88);margin-bottom:3px}
+.slide-bar h2{font-size:clamp(19px,2.3vw,28px);line-height:1.2;margin:0 0 5px;color:#F5F5F7;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.slide-bar .meta{color:rgba(245,245,247,.92);font-size:clamp(12.5px,1.15vw,14.5px);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slide-act{display:flex;align-items:center;gap:clamp(10px,1.4vw,16px);flex:none}
+.slide-act .price{font-size:14.5px;font-weight:600;color:#F5F5F7;white-space:nowrap}
+@media (max-width:700px){
+  /* stretch, not flex-start, or a long title sizes the column past the bar */
+  .slide-bar{flex-direction:column;align-items:stretch;gap:11px}
+  .slide-txt{width:100%}
+  .slide-bar h2{-webkit-line-clamp:3}
+  .slide-act{width:100%;justify-content:flex-start;flex-wrap:wrap;gap:9px 13px}
+  .slide-act .price{min-width:0;overflow:hidden;text-overflow:ellipsis}
+}
+.cnav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;display:none;
+  place-items:center;cursor:pointer;z-index:3;color:#fff;background:rgba(0,0,0,.42);
+  -webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%);
+  border:.5px solid rgba(255,255,255,.16);
+  transition:transform .45s var(--bounce),background .3s,opacity .3s}
+@media (hover:hover) and (pointer:fine){ .cnav:hover{background:var(--red-solid);transform:translateY(-50%) scale(1.14)} }
+.cnav:active{transform:translateY(-50%) scale(.95)}
+.cnav.prev{left:14px}.cnav.next{right:14px}
+@media(hover:hover) and (min-width:821px){ .cnav{display:grid} }
+.cdots{display:flex;justify-content:center;gap:7px;margin-top:14px}
+.cdots button{position:relative;width:7px;height:7px;border-radius:999px;background:var(--card-2);cursor:pointer;
+  transition:width .45s var(--spring),background .3s,transform .4s var(--bounce)}
+.cdots button::after{content:"";position:absolute;inset:-18px -9px}
+@media (hover:hover) and (pointer:fine){ .cdots button:hover{background:var(--red);transform:scale(1.4)} }
+.cdots button.on{width:24px;background:var(--red)}
+
+/* ===================== CONTENT ===================== */
+section{padding:clamp(22px,3.2vw,36px) 0}
+section.page-top{padding-top:clamp(8px,2vw,20px)}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:20px}
+.sec-head a{font-size:15px;font-weight:500;color:var(--red-bright);padding:6px 14px;border-radius:999px;
+  transition:transform .4s var(--bounce),background .3s,color .2s;white-space:nowrap}
+@media (hover:hover) and (pointer:fine){ .sec-head a:hover{background:var(--card);transform:scale(1.05)} }
+.grid{display:grid;gap:clamp(16px,2.4vw,26px);grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+@media (max-width:560px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 12px}
+  .grid .card h3{font-size:15.5px;margin-top:10px}
+  .grid .card .meta{font-size:12.5px}
+}
+.card{display:block;transition:transform .5s var(--spring)}
+@media (hover:hover) and (pointer:fine){ .card:hover{transform:translateY(-8px) scale(1.02)} }
+.poster{position:relative;aspect-ratio:2/3;border-radius:var(--r-md);overflow:hidden;background:var(--card);
+  box-shadow:0 8px 26px rgba(0,0,0,.32);transition:box-shadow .5s var(--spring)}
+@media (hover:hover) and (pointer:fine){ .card:hover .poster{box-shadow:0 20px 48px rgba(0,0,0,.5)} }
+/* Every piece of artwork on the site is painted through this one class. */
+.art{position:absolute;inset:0;width:100%;height:100%;
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  pointer-events:none;-webkit-user-select:none;user-select:none;
+  -webkit-touch-callout:none;-webkit-user-drag:none}
+.poster .ph{position:absolute;inset:0;display:grid;place-items:center;font-size:38px;font-weight:700;letter-spacing:-.04em;
+  color:rgba(255,255,255,.16);background:linear-gradient(150deg,#2A1418,#120609)}
+.poster .score{position:absolute;left:10px;bottom:10px}
+.card h3{margin:13px 0 3px}
+.card .meta{font-size:13.5px}
+
+.facts{margin:0;background:var(--card);border-radius:var(--r-lg);overflow:hidden}
+.facts-row{display:grid;grid-template-columns:148px minmax(0,1fr);gap:18px;padding:15px 20px;align-items:baseline;transition:background .3s}
+.facts-row + .facts-row{box-shadow:inset 0 .5px 0 var(--line)}
+.facts-row dt{color:var(--text-2);font-size:14.5px}
+.facts-row dd{margin:0;font-size:16px}
+@media (hover:hover) and (pointer:fine){ .facts-row:hover{background:var(--card-2)} }
+@media(max-width:540px){.facts-row{grid-template-columns:minmax(0,1fr);gap:2px}}
+.card-soon{color:var(--red-bright)}
+
+.detail{display:grid;grid-template-columns:272px minmax(0,1fr);grid-template-rows:auto 1fr;align-items:start;
+  grid-template-areas:"side head" "side body";gap:22px clamp(24px,4vw,52px)}
+.detail-side{grid-area:side}.detail-head{grid-area:head}.detail-body{grid-area:body;min-width:0}
+.detail-verdict{font-size:19px;font-weight:600;letter-spacing:-.02em;margin-top:14px}
+.detail-score{margin-top:18px}
+.detail-title{font-size:clamp(30px,5vw,52px);margin-bottom:10px}
+.rv-label{margin:34px 0 14px;font-family:var(--font);font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--red-bright);display:flex;align-items:center;gap:12px}
+.rv-label::after{content:"";flex:1;height:.5px;background:var(--line)}
+/* On a phone the title leads, then a small poster with the score beside it. */
+@media(max-width:760px){
+  .detail{grid-template-columns:minmax(0,1fr);grid-template-rows:auto;grid-template-areas:"head" "side" "body";gap:20px}
+  .detail-side{display:grid;grid-template-columns:118px minmax(0,1fr);gap:4px 16px;align-content:center;align-items:center}
+  .detail-side .poster{grid-row:1 / span 2}
+  .detail-score{margin:0;align-self:end}
+  .detail-verdict{margin:0;align-self:start;font-size:17px}
+  .detail-side:not(:has(.detail-verdict)) .detail-score{grid-row:1 / span 2;align-self:center}
+}
+.prose{max-width:66ch;font-size:17.5px;line-height:1.62}
+.prose p{margin:0 0 18px}
+.backlink{display:inline-flex;align-items:center;gap:5px;color:var(--red-bright);font-size:15px;font-weight:500;
+  margin-bottom:24px;padding:7px 15px 7px 11px;border-radius:999px;transition:transform .4s var(--bounce),background .3s,color .2s}
+@media (hover:hover) and (pointer:fine){ .backlink:hover{background:var(--red-solid);color:#fff;transform:scale(1.06)} }
+
+.pill{display:inline-block;padding:3px 11px;border-radius:999px;background:var(--card-2);color:var(--text-2);
+  font-size:12px;font-weight:600;margin-bottom:7px}
+.pill.hot{background:var(--red-solid);color:#fff}
+.chev{color:var(--text-2);transition:transform .45s var(--bounce),color .3s}
+
+/* ===================== EVENTS PAGE ===================== */
+.er-list{display:grid;gap:12px}
+.er{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;border-radius:var(--r-lg);
+  background:var(--card);text-align:left;width:100%;cursor:pointer;color:var(--text);overflow:hidden;isolation:isolate;padding:0;border:0;font:inherit;transition:background .3s,transform .4s var(--spring)}
+.er[hidden]{display:none}
+.er-date{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:84px;align-self:stretch;
+  padding:16px 0;background:var(--red-solid);color:#fff;font-variant-numeric:tabular-nums}
+.er-date b{font-family:var(--display);font-weight:400;font-size:30px;line-height:1}
+.er-date span{font-size:12px;font-weight:600;letter-spacing:.08em;line-height:1.1}
+.er-date span + span{color:rgba(255,255,255,.72)}
+.er-past .er-date{background:var(--card-2);color:var(--text-2)}
+.er-past .er-date span + span{color:inherit}
+.er-body{min-width:0;padding:15px 18px;display:flex;flex-direction:column;align-items:flex-start}
+.er-body .pill{font-size:11.5px;padding:2px 10px;margin-bottom:6px}
+.er-title{font-size:17px;font-weight:700;line-height:1.25;margin:0 0 5px;letter-spacing:-.01em;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.er-where{display:flex;align-items:flex-start;gap:6px;font-size:13.5px;color:var(--text-2)}
+.er-where svg{flex:none;margin-top:2px}
+.er .chev{padding-right:18px}
+.er-past{opacity:.55}
+.er:active{transform:scale(.985)}
+@media (hover:hover) and (pointer:fine){ .er:hover{background:var(--card-2)} .er:hover .chev{color:var(--red-bright);transform:translateX(4px) scale(1.2)} }
+.er-filter{margin:0 0 18px}
+.er-filter .seg{display:inline-flex;max-width:100%}
+.er-promo{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:20px;align-items:center;margin-top:34px;padding:22px 24px;
+  border-radius:var(--r-lg);background:linear-gradient(135deg,var(--tint-2),var(--card) 70%);box-shadow:inset 0 0 0 .5px var(--tint-2)}
+.er-promo-ico{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:var(--tint);color:var(--red-bright)}
+.er-promo-ico svg{width:28px;height:28px}
+.er-promo small{display:block;font-size:11.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-2)}
+.er-promo h3{font-family:var(--display);font-weight:400;font-size:clamp(21px,2.6vw,26px);margin:4px 0}
+.er-promo p{margin:0;font-size:14.5px;color:var(--text-2)}
+@media (max-width:620px){
+  .er-date{width:68px}.er-date b{font-size:25px}.er-date span{font-size:11px}
+  .er-body{padding:13px 12px 13px 14px}.er-title{font-size:15.5px}
+  .er .chev{padding-right:12px}
+  .er-promo{grid-template-columns:auto minmax(0,1fr);padding:18px}
+  .er-promo-ico{width:46px;height:46px}.er-promo-ico svg{width:23px;height:23px}
+  .er-promo .btn{grid-column:1 / -1;justify-self:start}
+}
+
+/* ===================== ABOUT ===================== */
+.ab-hero h1{font-size:clamp(38px,6vw,72px);line-height:1.04;margin:0 0 18px;max-width:16ch;text-wrap:balance}
+.ab-lead{font-size:clamp(16.5px,1.6vw,19.5px);line-height:1.6;color:var(--text-2);max-width:62ch;margin:0}
+.ab-feats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin:34px 0 30px}
+.ab-feat{display:flex;align-items:center;gap:14px;min-width:0}
+.ab-ico{width:46px;height:46px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--tint);color:var(--red-bright)}
+.ab-ico svg{width:22px;height:22px}
+.ab-feat strong,.ab-type strong{display:block;font-size:15.5px;font-weight:600}
+.ab-feat p,.ab-type p{margin:2px 0 0;font-size:13.5px;line-height:1.45;color:var(--text-2)}
+.ab-sec{box-shadow:inset 0 .5px 0 var(--line)}
+.ab-sec h2{margin:0 0 12px;text-wrap:balance}
+.ab-intro{margin:0;max-width:64ch;color:var(--text-2);font-size:16px}
+.ab-scores{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:26px}
+.ab-score{background:var(--card);border-radius:var(--r-lg);padding:20px;display:flex;flex-direction:column;min-width:0}
+.ab-score[data-top]{background:var(--red-solid);color:#fff}
+.ab-score b{font-family:var(--display);font-weight:400;font-size:clamp(30px,3.2vw,40px);line-height:1;font-variant-numeric:tabular-nums}
+.ab-score strong{font-size:15px;font-weight:600;margin-top:12px}
+.ab-score p{margin:6px 0 0;font-size:13.5px;line-height:1.45;color:var(--text-2)}
+.ab-score[data-top] p{color:rgba(255,255,255,.88)}
+.ab-note{margin:16px 0 0;font-size:13px;color:var(--text-2)}
+.ab-events{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.86fr);gap:48px;align-items:center}
+.ab-events p.ab-intro{margin-bottom:16px}
+.ab-types{box-shadow:inset .5px 0 0 var(--line);padding-left:34px}
+.ab-type{display:flex;align-items:center;gap:14px;padding:15px 0}
+.ab-type + .ab-type{box-shadow:inset 0 .5px 0 var(--line)}
+.ab-type .ab-ico{width:40px;height:40px}
+@media (max-width:900px){.ab-scores{grid-template-columns:repeat(3,minmax(0,1fr))}.ab-events{gap:24px}.ab-types{padding-left:22px}}
+@media (max-width:680px){
+  .ab-feats{grid-template-columns:1fr;gap:16px;margin:28px 0 24px}
+  .ab-scores{grid-template-columns:1fr;gap:8px;margin-top:22px}
+  .ab-score{display:grid;grid-template-columns:62px minmax(0,1fr);column-gap:16px;align-items:center;padding:16px 18px}
+  .ab-score b{grid-row:1 / span 2;font-size:32px}
+  .ab-score strong{margin:0}
+  .ab-score p{margin-top:2px}
+  .ab-events{grid-template-columns:1fr;gap:6px}
+  .ab-types{box-shadow:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+  .ab-type,.ab-type + .ab-type{flex-direction:column;align-items:flex-start;gap:10px;padding:16px;border-radius:var(--r-md);background:var(--card);box-shadow:none}
+}
+
+.badge{display:inline-flex;align-items:center;padding:9px 15px;border-radius:14px;background:var(--tint);
+  color:var(--red-bright);border:.5px solid var(--tint-2);font-weight:600;font-size:13.5px;letter-spacing:-.01em;
+  transition:transform .45s var(--bounce)}
+.badge.lg{padding:13px 20px;border-radius:19px;font-size:16px}
+.badge.sm{padding:5px 11px;border-radius:12px;font-size:11px;background:rgba(0,0,0,.5);color:#fff;border-color:rgba(255,255,255,.2);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+@media (hover:hover) and (pointer:fine){ .card:hover .badge,.badge:hover{transform:scale(1.08)} }
+.poster .badge{position:absolute;left:10px;bottom:10px}
+
+/* ===================== CALENDAR =====================
+   Every class here carries the kc- prefix and every state is an attribute,
+   so no page-wide rule can land on any part of the calendar. */
+.kc{display:grid;gap:clamp(22px,4vw,36px);align-items:start}
+@media (min-width:900px){.kc{grid-template-columns:minmax(0,440px) minmax(0,1fr)}}
+.kc-card{background:var(--card);border-radius:var(--r-lg);overflow:hidden;
+  padding:clamp(14px,3.6vw,22px) clamp(8px,2.6vw,18px) clamp(12px,3vw,16px);
+  -webkit-user-select:none;user-select:none}
+.kc-card,.kc-card *{-webkit-tap-highlight-color:transparent}
+.kc-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 8px;margin-bottom:16px}
+.kc-title{margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:clamp(21px,6vw,27px);line-height:1.1}
+.kc-title span{display:block;margin-bottom:3px;font-size:13px;font-weight:600;letter-spacing:0;color:var(--red-bright)}
+.kc-nav{display:flex;gap:6px;align-items:center;flex:none}
+.kc-btn{height:36px;min-width:36px;padding:0;border-radius:999px;display:grid;place-items:center;cursor:pointer;
+  color:var(--text);background:var(--card-2);font-size:13.5px;font-weight:600;transition:background .25s}
+.kc-btn[data-kc="today"]{padding:0 14px}
+.kc-btn:active{background:var(--tint-2)}
+.kc-week,.kc-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.kc-week{margin-bottom:6px}
+.kc-week span{text-align:center;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text-2)}
+.kc-grid{row-gap:2px;touch-action:pan-y}
+.kc-grid[data-kc-turn="next"]{animation:kcNext .44s var(--spring)}
+.kc-grid[data-kc-turn="prev"]{animation:kcPrev .44s var(--spring)}
+.kc-grid[data-kc-settle]{transition:transform .34s var(--spring),opacity .34s}
+@keyframes kcNext{from{opacity:0;transform:translateX(30px);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+@keyframes kcPrev{from{opacity:0;transform:translateX(-30px);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+.kc-day{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;padding:3px 0 5px;cursor:pointer;
+  color:var(--text);font-variant-numeric:tabular-nums lining-nums}
+.kc-num{width:clamp(34px,9.4vw,40px);height:clamp(34px,9.4vw,40px);border-radius:50%;display:grid;place-items:center;
+  font-size:clamp(15px,4.1vw,17px);font-weight:500;transition:background .2s,color .15s}
+.kc-day[data-kc-out] .kc-num{color:var(--text-2);opacity:.5}
+.kc-day[data-kc-out] .kc-dots{opacity:.45}
+.kc-day[aria-current="date"] .kc-num{color:var(--red-bright);font-weight:700;opacity:1;box-shadow:inset 0 0 0 1.5px var(--red)}
+.kc-day[aria-pressed="true"] .kc-num{background:var(--red-solid);color:#fff;font-weight:700;opacity:1;box-shadow:none}
+.kc-day:focus-visible{outline:none}
+.kc-day:focus-visible .kc-num{outline:2px solid var(--red-bright);outline-offset:2px}
+.kc-dots{display:flex;gap:3px;height:5px}
+.kc-dots i,.kc-foot i{width:5px;height:5px;border-radius:50%;background:var(--red)}
+.kc-dots i[data-kc-kind="event"],.kc-foot i[data-kc-kind="event"]{background:var(--text-2)}
+.kc-foot{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;padding:12px 8px 0;border-top:1px solid var(--line);
+  font-size:13px;color:var(--text-2)}
+.kc-foot span{display:inline-flex;align-items:center;gap:7px}
+.kc-foot i{width:7px;height:7px}
+@media (hover:hover) and (pointer:fine){
+  .kc-btn:hover{background:var(--tint-2)}
+  .kc-day:not([aria-pressed="true"]):hover .kc-num{background:var(--card-2)}
+}
+.kc-agenda{min-width:0}
+.kc-when{margin:0 0 4px;font-size:13px;font-weight:600;color:var(--red-bright)}
+.kc-date{margin:0 0 16px;font-size:clamp(20px,5vw,24px);letter-spacing:-.02em}
+.kc-label{margin:22px 0 10px;font-size:13px;font-weight:600;color:var(--text-2)}
+@media (max-width:380px){.kc-title{font-size:20px}.kc-head{padding:0 4px;gap:6px}.kc-nav{gap:4px}.kc-btn{height:32px;min-width:32px;font-size:12.5px}.kc-btn[data-kc="today"]{padding:0 10px}}
+@media (max-width:340px){.kc-title{font-size:18px}.kc-btn{height:30px;min-width:30px}.kc-btn[data-kc="today"]{padding:0 8px}}
+
+.empty{margin:0;padding:18px 20px;border-radius:var(--r-lg);background:var(--card);color:var(--text-2);font-size:15px}
+.empty h2{font-size:clamp(22px,3vw,28px);color:var(--text);margin:0 0 6px}
+.empty p{margin:0 0 16px}
+
+/* ===================== SCROLLBARS =====================
+   The native bar is switched off everywhere, arrows and all, because it is
+   drawn inside the element it belongs to and takes a slice of it. In its
+   place a rail is drawn alongside the content, touching nothing.
+   ====================================================== */
+/* Every surface, not a named list. A list means the next scrolling element
+   added anywhere gets a native bar next to a rail, which is what happened to
+   the event sheet. */
+*{scrollbar-width:none;-ms-overflow-style:none}
+*::-webkit-scrollbar{width:0;height:0;display:none}
+::-webkit-scrollbar-button{display:none;width:0;height:0}
+
+.rail{position:fixed;width:12px;z-index:200;opacity:0;pointer-events:none;transition:opacity .4s}
+.rail.show{opacity:1;pointer-events:auto}
+.rail::before{content:"";position:absolute;inset:0;border-radius:999px;background:var(--card);opacity:0;
+  transition:opacity .3s}
+.rail.drag::before{opacity:.5}
+@media (hover:hover) and (pointer:fine){ .rail:hover::before{opacity:.5} }
+.rail-thumb{position:absolute;left:3px;width:6px;min-height:34px;border-radius:999px;
+  background:var(--red);box-shadow:0 1px 5px rgba(243,2,25,.45);
+  transition:width .25s var(--spring),left .25s var(--spring),background .25s}
+.rail.drag .rail-thumb{width:12px;left:0;background:var(--red-hi)}
+@media (hover:hover) and (pointer:fine){ .rail:hover .rail-thumb{width:12px;left:0;background:var(--red-hi)} }
+.rail.drag .rail-thumb{background:var(--red-deep)}
+
+/* Touch surfaces never showed a bar in the first place. */
+@media (hover:none),(pointer:coarse){ .rail{display:none} }
+
+/* ===================== LIQUID LOADER =====================
+   Three bodies orbiting a core, drawn as one mass by an SVG filter. They
+   neck and part as they pass, so the shape is never the same twice and the
+   loop has no seam. Nothing lands, nothing resets, nothing to get bored of.
+   ========================================================= */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.load{min-height:clamp(320px,52vh,520px);display:grid;place-items:center;text-align:center;padding:40px 24px}
+.liquid{position:relative;width:168px;height:168px;margin:0 auto;isolation:isolate}
+.liquid-svg{position:relative;width:100%;height:100%;overflow:visible;z-index:1}
+
+.halo{position:absolute;inset:14%;border-radius:50%;
+  background:radial-gradient(circle,rgba(243,2,25,.24),rgba(243,2,25,.06) 52%,transparent 72%);
+  filter:blur(14px);animation:lqHalo 5.6s ease-in-out infinite}
+@keyframes lqHalo{0%,100%{opacity:.5;transform:scale(.92)}50%{opacity:.9;transform:scale(1.12)}}
+
+/* the whole cluster turns slowly, so no single orbit reads as the subject */
+.lq-cluster{transform-box:view-box;transform-origin:80px 80px;animation:lqTurn 22s linear infinite}
+@keyframes lqTurn{to{transform:rotate(360deg)}}
+
+.lq-arm{transform-box:view-box;transform-origin:80px 80px;will-change:transform}
+.lq-a1{animation:lqTurn 4.4s linear infinite}
+.lq-a2{animation:lqTurn 6.8s linear infinite reverse}
+.lq-a3{animation:lqTurn 3.3s linear infinite}
+
+/* each body breathes in and out of the core, which is what makes them neck */
+.lq-sat{transform-box:fill-box;transform-origin:center;will-change:transform}
+.lq-s1{animation:lqReach1 4.4s ease-in-out infinite}
+.lq-s2{animation:lqReach2 6.8s ease-in-out infinite -2.1s}
+.lq-s3{animation:lqReach3 3.3s ease-in-out infinite -.9s}
+@keyframes lqReach1{0%,100%{transform:translateX(14px) scale(.9)}50%{transform:translateX(34px) scale(1.06)}}
+@keyframes lqReach2{0%,100%{transform:translateX(30px) scale(1.04)}50%{transform:translateX(13px) scale(.86)}}
+@keyframes lqReach3{0%,100%{transform:translateX(20px) scale(.82)}50%{transform:translateX(39px) scale(1)}}
+
+.lq-core{transform-box:fill-box;transform-origin:center;animation:lqCore 5.2s ease-in-out infinite;
+  will-change:transform}
+@keyframes lqCore{0%,100%{transform:scale(.92)}50%{transform:scale(1.08)}}
+
+/* one highlight, held still while the mass moves under it */
+.lq-spec{animation:lqSpec 5.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes lqSpec{0%,100%{opacity:.4;transform:scale(.85)}50%{opacity:.7;transform:scale(1.05)}}
+
+/* Held still it is a cluster at rest rather than a frozen frame. */
+@media (prefers-reduced-motion: reduce){
+  .halo,.lq-cluster,.lq-arm,.lq-sat,.lq-core,.lq-spec{animation:none}
+  .lq-a1{transform:rotate(20deg)} .lq-a2{transform:rotate(160deg)} .lq-a3{transform:rotate(275deg)}
+  .lq-s1{transform:translateX(30px)} .lq-s2{transform:translateX(24px)} .lq-s3{transform:translateX(34px)}
+  .halo{opacity:.55}
+}
+
+.load-note{margin-top:26px;color:var(--text-2);font-size:15px;opacity:0;animation:fadeUp .6s var(--spring) .45s forwards}
+.load-note strong{display:block;color:var(--text);font-size:20px;margin-bottom:7px}
+.load-note p{margin:0 auto;max-width:34ch}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion: reduce){ .load-note{animation:none;opacity:1} }
+footer{padding:30px 0;margin-top:28px;box-shadow:inset 0 .5px 0 var(--line)}
+@media (max-width:820px){footer{padding:34px 0 10px}}
+.f-row{display:flex;flex-wrap:wrap;gap:22px;justify-content:space-between;align-items:center}
+@media (max-width:600px){
+  .f-row{flex-direction:column;align-items:center;text-align:center;gap:20px}
+  /* only the text column stacks, the icon row must stay a row */
+  .f-row > div:not(.f-links){display:flex;flex-direction:column;align-items:center}
+  .f-links{flex-direction:row;justify-content:center}
+}
+.f-links{display:flex;flex-direction:row;gap:10px;flex-wrap:nowrap}
+.f-links a{width:44px;height:44px;border-radius:999px;display:grid;place-items:center;flex:none;
+  background:var(--card);color:var(--text-2);
+  transition:transform .4s var(--bounce),background .3s,color .2s}
+@media (hover:hover) and (pointer:fine){ .f-links a:hover{background:var(--red-solid);color:#fff;transform:scale(1.12)} }
+.f-links a:active{transform:scale(.94)}
+
+
+/* ===================== EVENT SHEET ===================== */
+.backdrop{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(18px);
+  backdrop-filter:blur(18px);display:grid;place-items:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .35s}
+.grabber{display:none;position:absolute;top:9px;left:0;right:0;z-index:4;
+  width:42px;height:5px;border-radius:999px;margin:0 auto;
+  background:rgba(255,255,255,.5);box-shadow:0 1px 3px rgba(0,0,0,.35);
+  transition:width .3s var(--spring),background .3s}
+.backdrop[data-drag] .grabber{width:56px;background:rgba(255,255,255,.75)}
+.backdrop.open{opacity:1;pointer-events:auto}
+/* The panel is one piece. Its grabber and close button belong to the panel,
+   and only the content inside it scrolls, so nothing can be pulled away from
+   the holder the way a bouncing scroll region can. */
+.sheet{width:min(560px,100%);max-height:88vh;border-radius:var(--r-xl);
+  display:flex;flex-direction:column;overflow:hidden;
+  transform:translateY(28px) scale(.96);transition:transform .55s var(--spring)}
+.sheet-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch}
+.backdrop[data-drag],.backdrop[data-drag] .sheet{transition:none}
+.backdrop.open .sheet{transform:none}
+.sheet-banner{aspect-ratio:16/9;background-size:cover;background-position:center;
+  pointer-events:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  background-image:radial-gradient(115% 120% at 78% 0%,#F30219,#C9020D 46%,#180104)}
+.sheet-body{padding:clamp(20px,3.4vw,28px)}
+.sheet-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:999px;display:grid;place-items:center;
+  cursor:pointer;color:#fff;background:rgba(0,0,0,.42);z-index:2;transition:transform .45s var(--bounce),background .3s}
+@media (hover:hover) and (pointer:fine){ .sheet-close:hover{background:var(--red-solid);transform:scale(1.14)} }
+.sheet .facts{margin:18px 0}
+.sheet-title{font-size:clamp(23px,3.4vw,32px);margin:4px 0 0}
+.sheet-prose{font-size:16.5px}
+/* Phone: the panel rises from the bottom edge. Placed after the base rules so it wins. */
+@media (max-width:640px){
+  .backdrop{place-items:end center;padding:0}
+  .sheet{width:100%;max-height:88vh;border-radius:26px 26px 0 0;transform:translateY(100%) scale(1);
+    padding-bottom:env(safe-area-inset-bottom)}
+  .grabber{display:block}
+  .sheet-close{top:18px}
+  /* The strip the grabber sits in belongs to the gesture, not to scrolling. */
+  .sheet::before{content:"";position:absolute;top:0;left:0;right:0;height:30px;z-index:3;
+    touch-action:none}
+}
+
+
+/* ===================== MOTION SYSTEM =====================
+   Cinematic movement that stays subtle around content. Everything in this
+   block is disabled by the existing reduced-motion rules below. */
+:root{
+  --motion-slow:860ms;
+  --motion-distance:22px;
+}
+
+#app{transform-origin:50% 20%}
+#app.route-in{animation:routeIn .72s var(--spring) both}
+@keyframes routeIn{
+  from{opacity:0;transform:translateY(12px) scale(.992)}
+  to{opacity:1;transform:none}
+}
+
+/* Elements are promoted only while they are entering, then left alone. */
+.motion-reveal{opacity:0;transform:translateY(var(--motion-distance)) scale(.985)}
+.motion-reveal.is-visible{animation:revealIn var(--motion-slow) var(--spring) both;animation-delay:var(--reveal-delay,0ms)}
+@keyframes revealIn{
+  0%{opacity:0;transform:translateY(var(--motion-distance)) scale(.985)}
+  100%{opacity:1;transform:none}
+}
+
+/* A tiny perspective response makes posters feel physical without changing layout. */
+.motion-tilt{transform-style:preserve-3d;will-change:transform;transition:transform .42s var(--spring)}
+.motion-tilt .poster{transform:translateZ(0);transition:transform .42s var(--spring),box-shadow .5s var(--spring)}
+.motion-tilt.is-tilting .poster{transform:translateZ(12px)}
+
+/* Magnetic controls move only a few pixels and snap back with the site's bounce. */
+.motion-magnet{will-change:translate}
+
+/* The floating chrome subtly settles as the page starts moving. */
+.topbar{transition:top .45s var(--spring),padding .45s var(--spring),box-shadow .45s,background .45s,border-color .45s}
+.topbar.scrolled{top:8px;padding-top:5px;padding-bottom:5px;box-shadow:0 18px 50px rgba(0,0,0,.34),inset 0 1px 0 var(--glass-hi)}
+
+/* Give the active nav item a clean confirmation pulse after route changes. */
+.tabs a.nav-pop,.tabbar a.nav-pop{animation:navPop .52s var(--bounce)}
+@keyframes navPop{0%{transform:scale(.92)}60%{transform:scale(1.08)}100%{transform:none}}
+
+/* Theme switch feels like one continuous control instead of an instant swap. */
+.circle-btn.theme-spin svg{animation:themeSpin .48s var(--spring)}
+@keyframes themeSpin{from{opacity:0;transform:rotate(-70deg) scale(.72)}to{opacity:1;transform:none}}
+
+/* Carousel art gets a subtle depth drift as the slide comes into view. */
+.slide.is-current .slide-media{animation:heroDrift 7s ease-out both}
+@keyframes heroDrift{from{scale:1.055;translate:0 5px}to{scale:1.015;translate:0 0}}
+@media (hover:hover) and (pointer:fine){ .slide.is-current:hover .slide-media{transform:scale(1.06)} }
+
+/* Sheet contents cascade in after the panel itself lands. */
+.backdrop.open .sheet-banner{animation:sheetMediaIn .72s var(--spring) both}
+.backdrop.open .sheet-body > *{animation:sheetItemIn .58s var(--spring) both}
+.backdrop.open .sheet-body > *:nth-child(2){animation-delay:45ms}
+.backdrop.open .sheet-body > *:nth-child(3){animation-delay:90ms}
+.backdrop.open .sheet-body > *:nth-child(4){animation-delay:135ms}
+.backdrop.open .sheet-body > *:nth-child(5){animation-delay:180ms}
+@keyframes sheetMediaIn{from{opacity:0;transform:scale(1.035)}to{opacity:1;transform:none}}
+@keyframes sheetItemIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* Event rows and cards keep their existing hover lift, but gain a slight press. */
+.card:active{transform:scale(.985)}
+
+@media (hover:hover) and (pointer:fine){
+  .poster .art{transition:transform .75s var(--spring)}
+  .card:hover .poster .art{transform:scale(1.045)}
+  .card:hover h3{color:var(--red-bright)}
+  .card h3{transition:color .25s}
+}
+
+.rise{opacity:0;transform:translateY(16px);animation:rise .7s var(--spring) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transition-duration:.01ms!important}
+  .rise{opacity:1;transform:none}
+  .track{scroll-behavior:auto}
+}
+/* Reduced transparency: solid surfaces instead of glass. Last, so it wins. */
+@media (prefers-reduced-transparency: reduce){
+  .glass{background:var(--card-solid);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .glass::after{display:none}
+  .play{background:rgba(12,12,14,.9);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .slide-bar{background:rgba(14,14,16,.92);backdrop-filter:none;-webkit-backdrop-filter:none}
+}
