@@ -360,7 +360,7 @@ section.page-top{padding-top:clamp(8px,2vw,20px)}
 /* ===================== EVENTS PAGE ===================== */
 .er-list{display:grid;gap:12px}
 .er{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;border-radius:var(--r-lg);
-  background:var(--card);text-align:left;width:100%;cursor:pointer;color:var(--text);overflow:hidden;isolation:isolate;padding:0;border:0;font:inherit;transition:background .3s,transform .4s var(--spring)}
+  background:var(--card);text-align:left;width:100%;cursor:pointer;color:var(--text);overflow:hidden;isolation:isolate;padding:0;border:0;font:inherit;transition:background .3s,transform .45s var(--spring),box-shadow .45s var(--spring)}
 .er[hidden]{display:none}
 .er-date{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:84px;align-self:stretch;
   padding:16px 0;background:var(--red-solid);color:#fff;font-variant-numeric:tabular-nums}
@@ -378,7 +378,11 @@ section.page-top{padding-top:clamp(8px,2vw,20px)}
 .er .chev{padding-right:18px}
 .er-past{opacity:.55}
 .er:active{transform:scale(.985)}
-@media (hover:hover) and (pointer:fine){ .er:hover{background:var(--card-2)} .er:hover .chev{color:var(--red-bright);transform:translateX(4px) scale(1.2)} }
+/* The row lifts toward the reader on hover, like the cards and buttons. */
+@media (hover:hover) and (pointer:fine){
+  .er:hover{background:var(--card-2);transform:translateY(-3px) scale(1.012);box-shadow:0 14px 34px rgba(0,0,0,.28)}
+  .er:hover .chev{color:var(--red-bright);transform:translateX(4px) scale(1.2)}
+}
 .er-filter{margin:0 0 18px}
 .er-filter .seg{display:inline-flex;max-width:100%}
 .er-promo{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:20px;align-items:center;margin-top:34px;padding:22px 24px;

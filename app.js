@@ -113,7 +113,7 @@ function initMagnets(){
 
 function initMotion(isRoute){
   if(isRoute) routeMotion();
-  initReveals();
+  if(!returning) initReveals();          /* coming back to a page: it is already there, nothing to reveal */
   initTilt();
   initMagnets();
 }
@@ -1678,7 +1678,38 @@ function safeRender(keepScroll){
     return false;
   }
 }
-addEventListener("hashchange", () => { closeEvent(); closeVideo(); safeRender(); });
+/* Going back puts a page exactly where it was left, without replaying its
+   entrance, so returning from a film to the Movies list feels instant. */
+let returning = false;
+const scrollMemo = {}, navStack = [location.hash || "#/"];
+try{ history.scrollRestoration = "manual"; }catch(e){}
+addEventListener("hashchange", e => {
+  closeEvent(); closeVideo();
+  const from = (e.oldURL && e.oldURL.indexOf("#") !== -1) ? e.oldURL.slice(e.oldURL.indexOf("#")) : "#/";
+  scrollMemo[from] = scrollY;
+  const to = location.hash || "#/";
+  const back = navStack.length > 1 && navStack[navStack.length - 2] === to;
+  if(back) navStack.pop(); else navStack.push(to);
+  if(back && scrollMemo[to] !== undefined){
+    returning = true;
+    safeRender(true);
+    returning = false;
+    const y = scrollMemo[to];
+    scrollTo(0, y);
+    requestAnimationFrame(() => { if(Math.abs(scrollY - y) > 2) scrollTo(0, y); });
+  }else{
+    safeRender();
+  }
+});
+/* The "Movies" link on a film page behaves like Back when that is where the
+   reader came from, so it lands on the same spot in the list. */
+document.addEventListener("click", e => {
+  const a = e.target.closest && e.target.closest(".backlink");
+  if(a && navStack.length > 1 && navStack[navStack.length - 2] === a.getAttribute("href")){
+    e.preventDefault();
+    history.back();
+  }
+});
 
 safeRender();             /* the loader paints first, so the page is never blank */
 loadData().then(changed => { if(changed) safeRender(true); });
